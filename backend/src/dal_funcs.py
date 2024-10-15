@@ -4,10 +4,9 @@ from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorCollection
 from pymongo import ReturnDocument
 from uuid import uuid4
-from typing import Optional
+from typing import Optional, AsyncGenerator
 
 from dal_tables import Employee, TechPost, TechComment, EmoMsg
-
 
 class EmployeeDAL:
     def __init__(self, employee_collection: AsyncIOMotorCollection):
@@ -82,8 +81,31 @@ class TechPostDAL:
     async def list_tech_posts(self, session=None):
         async for doc in self._tech_post_collection.find({}, session=session):
             yield TechPost.from_doc(doc)
+    
+    # Add this method to filter tech posts by employee ID
+    async def list_tech_posts_by_employee(
+        self, employee_id: str, session=None
+    ) -> AsyncGenerator[TechPost, None]:
+        async for doc in self._tech_post_collection.find(
+            {"sender_id": employee_id},
+            projection={"content": 1, "sender_id": 1, "answered": 1, "best_comment_id": 1},
+            sort=[("answered", 1),("createdAt", -1),],
+            session=session,
+        ):
+            yield TechPost.from_doc(doc)
 
-
+    async def list_tech_posts_without_employee(
+        self, employee_id: str, session=None
+    ) -> AsyncGenerator[TechPost, None]:
+        async for doc in self._tech_post_collection.find(
+            {"sender_id": { "$ne": employee_id} },
+            projection={"content": 1, "sender_id": 1, "answered": 1, "best_comment_id": 1},
+            sort=[("answered", 1),("createdAt", -1),],
+            session=session,
+        ):
+            yield TechPost.from_doc(doc)
+            
+            
 class TechCommentDAL:
     def __init__(self, tech_comment_collection: AsyncIOMotorCollection):
         self._tech_comment_collection = tech_comment_collection
@@ -169,3 +191,5 @@ class EmoMsgDAL:
         query = {"sender_id": sender_id} if sender_id else {}
         async for doc in self._emo_msg_collection.find(query, session=session):
             yield EmoMsg.from_doc(doc)
+
+    
