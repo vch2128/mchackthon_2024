@@ -1,23 +1,51 @@
+// PageRouter.tsx
+
 import React from 'react';
-import { Link, Route, Routes } from 'react-router-dom';
-import NotFound from './pages/Home/NotFound';
+import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home/Home';
 import Tech from './pages/Tech/Tech';
 import Emo from './pages/Emo/Emo';
-import TechPost from './pages/Tech/TechPost';
+import Login from './pages/Login/Login';
+import PrivateRoute from './PrivateRoute';
 
-const PageRouter = () =>{
-    return (
-			<>
-				<Routes>
-					<Route path="/home" element={<Home />} />
-					<Route path="/tech" element={<Tech />} />
-					<Route path="/tech/post" element={<TechPost />} />
-					<Route path="/emo" element={<Emo />} />
-					<Route path="*" element={<NotFound />} />
-				</Routes>
-			</>
-    )
-}
+const PageRouter: React.FC = () => {
+  return (
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route
+        path="/home"
+        element={
+          <PrivateRoute>
+            <Home />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/tech"
+        element={
+          <PrivateRoute>
+            <Tech />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/emo"
+        element={
+          <PrivateRoute>
+            <Emo />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/"
+        element={
+          <PrivateRoute>
+            <Home />
+          </PrivateRoute>
+        }
+      />
+    </Routes>
+  );
+};
 
-export default PageRouter
+export default PageRouter;

@@ -1,63 +1,53 @@
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import { BiSolidTrash } from "react-icons/bi";
-import './App.css'
-import { Link, useLocation} from 'react-router-dom'
-import PageRouter from './PageRouter'
-import { useState, useRef } from 'react'
+import React, { useEffect } from 'react';
+import './App.css';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import PageRouter from './PageRouter';
 
 function App() {
   const location = useLocation();
-  const [paragraph, setParagraph] = useState(""); // Store the current input text
-  const [paragraphs, setParagraphs] = useState([]); // Store all submitted paragraphs
-  const inputRef = useRef(); // Reference for the textarea element
-  // Check if the current path is '/tech'
-  const isHomePage = location.pathname === '/home' || location.pathname === '/';
+  const navigate = useNavigate();
+
+  // Check if the user is authenticated by looking for a token in localStorage
+  const isAuthenticated = !!localStorage.getItem('token');
+  useEffect(() => {
+    // Redirect to /login if not authenticated and not already on /login
+    if (!isAuthenticated && location.pathname !== '/login') {
+      navigate('/login');
+    }
+    // Redirect to /home if authenticated and currently on /login
+    else if (isAuthenticated && location.pathname === '/login') {
+      navigate('/home');
+    }
+  }, [isAuthenticated, location.pathname, navigate]);
 
   return (
     <>
       <div>
         <PageRouter />
-        {isHomePage && (
+        {isAuthenticated && (
           <>
             <nav>
               <Link to="/home">Home</Link> |{' '}
               <Link to="/tech">Tech</Link> |{' '}
               <Link to="/emo">Emo</Link> |{' '}
+              <Link to="/login">Login</Link> |{' '}
+              <button
+                onClick={() => {
+                  localStorage.removeItem('token');
+                  navigate('/login');
+                }}
+              >
+                Logout
+              </button>
             </nav>
-            <div className="ListToDoLists">
-              <div className="box">
-                <label className="message-label">Enter your paragraph:</label>
-                <textarea
-                  value={paragraph}
-                  onChange={(e) => setParagraph(e.target.value)}
-                  className="large-input"
-                  placeholder="Type your paragraph here..."
-                />
-                <button className="new-button" onClick={() => {}}>
-                  Submit
-                </button>
-              </div>
+          </>
+        )}
 
-              {paragraphs.length > 0 && (
-                <div className="paragraph-display">
-                  <h3>Your Submitted Paragraphs:</h3>
-                  {paragraphs.map((p, index) => (
-                    <div key={index} className="paragraph-item">
-                      <p className="submitted-paragraph">{p}</p>
-                      <button
-                        className="delete-button"
-                        onClick={() => {}}
-                      >
-                        <BiSolidTrash /> Delete
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* <p>There are no to-do lists!</p> */}
-            </div>
+        {!isAuthenticated && (
+          <>
+            <nav>
+              <Link to="/login">Login</Link>
+            </nav>
           </>
         )}
       </div>
