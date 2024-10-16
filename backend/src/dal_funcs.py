@@ -3,6 +3,7 @@
 from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorCollection
 from pymongo import ReturnDocument
+from datetime import datetime
 from uuid import uuid4
 from typing import Optional, AsyncGenerator
 
@@ -13,11 +14,21 @@ class EmployeeDAL:
         self._employee_collection = employee_collection
 
     async def create_employee(
-        self, department: str, wallet: int, score: int, session=None
+        self, 
+        name: str,
+        account: str,
+        password: str,
+        department: str, 
+        wallet: Optional[int] = 30, 
+        score: Optional[int] = 0,
+        session=None
     ) -> str:
         response = await self._employee_collection.insert_one(
             {
                 "_id": uuid4().hex,
+                "name": name,
+                "account": account,
+                "password": password,
                 "department": department,
                 "wallet": wallet,
                 "score": score,
@@ -41,6 +52,14 @@ class EmployeeDAL:
         async for doc in self._employee_collection.find({}, session=session):
             yield Employee.from_doc(doc)
 
+    async def get_user_by_account(self, account: str, session=None):
+        doc = await self._employee_collection.find_one(
+            {"account": account},
+            session=session,
+        )
+        if doc:
+            return Employee.from_doc(doc)
+        return None
 
 class TechPostDAL:
     def __init__(self, tech_post_collection: AsyncIOMotorCollection):
@@ -88,7 +107,7 @@ class TechPostDAL:
     ) -> AsyncGenerator[TechPost, None]:
         async for doc in self._tech_post_collection.find(
             {"sender_id": employee_id},
-            projection={"content": 1, "sender_id": 1, "answered": 1, "best_comment_id": 1},
+            projection={"content": 1, "sender_id": 1, "answered": 1, "best_comment_id": 1, "createdAt": 1,},
             sort=[("answered", 1),("createdAt", -1),],
             session=session,
         ):
@@ -99,7 +118,7 @@ class TechPostDAL:
     ) -> AsyncGenerator[TechPost, None]:
         async for doc in self._tech_post_collection.find(
             {"sender_id": { "$ne": employee_id} },
-            projection={"content": 1, "sender_id": 1, "answered": 1, "best_comment_id": 1},
+            projection={"content": 1, "sender_id": 1, "answered": 1, "best_comment_id": 1, "createdAt": 1,},
             sort=[("answered", 1),("createdAt", -1),],
             session=session,
         ):
