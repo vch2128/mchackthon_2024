@@ -11,7 +11,10 @@ import PrivateRoute from './PrivateRoute';
 const PageRouter: React.FC = () => {
   return (
     <Routes>
-      <Route path="/login" element={<Login />} />
+      <Route 
+        path="/login" 
+        element={<Login />} 
+      />
       <Route
         path="/home"
         element={
