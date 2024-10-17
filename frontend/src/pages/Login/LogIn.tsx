@@ -28,6 +28,7 @@ const Login: React.FC = () => {
       localStorage.setItem('token', access_token);
       // Update the global user state
       setUser(user);
+      console.log(user)
       // Redirect to the protected page
       navigate('/home');
     } catch (error) {
