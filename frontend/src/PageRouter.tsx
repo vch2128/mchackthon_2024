@@ -7,6 +7,7 @@ import Tech from './pages/Tech/Tech';
 import Emo from './pages/Emo/Emo';
 import Login from './pages/Login/Login';
 import PrivateRoute from './PrivateRoute';
+import TechPost from './pages/Tech/TechPost';
 
 const PageRouter: React.FC = () => {
   return (
@@ -28,6 +29,14 @@ const PageRouter: React.FC = () => {
         element={
           <PrivateRoute>
             <Tech />
+          </PrivateRoute>
+        }
+      />
+      <Route 
+        path="/tech/post"
+        element={
+          <PrivateRoute>
+            <TechPost />
           </PrivateRoute>
         }
       />
