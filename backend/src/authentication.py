@@ -22,8 +22,8 @@ router = APIRouter()
 async def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
-async def authenticate_user(account: str, password: str):
-    user = await EmployeeDAL.get_user_by_account(account)
+async def authenticate_user(username: str, password: str, employeeDAL: EmployeeDAL):
+    user = await employeeDAL.get_user_by_username(username)
     if not user:
         return None
     if not await verify_password(password, user.password):

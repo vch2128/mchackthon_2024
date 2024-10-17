@@ -52,9 +52,9 @@ class EmployeeDAL:
         async for doc in self._employee_collection.find({}, session=session):
             yield Employee.from_doc(doc)
 
-    async def get_user_by_account(self, account: str, session=None):
+    async def get_user_by_username(self, username: str, session=None)-> Optional[Employee]:
         doc = await self._employee_collection.find_one(
-            {"account": account},
+            {"name": username},
             session=session,
         )
         if doc:

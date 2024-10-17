@@ -1,16 +1,18 @@
 // Login.tsx
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
 
 const Login: React.FC = () => {
-  const [account, setAccount] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-
+  const navigate = useNavigate();
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
       const response = await axios.post('/api/login', {
-        username: account,
+        username: username,
         password: password,
       }, {
         headers: {
@@ -21,6 +23,7 @@ const Login: React.FC = () => {
       // Store the token (e.g., in localStorage)
       localStorage.setItem('token', access_token);
       // Redirect to the protected page
+      navigate('/home');
     } catch (error) {
       console.error('Login failed:', error);
       // Handle login failure (e.g., display error message)
@@ -33,8 +36,8 @@ const Login: React.FC = () => {
         <label>Account:</label>
         <input
           type="text"
-          value={account}
-          onChange={(e) => setAccount(e.target.value)}
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
         />
       </div>
       <div>
