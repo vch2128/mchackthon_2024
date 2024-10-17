@@ -1,12 +1,14 @@
 // Login.tsx
-import React, { useState } from 'react';
+import './Login.css';
+import React, { useState} from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const location = useLocation();
   const navigate = useNavigate();
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -29,9 +31,10 @@ const Login: React.FC = () => {
       // Handle login failure (e.g., display error message)
     }
   };
-
-  return (
-    <form onSubmit={handleLogin}>
+  const onpage = ( location.pathname == '/login' )
+  return (<>
+    { onpage && 
+      (<form onSubmit={handleLogin}>
       <div>
         <label>Account:</label>
         <input
@@ -49,8 +52,9 @@ const Login: React.FC = () => {
         />
       </div>
       <button type="submit">submit</button>
-    </form>
-  );
+    </form>)
+    }
+  </>);
 };
 
 export default Login;
