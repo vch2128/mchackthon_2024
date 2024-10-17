@@ -5,7 +5,7 @@ import { useLocation } from 'react-router-dom';
 function Tech() {
   const location = useLocation();
   const onpage = ( location.pathname == '/tech' )
-  const techpost_id = 'd61dc499bcad41aeaa3f3f3e37e92840'
+  const techpost_id = 'c8e31075607e461385edc9f898ceb98c'
   return (<>
     { onpage && (
       <div>
