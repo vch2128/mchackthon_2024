@@ -23,12 +23,12 @@
 # {"id":"af9fa3e96de14cdabc61130faae9dbcc","name":"frank","account":"frank6999","password":"2222"}
 
 # create techpost 
-# curl -X POST "http://localhost:8001/api/techpost" \
-#      -H "Content-Type: application/json" \
-#      -d '{
-#            "content": "Tdqwefqwefqwfeddd",
-#            "sender_id": "emplqwere123"
-#          }'
+curl -X POST "http://localhost:8001/api/techpost" \
+     -H "Content-Type: application/json" \
+     -d '{
+           "content": "hello everyone",
+           "sender_id": "bonnie"
+         }'
 
 # create tech comment
 # curl -X POST "http://localhost:8001/api/techcomment" \
@@ -40,4 +40,4 @@
 #          }'
 
 # curl -X GET http://localhost:8001/api/techposts/techcomments/d61dc499bcad41aeaa3f3f3e37e92840
-curl -X GET http://localhost:8001/api/techposts/d61dc499bcad41aeaa3f3f3e37e92840
+# curl -X GET http://localhost:8001/api/techposts/d61dc499bcad41aeaa3f3f3e37e92840
