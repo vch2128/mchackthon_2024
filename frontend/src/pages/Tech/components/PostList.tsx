@@ -18,7 +18,7 @@ const PostList: React.FC<PostListProps> = ({ posts }) => {
   const navigate = useNavigate();
   const handleCardClick = (post_id: string) => {
     console.log(`Card clicked for post ID: ${post_id}`);
-    navigate(`/tech/post/${post_id}`)
+    navigate(`/tech/${post_id}`)
   };
   
   return (
@@ -33,9 +33,8 @@ const PostList: React.FC<PostListProps> = ({ posts }) => {
         key={post.id}
         onClick={() => handleCardClick(post.id)}
         >
-          <p style={{ textAlign: 'left' , fontWeight: 'bold', fontSize: '18px', margin: '3px 0'} }>{post.topic}</p>    
-          <p style={{ textAlign: 'right' , fontSize: '13px', margin: '1px 0'}}>{dateStringFormat(post.createdAt)}</p>  
-          <p style={{ textAlign: 'right' , fontSize: '13px', margin: '1px 0'}}>{post.sender_id}</p>                                                 {/*post.sender_id todo: change to title */}
+          <p style={{ textAlign: 'left' , fontWeight: 'bold', fontSize: '18px', margin: '3px 0'} }>{"Title"}</p>    
+          <p style={{ textAlign: 'right' , fontSize: '13px', margin: '1px 0'}}>{dateStringFormat(post.createdAt)}</p>                                                 {/*post.sender_id todo: change to title */}
           <p style={{ textAlign: 'left', whiteSpace: 'pre-wrap', fontSize: '15px', margin: '3px 0' }}>{post.content}</p>
         </Card>
       ))}

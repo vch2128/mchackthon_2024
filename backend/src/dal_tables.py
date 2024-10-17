@@ -4,9 +4,6 @@ from datetime import datetime
 
 class Employee(BaseModel):
     id: str
-    name: str
-    account: str
-    password: str
     department: str
     wallet: int
     score: int
@@ -15,9 +12,6 @@ class Employee(BaseModel):
     def from_doc(doc) -> "Employee":
         return Employee(
             id=str(doc["_id"]),
-            name=doc["name"],
-            account=doc["account"],
-            password=doc["password"],
             department=doc["department"],
             wallet=doc["wallet"],
             score=doc["score"],
