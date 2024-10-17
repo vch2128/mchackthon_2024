@@ -33,7 +33,7 @@ const PageRouter: React.FC = () => {
         }
       />
       <Route 
-        path="/tech/post"
+        path="/tech/post/:techpost_id"
         element={
           <PrivateRoute>
             <TechPost />
