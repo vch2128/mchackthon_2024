@@ -39,4 +39,5 @@
 #            "techpost_id": "d61dc499bcad41aeaa3f3f3e37e92840"
 #          }'
 
-curl -X GET http://localhost:8001/api/techposts/techcomments/d61dc499bcad41aeaa3f3f3e37e92840
+# curl -X GET http://localhost:8001/api/techposts/techcomments/d61dc499bcad41aeaa3f3f3e37e92840
+curl -X GET http://localhost:8001/api/techposts/d61dc499bcad41aeaa3f3f3e37e92840

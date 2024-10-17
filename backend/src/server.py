@@ -61,7 +61,7 @@ async def get_all_techposts() -> list[TechPost]:
 
 @app.get("/api/techposts/{techpost_id}") # return techpost with id = techpost_id
 async def get_a_techpost(techpost_id: str) -> TechPost:
-    return await app.techpost_dal.get_techpost(techpost_id)
+    return await app.techpost_dal.get_tech_post(techpost_id)
 
 @app.get("/api/techposts/sender/{sender_id}") # return techposts with same sender_id
 async def get_sender_techposts(sender_id: str) -> list[TechPost]:
