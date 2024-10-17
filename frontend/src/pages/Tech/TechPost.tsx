@@ -2,7 +2,9 @@ import React, { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 import { useLocation, useParams } from 'react-router-dom';
 import { UserContext} from '../../context/UserContext';
-import './TechPost.css'
+import { Divider, List, Typography, Input} from 'antd';
+
+const { TextArea } = Input;
 
 const TechPost =() => {
   // const [content, setContent] = useState('')
@@ -72,18 +74,21 @@ const TechPost =() => {
       <div>
         <p>{techPost?.content}</p>
       </div>
-      <div>
-      {comments?.map((com, index) => (
-        <div key={index} className="comment-div">
-          {com.content}
-        </div>
-      ))}
-      </div>
+      
+      <List
+        header={<div>Comments</div>}
+        footer={<div>Answer the question and get points!</div>}
+        bordered
+        dataSource={comments}
+        renderItem={(item) => (
+          <List.Item>
+            {item.content}
+          </List.Item>
+        )}
+      />
       <form onSubmit={leaveAComment}>
         <div>
-          <label>Leave a comment</label>
-          <input
-            type="comment"
+          <TextArea rows={4}
             value={commentContent}
             onChange={(e) => setCommentContent(e.target.value)}
           />
