@@ -5,7 +5,7 @@ import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home/Home';
 import Tech from './pages/Tech/Tech';
 import Emo from './pages/Emo/Emo';
-import Login from './pages/Login/Login';
+import Login from './pages/Login/LogIn';
 import PrivateRoute from './PrivateRoute';
 
 const PageRouter: React.FC = () => {
