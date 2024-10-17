@@ -1,15 +1,8 @@
 import { useEffect, useState, useContext } from 'react'
-<<<<<<< HEAD
 import { getPosts, getSenderPosts, Post } from './services/post'
 import PostWithTabs from './components/PostWithTabs'
 import { UserContext } from '../../context/UserContext'
 import './TechBoard.css'
-=======
-import { getPosts, getSenderPosts, Post } from './types/post'
-import PostWithTabs from './components/PostWithTabs'
-import { UserContext } from '../../context/UserContext'
-
->>>>>>> bonnie
 const TechBoard: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([])
   const [senderPosts, setSenderPosts] = useState<Post[]>([])
@@ -17,13 +10,8 @@ const TechBoard: React.FC = () => {
   
   const refreshPosts = async () => {
     const posts = await getPosts()
-<<<<<<< HEAD
     const sortedPosts = posts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     setPosts(sortedPosts)
-=======
-    const sortedMessages = posts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-    setPosts(sortedMessages)
->>>>>>> bonnie
     const senderPosts = await getSenderPosts(user.id)
     setSenderPosts(senderPosts)
   }
