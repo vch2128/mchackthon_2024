@@ -1,15 +1,17 @@
 // Login.tsx
 import './Login.css';
-import React, { useState} from 'react';
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
-
+import { UserContext } from '../../context/UserContext';
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const location = useLocation();
   const navigate = useNavigate();
+  const { setUser } = useContext(UserContext); // Access setUser from context
+
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
@@ -21,9 +23,11 @@ const Login: React.FC = () => {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
       });
-      const { access_token } = response.data;
+      const { access_token, user } = response.data;
       // Store the token (e.g., in localStorage)
       localStorage.setItem('token', access_token);
+      // Update the global user state
+      setUser(user);
       // Redirect to the protected page
       navigate('/home');
     } catch (error) {
