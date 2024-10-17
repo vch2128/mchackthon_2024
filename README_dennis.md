@@ -1,5 +1,24 @@
 # Dennis Branch
 
+## Quick Start
+- install package in frontend
+```bash
+cd frontend
+npm install
+```
+- only check frontend page
+```bash
+cd frontend
+npm run dev
+```
+- build docker
+```
+docker-compose up --build
+```
+
+## Page Logic
+All the we pages are stored in /frontend/src/pages; a .tsx can be a page or component.
+
 ## Build dodcker
 
 ```bash
