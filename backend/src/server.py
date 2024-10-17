@@ -1,8 +1,7 @@
 from contextlib import asynccontextmanager
 from datetime import datetime, timedelta
-from passlib.context import CryptContext
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
 import os
 import sys
 
@@ -15,7 +14,7 @@ import uvicorn
 
 from dal_funcs import TechPostDAL, EmployeeDAL
 from dal_tables import TechPost, Employee
-from authentication import authenticate_user, create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES
+from authentication import authenticate_user, create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES, pwd_context
 
 MONGODB_URI = os.environ["MONGODB_URI"]
 DEBUG = os.environ.get("DEBUG", "").strip().lower() in {"1", "true", "on", "yes"}
@@ -124,9 +123,9 @@ async def create_techpost(tech_post: TechPostCreate) -> NewTechPostResponse:
         content=tech_post.content,
     )
     
-@app.post("api/login")
+@app.post("/api/login")
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = await authenticate_user(form_data.username, form_data.password)
+    user = await authenticate_user(form_data.username, form_data.password, app.employee_dal)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
