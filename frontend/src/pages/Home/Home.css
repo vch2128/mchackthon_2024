@@ -1,0 +1,67 @@
+/* Home.css */
+
+.fixed-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #fff; /* White background */
+    z-index: 1000;
+    padding:2px 0px 2px 0px; 
+    border-bottom: 2px solid #ccc; 
+    margin-top:2px;
+    margin-bottom: 2px;
+}
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px; /* Adds top margin to prevent overlap with the header */
+}
+
+.box {
+    flex: 1;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+   
+}
+
+.box-left {
+    margin-right: 10px;
+    /* width: 30%; */
+}
+
+.box-right {
+    margin-left: 10px;
+}
+
+h2 {
+    color: black;
+}
+
+h1 {
+    color: black;
+}
+
+p {
+    color: black;
+}
+
+/* Home.css */
+
+textarea {
+    background-color: #f0f0f0; /* Light grey background */
+    color: black; /* Black text color */
+    border: 1px solid #ccc; /* Optional: Adds a border around the textarea */
+    padding: 10px; /* Adds some padding inside the textarea */
+    border-radius: 5px; /* Optional: Rounds the corners slightly */
+    font-size: 16px; /* Adjust the font size */
+    width: 100%; 
+    box-sizing: border-box; /* Ensure padding is included in the element's width/height */
+}
+  
+textarea::placeholder {
+    color: #888; /* Optional: Lighter grey for the placeholder text */
+}
+  

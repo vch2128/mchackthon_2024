@@ -5,9 +5,9 @@ from motor.motor_asyncio import AsyncIOMotorCollection
 from pymongo import ReturnDocument
 from datetime import datetime
 from uuid import uuid4
-from typing import Optional, AsyncGenerator
-
-from dal_tables import Employee, TechPost, TechComment, EmoMsg
+from typing import Optional, AsyncGenerator, List
+from gpt import gpt_get_topic
+from dal_tables import Employee, TechPost, TechComment, EmoMsg, EmoReply, GPTData
 
 class EmployeeDAL:
     def __init__(self, employee_collection: AsyncIOMotorCollection):
@@ -74,11 +74,13 @@ class TechPostDAL:
         best_comment_id: Optional[str] = None,
         session=None,
     ) -> str:
+        gpt_topic = await gpt_get_topic(content)
+        
         response = await self._tech_post_collection.insert_one(
             {
                 "_id": uuid4().hex,
                 "createdAt": datetime.utcnow(),
-                "topic": topic,
+                "topic": gpt_topic,
                 "content": content,
                 "sender_id": sender_id,
                 "answered": answered,
@@ -164,6 +166,11 @@ class TechCommentDAL:
             {"tech_post_id": tech_post_id}, session=session
         ):
             yield TechComment.from_doc(doc)
+    
+    async def list_tech_comments_inlist(self, tech_post_id: str, session=None) -> List[TechComment]:
+        return [comment async for comment in self._tech_comment_collection.find(
+            {"tech_post_id": tech_post_id}, session=session
+        ).to_list(length=None)]
 
 class EmoMsgDAL:
     def __init__(self, emo_msg_collection: AsyncIOMotorCollection):
@@ -171,22 +178,21 @@ class EmoMsgDAL:
 
     async def create_emo_msg(
         self,
-        type: str,
-        score: int,
-        content: str,
         sender_id: str,
+        content: str,
         rcvr_id: str,
-        answered: bool = False,
+        topic: Optional[str] = "No Topic",
+        answered: Optional[bool] = False,
         session=None,
     ) -> str:
+        gpt_topic = await gpt_get_topic(content)
         response = await self._emo_msg_collection.insert_one(
             {
                 "_id": uuid4().hex,
                 "createdAt": datetime.utcnow(),
-                "type": type,
-                "score": score,
-                "content": content,
                 "sender_id": sender_id,
+                "topic": gpt_topic,
+                "content": content,
                 "rcvr_id": rcvr_id,
                 "answered": answered,
             },
@@ -205,9 +211,102 @@ class EmoMsgDAL:
             return EmoMsg.from_doc(doc)
         return None
 
-    async def list_emo_msgs(self, sender_id: Optional[str] = None, session=None):
+    async def list_emo_msgs_by_sender(self, sender_id: Optional[str] = None, session=None):
         query = {"sender_id": sender_id} if sender_id else {}
-        async for doc in self._emo_msg_collection.find(query, session=session):
+        async for doc in self._emo_msg_collection.find(
+            query, 
+            sort=[("answered", 1),("createdAt", -1),],
+            session=session):
             yield EmoMsg.from_doc(doc)
-
+            
+    async def list_emo_msgs_by_rcvr(self, rcvr_id: Optional[str] = None, session=None):
+        query = {"rcvr_id": rcvr_id} if rcvr_id else {}
+        async for doc in self._emo_msg_collection.find(
+            query, 
+            sort=[("answered", 1),("createdAt", -1),],
+            session=session):
+            yield EmoMsg.from_doc(doc)
+            
+    async def update_answered(self, emo_msg_id: Optional[str] = None, answer: Optional[bool] = True, session=None):
+        result = await self._emo_msg_collection.update_one(
+            {"_id": emo_msg_id},
+            {"$set": {"answered": answer}},
+            session=session
+        )
+        return result.modified_count > 0
     
+class EmoReplyDAL:
+    def __init__(self, emo_reply_collection: AsyncIOMotorCollection):
+        self._emo_reply_collection = emo_reply_collection
+        
+    async def create_emo_reply(
+        self,
+        emo_msg_id: str,
+        sender_id: str,
+        content: str,
+        score: Optional[int] = 0,
+        session=None,
+    ) -> str:
+        response = await self._emo_reply_collection.insert_one(
+            {
+                "_id": uuid4().hex,
+                "createdAt": datetime.utcnow(),
+                "emo_msg_id": emo_msg_id,
+                "sender_id": sender_id,
+                "content": content,
+                "score": score,
+            },
+            session=session,
+        )
+        return str(response.inserted_id)
+
+    async def get_emo_reply(
+        self, id: str | ObjectId, session=None
+    ) -> Optional[EmoReply]:
+        doc = await self._emo_reply_collection.find_one(
+            {"_id": str(id)},
+            session=session,
+        )
+        if doc:
+            return EmoReply.from_doc(doc)
+        return None
+
+    async def list_emo_replies_by_emo_msg(self, emo_msg_id: Optional[str] = None, session=None):
+        query = {"emo_msg_id": emo_msg_id} if emo_msg_id else {}
+        async for doc in self._emo_reply_collection.find(
+            query, 
+            session=session):
+            yield EmoReply.from_doc(doc)
+            
+    async def list_emo_reply_by_sender(self, sender_id: Optional[str] = None, session=None):
+        query = {"sender_id": sender_id} if sender_id else {}
+        async for doc in self._emo_reply_collection.find(
+            query, 
+            sort=[("createdAt", -1)],
+            session=session):
+            yield EmoReply.from_doc(doc)
+            
+            
+class GPTDataDAL:
+    def __init__(self, gpt_data_collection: AsyncIOMotorCollection):
+        self._gpt_data_collection = gpt_data_collection
+
+    async def create_gpt_data(
+        self,
+        tech_post_id: str,
+        tech_post_embedding: List[float],
+        session=None,
+    ) -> str:
+        response = await self._gpt_data_collection.insert_one(
+            {
+                "_id": uuid4().hex,
+                "tech_post_id": tech_post_id,
+                "tech_post_embedding": tech_post_embedding
+            },
+            session=session,
+        )
+        return str(response.inserted_id)
+    
+    async def list_gpt_data(self, session=None):
+        async for doc in self._gpt_data_collection.find({}, session=session):
+            yield GPTData.from_doc(doc)
