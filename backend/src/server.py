@@ -12,9 +12,10 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel
 import uvicorn
 
-from dal_funcs import TechPostDAL, EmployeeDAL, TechCommentDAL
-from dal_tables import TechPost, Employee, TechComment
+from dal_funcs import TechPostDAL, EmployeeDAL, TechCommentDAL, EmoMsgDAL, EmoReplyDAL
+from dal_tables import TechPost, Employee, TechComment, EmoMsg, EmoReply
 from authentication import authenticate_user, create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES, pwd_context
+from gpt import gpt_separate_paragraph
 
 MONGODB_URI = os.environ["MONGODB_URI"]
 DEBUG = os.environ.get("DEBUG", "").strip().lower() in {"1", "true", "on", "yes"}
@@ -34,6 +35,7 @@ async def lifespan(app: FastAPI):
     techpost_collection = db.get_collection("techpost")
     techcomment_collection = db.get_collection("techcomment")
     emomsg_collection = db.get_collection("emomsg")
+    emoreply_collection = db.get_collection("emoreply")
 
     # Store in app.state:
     app.state.db_client = client
@@ -42,10 +44,13 @@ async def lifespan(app: FastAPI):
     app.state.techpost_collection = techpost_collection
     app.state.techcomment_collection = techcomment_collection
     app.state.emomsg_collection = emomsg_collection
+    app.state.emoreply_collection = emoreply_collection
     
     app.techpost_dal    = TechPostDAL(techpost_collection)
     app.employee_dal    = EmployeeDAL(employee_collection)
     app.techcomment_dal = TechCommentDAL(techcomment_collection)
+    app.emomsg_dal = EmoMsgDAL(emomsg_collection)
+    app.emoreply_dal = EmoReplyDAL(emoreply_collection)
     
     # Yield back to FastAPI Application:
     yield
@@ -55,6 +60,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan, debug=DEBUG)
+
 @app.get("/api/techposts") # return all techposts
 async def get_all_techposts() -> list[TechPost]:
     return [i async for i in app.techpost_dal.list_tech_posts()]
@@ -74,6 +80,22 @@ async def get_others_techposts(sender_id: str) -> list[TechPost]:
 @app.get("/api/techposts/techcomments/{techpost_id}")
 async def get_tech_comments_by_techpost(techpost_id: str) -> list[TechComment]:
     return [i async for i in app.techcomment_dal.list_tech_comments(techpost_id)]
+
+@app.get("/api/emomsg/{emomsg_id}")
+async def get_an_emomsg(emomsg_id: str) -> EmoMsg:
+    return await app.emomsg_dal.get_emo_msg(emomsg_id)
+
+@app.get("/api/emomsg/sender/{sender_id}")
+async def get_emomsg_by_sender(sender_id: str) -> list[EmoMsg]:
+    return [i async for i in app.emomsg_dal.list_emo_msgs_by_sender(sender_id)]
+
+@app.get("/api/emomsg/rcvr/{rcvr_id}")
+async def get_emomsg_by_rcvr(rcvr_id: str) -> list[EmoMsg]:
+    return [i async for i in app.emomsg_dal.list_emo_msgs_by_rcvr(rcvr_id)]
+
+@app.get("/api/emoreply/emomsg/{emomsg_id}")
+async def get_emoreply_by_emomsg(emomsg_id: str) -> list[EmoReply]:
+    return [i async for i in app.emoreply_dal.list_emo_replies_by_emo_msg(emomsg_id)]
 
 class EmployeeCreate(BaseModel):
     name: str
@@ -148,7 +170,89 @@ async def create_techcomment(tech_comment: TechCommentCreate) -> NewTechCommentR
         id=new_id, 
         content=tech_comment.content,
     )
+
+class NewEmoMsgResponse(BaseModel):
+    id: str
+    content: str
+    rcvr_id: str
+
+class EmoMsgCreate(BaseModel):
+    sender_id: str
+    content: str
+    rcvr_id: str
+
+# create a emo msg
+@app.post("/api/emomsg", status_code=status.HTTP_201_CREATED)
+async def create_emomsg(emomsg: EmoMsgCreate) -> NewEmoMsgResponse:
+    new_id = await app.emomsg_dal.create_emo_msg(
+        sender_id=emomsg.sender_id,
+        content=emomsg.content,
+        rcvr_id=emomsg.rcvr_id
+    )
+    return NewEmoMsgResponse(
+        id=new_id, 
+        content=emomsg.content,
+        rcvr_id=emomsg.rcvr_id
+    )
+
+class NewEmoReplyResponse(BaseModel):
+    id: str
+    emo_msg_id: str
+    content: str
+    state: str
+
+class EmoReplyCreate(BaseModel):
+    emo_msg_id: str
+    sender_id: str
+    content: str
+
+# create a emo reply
+@app.post("/api/emoreply", status_code=status.HTTP_201_CREATED)
+async def create_emoreply(emoreply: EmoReplyCreate) -> NewEmoReplyResponse:
+    isAnswered = await app.emomsg_dal.get_emo_msg(id=emoreply.emo_msg_id)
+    if isAnswered.answered:
+        return NewEmoReplyResponse(
+            id="",
+            emo_msg_id=emoreply.emo_msg_id,
+            content="",
+            state="The emo msg is answered"
+        )
+        
+    new_id = await app.emoreply_dal.create_emo_reply(
+        emo_msg_id=emoreply.emo_msg_id,
+        sender_id=emoreply.sender_id,
+        content=emoreply.content
+    )
     
+    # set corresponding emomsg answered=True
+    if new_id:
+        await app.emomsg_dal.update_answered(
+            emo_msg_id=emoreply.emo_msg_id,
+            answer=True,
+        )
+        
+    return NewEmoReplyResponse(
+        id=new_id,
+        emo_msg_id=emoreply.emo_msg_id,
+        content=emoreply.content,
+        state="successfully updated"
+    )
+
+class NewParagraphSubmit(BaseModel):
+    tech_prob: str
+    emo_prob: str
+
+class ParagraphResponseCreate(BaseModel):
+    msg: str
+
+@app.post("/api/submit-paragraph", status_code=status.HTTP_201_CREATED)
+async def gpt_devide_problem(paragraph: ParagraphResponseCreate) -> NewParagraphSubmit:
+    response = await gpt_separate_paragraph(paragraph.msg)
+    return NewParagraphSubmit(
+        tech_prob=response["tech_prob"],
+        emo_prob=response["emo_prob"]
+    )
+
 @app.post("/api/login")
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     user = await authenticate_user(form_data.username, form_data.password, app.employee_dal)
