@@ -70,7 +70,7 @@ const Home: React.FC = () => {
       const response = await axios.post(
         '/api/search/similar',
         {
-          "problem": techProb,
+          msg: techProb,
         },
         {
           headers: {
@@ -88,10 +88,9 @@ const Home: React.FC = () => {
 
   const getRelatedComments = async (techPostId: string) => {
     try {
-      const response = await axios.get(
-        `/api/techposts/techcomments/${techPostId}`
-      );
+      const response = await axios.get(`/api/techposts/techcomments/${techPostId}`);
       // return a list of data
+      console.log(response)
       return response.data
     } catch (error) {
       setErrorTech('Failed to getSimilarTechId');
