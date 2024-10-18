@@ -274,3 +274,11 @@ class EmoReplyDAL:
             session=session):
             yield EmoReply.from_doc(doc)
             
+    async def list_emo_reply_by_sender(self, sender_id: Optional[str] = None, session=None):
+        query = {"sender_id": sender_id} if sender_id else {}
+        async for doc in self._emo_reply_collection.find(
+            query, 
+            sort=[("createdAt", -1)],
+            session=session):
+            yield EmoReply.from_doc(doc)
+            
