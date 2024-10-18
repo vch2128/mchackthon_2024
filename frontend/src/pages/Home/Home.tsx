@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
 
-function Home() {
+const Home: React.FC = () => {
   const [paragraph, setParagraph] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null); // Explicitly type error as string or null
@@ -9,22 +10,16 @@ function Home() {
     setLoading(true); // Show loading state
     setError(null);   // Reset error state
     try {
-      const response = await fetch('/api/submit-paragraph', {
-        method: 'POST',
+      const response = await axios.post('/api/submit-paragraph', {
+        msg: paragraph
+      },  {
         headers: {
-          'Content-Type': 'application/json', // Set the content type to JSON
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          paragraph, // Send the paragraph in the body of the request
-        }),
-      });
+      })
 
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      const data = await response.json();
-      alert(`Paragraph submitted successfully: ${data.message}`);
+      const data = await response.data;
+      alert(`Paragraph submitted successfully: ${data.tech_prob} \n  ${data.emo_prob}`);
     } catch (error) {
       setError('Failed to submit the paragraph');
       console.error('Error submitting paragraph:', error);
