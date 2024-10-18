@@ -1,134 +1,77 @@
-body {
-  font-family: 'Roboto', sans-serif; 
-  background-image: url('./images/blue_sky.png');
-  background-size: cover;
-  background-color: #333; 
-  color: #ffffff; 
-  margin: 0;
-  padding: 0;
-}
-
-.emo-container {
+/* 調整主佈局 */
+.emo-layout {
   display: flex;
-  height: 100vh; 
+  height: 100vh;
+  background-color: #f0f2f5;
 }
 
-.sidebar {
-  position: fixed; 
+/* 側邊欄：固定寬度 */
+.emo-sider {
+  position: fixed; /* 固定在左側 */
   top: 0;
   left: 0;
-  height: 100vh; 
-  width: 300px;
-  padding: 20px;
-  background-color: #3e1a1a; 
-  border-right: 1px solid #ddd; 
-  overflow-y: auto; 
+  height: 100vh;
+  width: 15%; /* 縮小側邊欄的寬度為 15% */
+  min-width: 200px; /* 設置最小寬度避免側邊欄過窄 */
+  background-color: #fff;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  overflow: auto;
 }
 
-.sidebar h2 {
-  margin-top: 0;
-  color: white;
-  font-size: 20px;
-  font-weight: bold;
-}
-
-.sidebar ul {
-  list-style: none;
-  padding: 0;
-}
-
-.sidebar li {
-  margin-bottom: 10px;
-}
-
-.sidebar button {
-  width: 100%;
-  padding: 12px;
-  font-size: 16px;
-  cursor: pointer;
-  background-color: #1b8848; 
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); 
-  color: white;
-  transition: background-color 0.3s ease;
-}
-
-.sidebar button:hover {
-  background-color: #28a745; 
-  box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.2); 
-}
-
-.main-content {
-  margin-left: 270px; 
-  flex: 1;
-  padding: 20px;
-  max-width: 1000px; 
-}
-
-.paragraph-box {
-  background-color: #f9f9f9;
-  padding: 20px;
-  border-bottom: 2px solid #dddddd;
-  margin-bottom: 20px;
-  border-radius: 10px; 
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
-  color: #333;
-}
-
-.paragraph-box h2 {
-  font-size: 24px; 
-  font-weight: bold; 
-  margin: 0 0 10px 0; 
-  color: #444; 
-}
-
-.paragraph-box p {
-  font-size: 18px;
-  line-height: 1.6;
-  letter-spacing: 0.5px; 
-  color: #333; 
-}
-
-h3 {
-  font-size: 20px;
-  font-weight: bold;
-  color: #ffffff; 
-  margin-bottom: 15px;
-}
-
-.reply-box {
-  padding: 15px;
-  background-color: #ffffff;
-  border: 1px solid #ccc;
-  border-radius: 10px; /* 圓角設計 */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
-  margin-bottom: 15px;
-  transition: background-color 0.3s ease;
-}
-
-.reply-box p {
+.emo-sider h2 {
+  padding: 16px;
   margin: 0;
+  font-size: 18px;
+  text-align: center;
+  background-color: #001529;
+  color: white;
+}
+
+/* 主內容區域 */
+.emo-content {
+  position: fixed; /* 固定在左側 */
+  top: 0;
+  left: 25%; /* 確保內容區域從側邊欄後開始顯示 */
+  padding: 24px;
+  background-color: #f0f2f5;
+  overflow-y: auto;
+  width: 70%; /* 使用百分比寬度讓內容區佔據 85% 的剩餘空間 */
+  box-sizing: border-box; /* 確保 padding 不影響內容寬度 */
+}
+
+/* 卡片樣式 */
+.ant-card {
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.ant-card-head-title {
+  font-size: 20px;
+  color: #001529;
+}
+
+/* 回覆列表 */
+.reply-box {
+  margin-bottom: 16px;
+}
+
+.ant-list-item-meta-description {
+  color: rgba(0, 0, 0, 0.65);
   font-size: 16px;
-  color: #555; /* 回覆文字顏色 */
+  line-height: 1.6;
 }
 
-.reply-box:hover {
-  background-color: #f5f5f5; /* 滑鼠懸停時變亮 */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* 增加陰影 */
-}
-
-
+/* 信箱圖示 */
 .mailbox-icon {
   position: fixed;
-  bottom: 20px; /* 距離底部 20px */
-  right: 20px; /* 距離右邊 20px */
-  width: 230px; /* 圖片寬度 */
+  bottom: 20px; 
+  right: 20px; 
+  width: 150px; 
   height: auto; /* 自動調整高度 */
   cursor: pointer; /* 當滑鼠懸停時顯示手勢 */
   transition: transform 0.3s ease;
 }
 
 .mailbox-icon:hover {
-  transform: scale(1.1); /* 當滑鼠懸停時稍微放大圖片 */
+  transform: scale(1.1);
 }

@@ -26,6 +26,7 @@ class Employee(BaseModel):
 class TechPost(BaseModel):
     id: str
     createdAt: datetime
+    topic: str
     content: str
     sender_id: str
     answered: bool
@@ -36,6 +37,7 @@ class TechPost(BaseModel):
         return TechPost(
             id=str(doc["_id"]),
             createdAt=doc["createdAt"],
+            topic=doc["topic"],
             content=doc["content"],
             sender_id=str(doc["sender_id"]),
             answered=doc["answered"],

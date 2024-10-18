@@ -47,7 +47,7 @@ class EmployeeDAL:
         if doc:
             return Employee.from_doc(doc)
         return None
-
+    
     async def list_employees(self, session=None):
         async for doc in self._employee_collection.find({}, session=session):
             yield Employee.from_doc(doc)
@@ -69,6 +69,7 @@ class TechPostDAL:
         self,
         content: str,
         sender_id: str,
+        topic: Optional[str] = "No Topic",
         answered: bool = False,
         best_comment_id: Optional[str] = None,
         session=None,
@@ -77,6 +78,7 @@ class TechPostDAL:
             {
                 "_id": uuid4().hex,
                 "createdAt": datetime.utcnow(),
+                "topic": topic,
                 "content": content,
                 "sender_id": sender_id,
                 "answered": answered,
@@ -164,7 +166,6 @@ class TechCommentDAL:
             {"tech_post_id": tech_post_id}, session=session
         ):
             yield TechComment.from_doc(doc)
-
 
 class EmoMsgDAL:
     def __init__(self, emo_msg_collection: AsyncIOMotorCollection):
