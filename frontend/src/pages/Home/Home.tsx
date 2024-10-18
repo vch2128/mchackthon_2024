@@ -1,6 +1,6 @@
 function Home() {
   return (
-    <div>
+    <div style={{ color: 'black' }}>
       <h1>Home Page</h1>
       <p>Welcome to the home page!</p>
     </div>

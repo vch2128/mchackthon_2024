@@ -5,12 +5,12 @@ export type Post = {
     id: string
     createdAt: string
     content: string
+    topic: string
     sender_id: string
     answered: boolean
     best_comment_id: string | null
   }
   
-  // export type PostBody = Omit<Post, 'id' | 'createdAt'>
 
   // services for tech posts
   export const getPosts = async (): Promise<Post[]> => {
@@ -28,7 +28,8 @@ export type Post = {
     return response.data
   }
 
-  // export const getPost = async (id: string): Promise<Post> => {
-  //   const response = await axios.get(`/api/tech/posts/${id}`)
-  //   return response.data
-  // }
+  export const getOnePost = async (post_id: string): Promise<Post> => {
+    const response = await axios.get(`/api/techposts/${post_id}`);
+    console.log("get one post");
+    return response.data;
+  }
