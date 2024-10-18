@@ -10,6 +10,7 @@ from fastapi import FastAPI, status, HTTPException, status, Depends, BackgroundT
 from fastapi.security import OAuth2PasswordRequestForm
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel
+from typing import List
 import uvicorn
 
 from dal_funcs import TechPostDAL, EmployeeDAL, TechCommentDAL, EmoMsgDAL, EmoReplyDAL, GPTDataDAL
@@ -278,15 +279,21 @@ async def gpt_devide_problem(paragraph: ParagraphResponseCreate) -> NewParagraph
     )
     
 
-@app.post("/api/search/techpost", status_code=status.HTTP_201_CREATED)
-async def gpt_get_searched_answer(probelm: ParagraphResponseCreate) -> NewSingleResponse:
-    prob_embed = await get_embedding(probelm.msg)
+@app.post("/api/search/similar", status_code=status.HTTP_201_CREATED)
+async def gpt_get_similar_techpost_id(paragraph: ParagraphResponseCreate) -> NewSingleResponse:
+    prob_embed = await get_embedding(paragraph.msg)
     gpt_data_list = app.gptdata_dal.list_gpt_data()
     gpt_data = await find_most_similar(gpt_data_list, prob_embed)
-    print("gege: ", gpt_data.tech_post_id)
-    history_answer_list_async = [i async for i in app.techcomment_dal.list_tech_comments(gpt_data.tech_post_id)]
-    print(history_answer_list_async)
-    answer = await gpt_pre_answer_tech_post(probelm.msg, history_answer_list_async)
+    print("er", gpt_data)
+    return NewSingleResponse(
+        msg=gpt_data.tech_post_id
+    )
+    
+@app.post("/api/search/techpost", status_code=status.HTTP_201_CREATED)
+async def gpt_get_presearched_answer(
+        history_answer_list: List[str]
+    ) -> NewSingleResponse:
+    answer = await gpt_pre_answer_tech_post(problem.msg, history_answer_list)
     return NewSingleResponse(
         msg=answer
     )
