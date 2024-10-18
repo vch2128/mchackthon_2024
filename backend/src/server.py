@@ -282,9 +282,10 @@ async def gpt_devide_problem(paragraph: ParagraphResponseCreate) -> NewParagraph
 @app.post("/api/search/similar", status_code=status.HTTP_201_CREATED)
 async def gpt_get_similar_techpost_id(paragraph: ParagraphResponseCreate) -> NewSingleResponse:
     prob_embed = await get_embedding(paragraph.msg)
+    print("erqwef")
     gpt_data_list = app.gptdata_dal.list_gpt_data()
     gpt_data = await find_most_similar(gpt_data_list, prob_embed)
-    print("er", gpt_data)
+    print("erqwef")
     return NewSingleResponse(
         msg=gpt_data.tech_post_id
     )
@@ -328,59 +329,6 @@ def main(argv=sys.argv[1:]):
         uvicorn.run("server:app", host="0.0.0.0", port=3001, reload=DEBUG)
     except KeyboardInterrupt:
         pass
-
-
-
-
-
-
-class ParagraphSubmit(BaseModel):
-    paragraph: str
-
-class ParagraphResponse(BaseModel):
-    message: str
-
-@app.post("/api/submit-paragraph", response_model=ParagraphResponse)
-async def submit_paragraph(paragraph_data: ParagraphSubmit):
-    paragraph = paragraph_data.paragraph
-    api_key = "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"
-
-    if not api_key:
-        return {"message": "API key not set"}
-
-    openai.api_key = api_key
-    system_content = "You will help me separate the paragraph into two parts. "\
-                     "The first part contains the mood. "\
-                     "The second part contains the tech problem."
-
-    messages = [
-        {"role": "system", "content": system_content},
-        {"role": "user", "content": paragraph}
-    ]
-
-    try:
-        response = openai.ChatCompletion.create(
-            model="gpt-4",
-            messages=messages,
-            max_tokens=100,
-            temperature=0.7
-        )
-
-        result = response['choices'][0]['message']['content'].strip()
-
-        print(f"Response from OpenAI: {result}")
-        print(f"Received paragraph: {paragraph}")
-
-        return {"message": "Paragraph received and processed successfully"}
-
-    except Exception as e:
-        print(f"Error occurred: {e}")
-        return {"message": "Error processing the paragraph"}
-
-
-
-
-
 
 if __name__ == "__main__":
     main()
