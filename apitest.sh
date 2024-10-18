@@ -52,20 +52,20 @@
 #          }'
 
 
-curl -X POST "http://localhost:8001/api/search/techpost" \
-     -H "Content-Type: application/json" \
-     -d '{
-           "msg": "database schema problem."
-         }'
-
-# create tech comment
-# curl -X POST "http://localhost:8001/api/techcomment" \
+# curl -X POST "http://localhost:8001/api/search/techpost" \
 #      -H "Content-Type: application/json" \
 #      -d '{
-#            "content": "Database schema should use MongoDB",
-#            "sender_id": "emplqwere123",
-#            "techpost_id": "fcc852c7eee944f48c228910d2d060de"
+#            "msg": "database schema problem."
 #          }'
+
+# create tech comment
+curl -X POST "http://localhost:8001/api/techcomment" \
+     -H "Content-Type: application/json" \
+     -d '{
+           "content": "Database schema should use MongoDB",
+           "sender_id": "emplqwere123",
+           "techpost_id": "708f24c378b64942b61edc3e15533045"
+         }'
 
 # create emo reply
 # curl -X POST "http://localhost:8001/api/emoreply" \
@@ -76,11 +76,11 @@ curl -X POST "http://localhost:8001/api/search/techpost" \
 #            "sender_id": "2f089e4813ad4d028bc543ff1de4e11e"
 #          }'
 
-# curl -X GET http://localhost:8001/api/techposts/techcomments/d61dc499bcad41aeaa3f3f3e37e92840
+# curl -X GET http://localhost:8001/api/techposts/techcomments/708f24c378b64942b61edc3e15533045
 # curl -X GET http://localhost:8001/api/techposts/708f24c378b64942b61edc3e15533045
 # curl -X GET http://localhost:8001/api/emomsg/a9dafa3762d24284be76cd0ddff9c7d0
 # curl -X GET http://localhost:8001/api/emomsg/rcvr/83fa6df15b784d60bc760e6413cd8269
 # curl -X GET http://localhost:8001/api/emoreply/emomsg/a9dafa3762d24284be76cd0ddff9c7d0
-curl -X GET http://localhost:8001/api/emoreply/sender/2f089e4813ad4d028bc543ff1de4e11e
+# curl -X GET http://localhost:8001/api/emoreply/sender/2f089e4813ad4d028bc543ff1de4e11e
 # a9dafa3762d24284be76cd0ddff9c7d0
 # 4214d9bfda9d4f9696d828aee6b5ba50
