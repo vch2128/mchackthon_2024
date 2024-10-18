@@ -15,6 +15,7 @@ import uvicorn
 from dal_funcs import TechPostDAL, EmployeeDAL, TechCommentDAL, EmoMsgDAL, EmoReplyDAL
 from dal_tables import TechPost, Employee, TechComment, EmoMsg, EmoReply
 from authentication import authenticate_user, create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES, pwd_context
+from gpt import gpt_separate_paragraph
 
 MONGODB_URI = os.environ["MONGODB_URI"]
 DEBUG = os.environ.get("DEBUG", "").strip().lower() in {"1", "true", "on", "yes"}
@@ -235,6 +236,21 @@ async def create_emoreply(emoreply: EmoReplyCreate) -> NewEmoReplyResponse:
         emo_msg_id=emoreply.emo_msg_id,
         content=emoreply.content,
         state="successfully updated"
+    )
+
+class NewParagraphSubmit(BaseModel):
+    tech_prob: str
+    emo_prob: str
+
+class ParagraphResponseCreate(BaseModel):
+    msg: str
+
+@app.post("/api/submit-paragraph", status_code=status.HTTP_201_CREATED)
+async def gpt_devide_problem(paragraph: ParagraphResponseCreate) -> NewParagraphSubmit:
+    response = await gpt_separate_paragraph(paragraph.msg)
+    return NewParagraphSubmit(
+        tech_prob=response["tech_prob"],
+        emo_prob=response["emo_prob"]
     )
 
 @app.post("/api/login")
