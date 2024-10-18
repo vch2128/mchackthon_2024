@@ -109,12 +109,22 @@ class EmployeeCreate(BaseModel):
     account: str
     password: str
     department: str
+    age : int
+    position: str
+    seniority: int
+    region: str
+    
 
 class NewEmployeeResponse(BaseModel):
     id: str
     name: str
     account: str
     password: str  # Note: Returning passwords is not recommended
+    department: str
+    age : int
+    position: str
+    seniority: int
+    region: str
     
     
 @app.post("/api/employee", status_code=status.HTTP_201_CREATED)
@@ -125,13 +135,22 @@ async def create_employee(employee: EmployeeCreate) -> NewEmployeeResponse:
         name=employee.name,
         account=employee.account,
         password=hashed_password,
-        department=employee.department
+        department=employee.department,
+        age=employee.age,
+        position=employee.position,
+        seniority=employee.seniority,
+        region=employee.region
     )
     return NewEmployeeResponse(
         id=new_id, 
         name=employee.name,
         account=employee.account,
         password=hashed_password,
+        department=employee.department,
+        age=employee.age,
+        position=employee.position,
+        seniority=employee.seniority,
+        region=employee.region
     )
 
 # Assuming NewTechPostResponse is already defined
@@ -180,26 +199,29 @@ async def create_techcomment(tech_comment: TechCommentCreate) -> NewTechCommentR
 
 class NewEmoMsgResponse(BaseModel):
     id: str
+    sender_id: str
     content: str
-    rcvr_id: str
+    rcvr_id : list[str]
 
 class EmoMsgCreate(BaseModel):
     sender_id: str
     content: str
-    rcvr_id: str
 
 # create a emo msg
 @app.post("/api/emomsg", status_code=status.HTTP_201_CREATED)
 async def create_emomsg(emomsg: EmoMsgCreate) -> NewEmoMsgResponse:
+    similar_employee = await app.employee_dal.find_similar_employee(sender_id=emomsg.sender_id)
+    similar_employee_ids = [employee["_id"] for employee in similar_employee]
     new_id = await app.emomsg_dal.create_emo_msg(
         sender_id=emomsg.sender_id,
         content=emomsg.content,
-        rcvr_id=emomsg.rcvr_id
+        rcvr_id=similar_employee_ids
     )
     return NewEmoMsgResponse(
         id=new_id, 
+        sender_id=emomsg.sender_id,
         content=emomsg.content,
-        rcvr_id=emomsg.rcvr_id
+        rcvr_id=similar_employee_ids
     )
 
 class NewEmoReplyResponse(BaseModel):
