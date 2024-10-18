@@ -1,0 +1,8 @@
+/* Set the background of the entire page to black */
+body {
+  background-color: black;
+  color: white; /* Optional: Text color for better visibility */
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
