@@ -43,14 +43,6 @@ function App() {
             </nav>
           </>
         )}
-
-        {!isAuthenticated && (
-          <>
-            <nav>
-              <Link to="/login">Login</Link>
-            </nav>
-          </>
-        )}
       </div>
     </>
   )
