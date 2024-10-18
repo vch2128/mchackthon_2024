@@ -6,7 +6,7 @@ from pymongo import ReturnDocument
 from datetime import datetime
 from uuid import uuid4
 from typing import Optional, AsyncGenerator
-
+from gpt import gpt_get_topic
 from dal_tables import Employee, TechPost, TechComment, EmoMsg, EmoReply
 
 class EmployeeDAL:
@@ -74,11 +74,12 @@ class TechPostDAL:
         best_comment_id: Optional[str] = None,
         session=None,
     ) -> str:
+        gpt_topic = await gpt_get_topic(content)
         response = await self._tech_post_collection.insert_one(
             {
                 "_id": uuid4().hex,
                 "createdAt": datetime.utcnow(),
-                "topic": topic,
+                "topic": gpt_topic,
                 "content": content,
                 "sender_id": sender_id,
                 "answered": answered,
@@ -180,12 +181,13 @@ class EmoMsgDAL:
         answered: Optional[bool] = False,
         session=None,
     ) -> str:
+        gpt_topic = await gpt_get_topic(content)
         response = await self._emo_msg_collection.insert_one(
             {
                 "_id": uuid4().hex,
                 "createdAt": datetime.utcnow(),
                 "sender_id": sender_id,
-                "topic": topic,
+                "topic": gpt_topic,
                 "content": content,
                 "rcvr_id": rcvr_id,
                 "answered": answered,

@@ -47,7 +47,7 @@
 # curl -X POST "http://localhost:8001/api/techpost" \
 #      -H "Content-Type: application/json" \
 #      -d '{
-#            "content": "Tdqwefqwefqwfeddd",
+#            "content": "In modern IoT ecosystems, managing and processing vast streams of real-time data across distributed nodes poses significant challenges. The primary issue involves ensuring low-latency data ingestion, processing, and analysis while maintaining scalability and fault tolerance. Current architectures often struggle with data synchronization, leading to inconsistencies and delayed insights. Additionally, resource allocation becomes inefficient as the system scales, causing bottlenecks and increased operational costs. Developing an optimized framework that leverages edge computing, efficient load balancing algorithms, and robust data synchronization protocols is essential. The solution must ensure seamless integration, high reliability, and real-time responsiveness to meet the demands of dynamic IoT applications.",
 #            "sender_id": "emplqwere123"
 #          }'
 
@@ -70,9 +70,9 @@
 #          }'
 
 # curl -X GET http://localhost:8001/api/techposts/techcomments/d61dc499bcad41aeaa3f3f3e37e92840
-# curl -X GET http://localhost:8001/api/techposts/d61dc499bcad41aeaa3f3f3e37e92840
+# curl -X GET http://localhost:8001/api/techposts/cda58d851f02464aa6e1dacfb06b9961
 # curl -X GET http://localhost:8001/api/emomsg/a9dafa3762d24284be76cd0ddff9c7d0
 # curl -X GET http://localhost:8001/api/emomsg/rcvr/83fa6df15b784d60bc760e6413cd8269
-curl -X GET http://localhost:8001/api/emoreply/emomsg/a9dafa3762d24284be76cd0ddff9c7d0
+# curl -X GET http://localhost:8001/api/emoreply/emomsg/a9dafa3762d24284be76cd0ddff9c7d0
 # a9dafa3762d24284be76cd0ddff9c7d0
 # 4214d9bfda9d4f9696d828aee6b5ba50
