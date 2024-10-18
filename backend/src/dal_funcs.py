@@ -168,13 +168,11 @@ class TechCommentDAL:
             {"tech_post_id": tech_post_id}, session=session
         ):
             yield TechComment.from_doc(doc)
-            
-    async def list_tech_comments_content_only(self, tech_post_id: str, session=None):
-        async for doc in self._tech_comment_collection.find(
-            {"tech_post_id": tech_post_id}, 
-            session=session
-        ):
-            yield doc.get("content", "")
+    
+    async def list_tech_comments_inlist(self, tech_post_id: str, session=None) -> List[TechComment]:
+        return [comment async for comment in self._tech_comment_collection.find(
+            {"tech_post_id": tech_post_id}, session=session
+        ).to_list(length=None)]
 
 class EmoMsgDAL:
     def __init__(self, emo_msg_collection: AsyncIOMotorCollection):
