@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import List, Optional
 from datetime import datetime
 
 class Employee(BaseModel):
@@ -64,22 +64,52 @@ class TechComment(BaseModel):
 class EmoMsg(BaseModel):
     id: str
     createdAt: datetime
-    type: str
-    score: int
-    content: str
     sender_id: str
-    answered: bool
+    topic: str
+    content: str
     rcvr_id: str
+    answered: bool
 
     @staticmethod
     def from_doc(doc) -> "EmoMsg":
         return EmoMsg(
             id=str(doc["_id"]),
             createdAt=doc["createdAt"],
-            type=doc["type"],
-            score=doc["score"],
+            sender_id=doc["sender_id"],
+            topic=doc["topic"],
             content=doc["content"],
-            sender_id=str(doc["sender_id"]),
-            answered=doc["answered"],
             rcvr_id=str(doc["rcvr_id"]),
+            answered=doc["answered"]
+        )
+
+class EmoReply(BaseModel):
+    id: str
+    createdAt: datetime
+    emo_msg_id: str
+    sender_id: str
+    content: str
+    score: int
+    
+    @staticmethod
+    def from_doc(doc) -> "EmoReply":
+        return EmoReply(
+            id=str(doc["_id"]),
+            createdAt=doc["createdAt"],
+            emo_msg_id=doc["emo_msg_id"],
+            sender_id=doc["sender_id"],
+            content=doc["content"],
+            score=doc["score"]
+        )
+        
+class GPTData(BaseModel):
+    id: str
+    tech_post_id: str
+    tech_post_embedding: List[float]
+    
+    @staticmethod
+    def from_doc(doc) -> "GPTData":
+        return GPTData(
+            id=str(doc["_id"]),
+            tech_post_id=doc["tech_post_id"],
+            tech_post_embedding=doc["tech_post_embedding"]
         )
