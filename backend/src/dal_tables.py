@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import List, Optional
 from datetime import datetime
 
 class Employee(BaseModel):
@@ -91,7 +91,7 @@ class EmoReply(BaseModel):
     score: int
     
     @staticmethod
-    def from_doc(doc) -> "EmoMsg":
+    def from_doc(doc) -> "EmoReply":
         return EmoReply(
             id=str(doc["_id"]),
             createdAt=doc["createdAt"],
@@ -99,4 +99,17 @@ class EmoReply(BaseModel):
             sender_id=doc["sender_id"],
             content=doc["content"],
             score=doc["score"]
+        )
+        
+class GPTData(BaseModel):
+    id: str
+    tech_post_id: str
+    tech_post_embedding: List[float]
+    
+    @staticmethod
+    def from_doc(doc) -> "GPTData":
+        return GPTData(
+            id=str(doc["_id"]),
+            tech_post_id=doc["tech_post_id"],
+            tech_post_embedding=doc["tech_post_embedding"]
         )
