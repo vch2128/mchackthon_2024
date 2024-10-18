@@ -198,6 +198,7 @@ class NewEmoReplyResponse(BaseModel):
     id: str
     emo_msg_id: str
     content: str
+    state: str
 
 class EmoReplyCreate(BaseModel):
     emo_msg_id: str
@@ -207,15 +208,33 @@ class EmoReplyCreate(BaseModel):
 # create a emo reply
 @app.post("/api/emoreply", status_code=status.HTTP_201_CREATED)
 async def create_emoreply(emoreply: EmoReplyCreate) -> NewEmoReplyResponse:
+    isAnswered = await app.emomsg_dal.get_emo_msg(id=emoreply.emo_msg_id)
+    if isAnswered.answered:
+        return NewEmoReplyResponse(
+            id="",
+            emo_msg_id=emoreply.emo_msg_id,
+            content="",
+            state="The emo msg is answered"
+        )
+        
     new_id = await app.emoreply_dal.create_emo_reply(
         emo_msg_id=emoreply.emo_msg_id,
         sender_id=emoreply.sender_id,
         content=emoreply.content
     )
+    
+    # set corresponding emomsg answered=True
+    if new_id:
+        await app.emomsg_dal.update_answered(
+            emo_msg_id=emoreply.emo_msg_id,
+            answer=True,
+        )
+        
     return NewEmoReplyResponse(
         id=new_id,
         emo_msg_id=emoreply.emo_msg_id,
-        content=emoreply.content
+        content=emoreply.content,
+        state="successfully updated"
     )
 
 @app.post("/api/login")

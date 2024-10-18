@@ -220,6 +220,14 @@ class EmoMsgDAL:
             sort=[("answered", 1),("createdAt", -1),],
             session=session):
             yield EmoMsg.from_doc(doc)
+            
+    async def update_answered(self, emo_msg_id: Optional[str] = None, answer: Optional[bool] = True, session=None):
+        result = await self._emo_msg_collection.update_one(
+            {"_id": emo_msg_id},
+            {"$set": {"answered": answer}},
+            session=session
+        )
+        return result.modified_count > 0
     
 class EmoReplyDAL:
     def __init__(self, emo_reply_collection: AsyncIOMotorCollection):
@@ -259,5 +267,8 @@ class EmoReplyDAL:
 
     async def list_emo_replies_by_emo_msg(self, emo_msg_id: Optional[str] = None, session=None):
         query = {"emo_msg_id": emo_msg_id} if emo_msg_id else {}
-        async for doc in self._emo_reply_collection.find(query, session=session):
+        async for doc in self._emo_reply_collection.find(
+            query, 
+            session=session):
             yield EmoReply.from_doc(doc)
+            

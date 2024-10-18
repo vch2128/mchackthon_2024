@@ -92,7 +92,7 @@ class EmoReply(BaseModel):
     
     @staticmethod
     def from_doc(doc) -> "EmoMsg":
-        return EmoMsg(
+        return EmoReply(
             id=str(doc["_id"]),
             createdAt=doc["createdAt"],
             emo_msg_id=doc["emo_msg_id"],
