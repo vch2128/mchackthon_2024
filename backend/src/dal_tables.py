@@ -64,22 +64,39 @@ class TechComment(BaseModel):
 class EmoMsg(BaseModel):
     id: str
     createdAt: datetime
-    type: str
-    score: int
-    content: str
     sender_id: str
-    answered: bool
+    topic: str
+    content: str
     rcvr_id: str
+    answered: bool
 
     @staticmethod
     def from_doc(doc) -> "EmoMsg":
         return EmoMsg(
             id=str(doc["_id"]),
             createdAt=doc["createdAt"],
-            type=doc["type"],
-            score=doc["score"],
+            sender_id=doc["sender_id"],
+            topic=doc["topic"],
             content=doc["content"],
-            sender_id=str(doc["sender_id"]),
-            answered=doc["answered"],
             rcvr_id=str(doc["rcvr_id"]),
+            answered=doc["answered"]
+        )
+
+class EmoReply(BaseModel):
+    id: str
+    createdAt: datetime
+    emo_msg_id: str
+    sender_id: str
+    content: str
+    score: int
+    
+    @staticmethod
+    def from_doc(doc) -> "EmoMsg":
+        return EmoReply(
+            id=str(doc["_id"]),
+            createdAt=doc["createdAt"],
+            emo_msg_id=doc["emo_msg_id"],
+            sender_id=doc["sender_id"],
+            content=doc["content"],
+            score=doc["score"]
         )
