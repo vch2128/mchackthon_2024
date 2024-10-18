@@ -2,24 +2,26 @@ import React, { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 import { useLocation, useParams } from 'react-router-dom';
 import { UserContext} from '../../context/UserContext';
-import { Divider, List, Typography, Input} from 'antd';
-import { Comment, addComment, getComments } from '../types/comment';
-import { Post, getOnePost } from '../types/post';
+import { Input, Form, Button, Typography, Divider, Row, Col } from 'antd';
+import CommentList from './components/CommentList';
+import { Comment } from '@ant-design/compatible';
+import { notification } from 'antd';
+import { Comment_t } from './types/comment';
 
+const { Title, Paragraph } = Typography;
 const { TextArea } = Input;
 
-// add notification for new comment
-
 const TechPost =() => {
-  // const [content, setContent] = useState('')
-  
+
   const { user } = useContext(UserContext);
   const location = useLocation();
   const { techpost_id } = useParams(); // Access passed state
   const onpage = ( location.pathname == `/tech/post/${techpost_id}` )
   const [commentContent, setCommentContent] = useState('')
   const [techPost, setTechPost] = useState(null);
-  const [comments, setComments] = useState([]);
+  const [comments, setComments] = useState<Comment_t[]>([]);
+  const avatarUrl = "https://shoplineimg.com/643616b7087ae8002271ceb2/64e073d381afe80022a66ebc/1200x.webp?source_format=png"; // Define the avatar URL
+
 
   useEffect(() => {
     if (onpage) {
@@ -54,6 +56,9 @@ const TechPost =() => {
 
   const leaveAComment = async() => {
     try {
+      if (commentContent === '') {
+        return;
+      }
       const response = await axios.post('/api/techcomment', {
         content: commentContent,
         sender_id: user.id,
@@ -63,42 +68,65 @@ const TechPost =() => {
           'Content-Type': 'application/json',
         },
       });
-      return response.data
+      
+      // Add the new comment to the existing comments
+      setComments(prevComments => [...prevComments, response.data]);
+      
+      // Clear the comment input
+      setCommentContent('');
+      
+      // Show a success notification
+      notification.success({
+        message: 'Comment added successfully',
+        duration: 3,
+      });
+      
+      return response.data;
     } catch (error) {
-      console.error('Login failed:', error);
+      console.error('Comment failed:', error);
+      notification.error({
+        message: 'Failed to add comment',
+        description: 'Please try again later',
+        duration: 3,
+      });
     }
   }
 
   return (<>
     {
       onpage && (<>
-      <div>
-        <h2>{techPost?.topic}</h2>
-      </div>
-      <div>
-        <p>{techPost?.content}</p>
-      </div>
+      <Row justify="center">
+        <Col xs={24} sm={24} md={24} lg={24} xl={24}>
+          <Typography>
+            <Title level={3}>{techPost?.topic}</Title>
+            <Paragraph style={{fontSize: '16px'}}>{techPost?.content}</Paragraph>
+          </Typography>
+
+      <Divider />
+
+      <CommentList comments={comments} />
       
-      <List
-        header={<div>Comments</div>}
-        footer={<div>Answer the question and get points!</div>}
-        bordered
-        dataSource={comments}
-        renderItem={(item) => (
-          <List.Item>
-            {item.content}
-          </List.Item>
-        )}
+      < Comment
+        style={{paddingLeft: '15px', paddingRight: '20px'}}
+        avatar={<img src={avatarUrl} style={{ width: 40, height: 40, borderRadius: '50%' }} />} 
+        content={
+          <div>
+            <Form.Item>
+                <TextArea rows={4}
+                          value={commentContent}
+                          onChange={(e) => setCommentContent(e.target.value)}
+                />
+            </Form.Item>
+            <Form.Item>
+              <Button htmlType="submit" onClick={leaveAComment} type="primary">
+                Add Comment
+              </Button>
+            </Form.Item>
+          </div>
+        }
       />
-      <form onSubmit={leaveAComment}>
-        <div>
-          <TextArea rows={4}
-            value={commentContent}
-            onChange={(e) => setCommentContent(e.target.value)}
-          />
-        </div>
-        <button type="submit">submit</button>
-      </form>
+      </Col>
+      </Row>
       </>)
     }
   </>);

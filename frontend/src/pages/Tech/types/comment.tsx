@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 // types for comments
-export type Comment = {
+export type Comment_t = {
     id: string
     createdAt: string
     content: string
