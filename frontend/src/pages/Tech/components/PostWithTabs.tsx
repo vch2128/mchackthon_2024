@@ -11,17 +11,34 @@ interface TabContentProps {
 const TabContent: React.FC<TabContentProps> = ({ allposts, myposts }) => {
   const [activeTab, setActiveTab] = useState('allposts');
 
+  const items = [
+    {
+      key: 'allposts',
+      label: <span style={{ color: activeTab === 'allposts' ? 'blue' : 'black' }}>All Posts</span>,
+      children: (
+        <div style={{ maxHeight: '550px', overflowY: 'auto' }}>
+            <PostList posts={allposts} />
+        </div>
+      ),
+    },
+    {
+      key: 'myposts',
+      label: <span style={{ color: activeTab === 'myposts' ? 'blue' : 'black' }}>My Posts</span>,
+      children: (
+        <div style={{ maxHeight: '550px', overflowY: 'auto' }}>
+            <PostList posts={myposts} />
+        </div>
+      ),
+    },
+  ];
+
   return (
-    <div>
-      <Tabs activeKey={activeTab} onChange={setActiveTab} tabBarStyle={{ color: '#fff' }}>
-        <Tabs.TabPane tab={<span style={{ color: activeTab === 'allposts' ? '#fff' : 'white' }}>All Posts</span>} key="allposts">
-          <PostList posts={allposts} />
-        </Tabs.TabPane>
-        <Tabs.TabPane tab={<span style={{ color: activeTab === 'myposts' ? '#fff' : '#aaa' }}>My Posts</span>} key="myposts">
-          <PostList posts={myposts} />
-        </Tabs.TabPane>
-      </Tabs>
-    </div>
+    <Tabs
+      activeKey={activeTab}
+      onChange={setActiveTab}
+      tabBarStyle={{ color: 'black' }}
+      items={items} // New approach using the `items` prop
+    />
   );
 };
 

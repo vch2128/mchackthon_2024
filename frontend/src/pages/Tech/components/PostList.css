@@ -1,9 +1,0 @@
-.limited-text {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    -webkit-line-clamp: 3;
-    max-height: 4.5em;  /* 3 lines * 1.5em line-height */
-    line-height: 1.5em;
-    text-overflow: ellipsis;
-  }

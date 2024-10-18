@@ -106,21 +106,19 @@ class TechPostDAL:
     # Add this method to filter tech posts by employee ID
     async def list_tech_posts_by_employee(
         self, employee_id: str, session=None
-    ) -> AsyncGenerator[TechPost, None]:
+    ) :
         async for doc in self._tech_post_collection.find(
             {"sender_id": employee_id},
-            projection={"content": 1, "sender_id": 1, "answered": 1, "best_comment_id": 1, "createdAt": 1,},
-            sort=[("answered", 1),("createdAt", -1),],
+            sort=[("answered", 1),("createdAt", -1)],
             session=session,
         ):
             yield TechPost.from_doc(doc)
 
     async def list_tech_posts_without_employee(
         self, employee_id: str, session=None
-    ) -> AsyncGenerator[TechPost, None]:
+    ):
         async for doc in self._tech_post_collection.find(
             {"sender_id": { "$ne": employee_id} },
-            projection={"content": 1, "sender_id": 1, "answered": 1, "best_comment_id": 1, "createdAt": 1,},
             sort=[("answered", 1),("createdAt", -1),],
             session=session,
         ):

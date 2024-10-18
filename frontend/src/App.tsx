@@ -22,7 +22,7 @@ function App() {
 
   return (
     <>
-      <div>
+      <div style={{ color: 'black' }}>
         <PageRouter />
         {isAuthenticated && (
           <>

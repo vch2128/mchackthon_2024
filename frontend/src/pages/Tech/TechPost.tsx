@@ -3,8 +3,12 @@ import axios from 'axios';
 import { useLocation, useParams } from 'react-router-dom';
 import { UserContext} from '../../context/UserContext';
 import { Divider, List, Typography, Input} from 'antd';
+import { Comment, addComment, getComments } from '../types/comment';
+import { Post, getOnePost } from '../types/post';
 
 const { TextArea } = Input;
+
+// add notification for new comment
 
 const TechPost =() => {
   // const [content, setContent] = useState('')
@@ -24,7 +28,7 @@ const TechPost =() => {
     }
   }, [onpage])
 
-  const getTechPost = async() => {
+  const getTechPost = async() => {  //ok
     try {
       const response = await axios.get(`/api/techposts/${techpost_id}`);
       console.log("get tech post");
@@ -36,7 +40,7 @@ const TechPost =() => {
     }
   }
 
-  const getCommentsOfTechPost = async() => {
+  const getCommentsOfTechPost = async() => {  //ok
     try {
       // the response will be a list of comments
       const response = await axios.get(`/api/techposts/techcomments/${techpost_id}`);
