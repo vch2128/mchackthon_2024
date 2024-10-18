@@ -1,8 +1,13 @@
 import os
 import json
+# import asyncio
 from openai import OpenAI
+from typing import List
+from dal_tables import GPTData
+import numpy as np
 
 OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
+# OPENAI_API_KEY = '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'
 
 client = OpenAI(api_key=OPENAI_API_KEY)
 
@@ -92,3 +97,78 @@ async def gpt_separate_paragraph(paragraph):
     
 # "I am thrilled about the advancements in renewable energy technologies. "
 # "However, there are significant challenges in energy storage and grid integration that need to be addressed."
+
+async def get_embedding(text, model="text-embedding-3-small"):
+    text = text.replace("\n", " ")
+    return client.embeddings.create(input = [text], model=model).data[0].embedding
+
+def cosine_similarity(vec1: List[float], vec2: List[float]) -> float:
+    """Compute the cosine similarity between two vectors."""
+    a = np.array(vec1)
+    b = np.array(vec2)
+    if np.linalg.norm(a) == 0 or np.linalg.norm(b) == 0:
+        return 0.0
+    return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+
+async def find_most_similar(
+    gpt_data_list: List[GPTData],
+    new_embedding: List[float]
+) -> GPTData:
+    """Find the GPTData instance with the most similar embedding to the new_embedding."""
+    max_similarity = -1.0
+    most_similar_data = None
+
+    if not gpt_data_list:
+        return None
+
+    # Compute all similarity scores
+    async for data in gpt_data_list:
+        similarity = cosine_similarity(data.tech_post_embedding, new_embedding)
+        if similarity > max_similarity:
+            max_similarity = similarity
+            most_similar_data = data
+    print(most_similar_data.tech_post_id)
+    return most_similar_data
+
+async def gpt_pre_answer_tech_post(problem, history_answer_list_async):
+    history_answer_list = [comment.content for comment in history_answer_list_async]
+    history_answer = ";".join(history_answer_list)
+    if not OPENAI_API_KEY:
+        return {"message": "API key not set"}
+
+    prompt = f"""
+    You are provided with some historical answers to a similar problem. Please use this as a reference to answer the current problem.
+
+    **Historical Answer:**
+    "{history_answer}"
+
+    **Current Problem:**
+    "{problem}"
+
+    Please ensure that your answer is clear, concise, and builds upon the insights from the historical answer.
+    """
+    
+    messages = [
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": prompt}
+    ]
+    
+    try:
+        # Asynchronous API call
+        completion = client.chat.completions.create(
+            model="gpt-4",
+            messages=messages,
+            max_tokens=150,  # Increased tokens to accommodate longer responses
+        )
+
+        assistant_reply = completion.choices[0].message.content
+        return assistant_reply
+    
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        return {"message": "Error processing the paragraph."} 
+# async def main():
+#     result = await get_embedding("I am a bad guy")
+#     print(result)
+
+# asyncio.run(main())

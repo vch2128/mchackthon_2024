@@ -6,16 +6,16 @@ import os
 import sys
 
 from bson import ObjectId
-from fastapi import FastAPI, status, HTTPException, status, Depends
+from fastapi import FastAPI, status, HTTPException, status, Depends, BackgroundTasks
 from fastapi.security import OAuth2PasswordRequestForm
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel
 import uvicorn
 
-from dal_funcs import TechPostDAL, EmployeeDAL, TechCommentDAL, EmoMsgDAL, EmoReplyDAL
-from dal_tables import TechPost, Employee, TechComment, EmoMsg, EmoReply
+from dal_funcs import TechPostDAL, EmployeeDAL, TechCommentDAL, EmoMsgDAL, EmoReplyDAL, GPTDataDAL
+from dal_tables import TechPost, Employee, TechComment, EmoMsg, EmoReply, GPTData
 from authentication import authenticate_user, create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES, pwd_context
-from gpt import gpt_separate_paragraph
+from gpt import gpt_separate_paragraph, get_embedding, find_most_similar, gpt_pre_answer_tech_post
 
 
 import openai
@@ -39,6 +39,7 @@ async def lifespan(app: FastAPI):
     techcomment_collection = db.get_collection("techcomment")
     emomsg_collection = db.get_collection("emomsg")
     emoreply_collection = db.get_collection("emoreply")
+    gptdata_collection = db.get_collection("gptdata")
 
     # Store in app.state:
     app.state.db_client = client
@@ -48,12 +49,15 @@ async def lifespan(app: FastAPI):
     app.state.techcomment_collection = techcomment_collection
     app.state.emomsg_collection = emomsg_collection
     app.state.emoreply_collection = emoreply_collection
+    app.state.gptdata_collection = gptdata_collection
+    
     
     app.techpost_dal    = TechPostDAL(techpost_collection)
     app.employee_dal    = EmployeeDAL(employee_collection)
     app.techcomment_dal = TechCommentDAL(techcomment_collection)
     app.emomsg_dal = EmoMsgDAL(emomsg_collection)
     app.emoreply_dal = EmoReplyDAL(emoreply_collection)
+    app.gptdata_dal = GPTDataDAL(gptdata_collection)
     
     # Yield back to FastAPI Application:
     yield
@@ -142,19 +146,29 @@ class NewTechPostResponse(BaseModel):
 class TechPostCreate(BaseModel):
     content: str
     sender_id: str
-    
 
+async def process_embedding(new_id: str, context: str):    
+    embed = await get_embedding(context)
+    await app.gptdata_dal.create_gpt_data(
+        tech_post_id=new_id,
+        tech_post_embedding=embed
+    )
+    
 # create a techpost with sender_id and content
 @app.post("/api/techpost", status_code=status.HTTP_201_CREATED)
-async def create_techpost(tech_post: TechPostCreate) -> NewTechPostResponse:
+async def create_techpost(tech_post: TechPostCreate, background_tasks: BackgroundTasks) -> NewTechPostResponse:
     new_id = await app.techpost_dal.create_tech_post(
         content=tech_post.content,
         sender_id=tech_post.sender_id
     )
+    
+    background_tasks.add_task(process_embedding, new_id, tech_post.content)
+    
     return NewTechPostResponse(
         id=new_id, 
         content=tech_post.content,
     )
+
 
 class NewTechCommentResponse(BaseModel):
     id: str
@@ -251,6 +265,9 @@ class NewParagraphSubmit(BaseModel):
 
 class ParagraphResponseCreate(BaseModel):
     msg: str
+    
+class NewSingleResponse(BaseModel):
+    msg:str
 
 @app.post("/api/submit-paragraph", status_code=status.HTTP_201_CREATED)
 async def gpt_devide_problem(paragraph: ParagraphResponseCreate) -> NewParagraphSubmit:
@@ -259,7 +276,23 @@ async def gpt_devide_problem(paragraph: ParagraphResponseCreate) -> NewParagraph
         tech_prob=response["tech_prob"],
         emo_prob=response["emo_prob"]
     )
+    
 
+@app.post("/api/search/techpost", status_code=status.HTTP_201_CREATED)
+async def gpt_get_searched_answer(probelm: ParagraphResponseCreate) -> NewSingleResponse:
+    prob_embed = await get_embedding(probelm.msg)
+    gpt_data_list = app.gptdata_dal.list_gpt_data()
+    gpt_data = await find_most_similar(gpt_data_list, prob_embed)
+    print("gege: ", gpt_data.tech_post_id)
+    history_answer_list_async = [i async for i in app.techcomment_dal.list_tech_comments(gpt_data.tech_post_id)]
+    print(history_answer_list_async)
+    answer = await gpt_pre_answer_tech_post(probelm.msg, history_answer_list_async)
+    return NewSingleResponse(
+        msg=answer
+    )
+    
+    
+    
 @app.post("/api/login")
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     user = await authenticate_user(form_data.username, form_data.password, app.employee_dal)
