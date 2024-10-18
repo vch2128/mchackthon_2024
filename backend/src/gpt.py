@@ -6,6 +6,37 @@ OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
 
 client = OpenAI(api_key=OPENAI_API_KEY)
 
+async def gpt_get_topic(paragraph):
+    if not OPENAI_API_KEY:
+        return {"message": "API key not set"}
+
+    prompt = f"""
+    Summarize the main topic of the following paragraph in 10 words or fewer:
+
+    Paragraph:
+    "{paragraph}"
+    """
+    
+    messages = [
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": prompt}
+    ]
+    
+    try:
+        # Asynchronous API call
+        completion = client.chat.completions.create(
+            model="gpt-4",
+            messages=messages,
+            max_tokens=150,  # Increased tokens to accommodate longer responses
+        )
+
+        assistant_reply = completion.choices[0].message.content
+        return assistant_reply
+    
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        return {"message": "Error processing the paragraph."}
+
 async def gpt_separate_paragraph(paragraph):
     if not OPENAI_API_KEY:
         return {"message": "API key not set"}
