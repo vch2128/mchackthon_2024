@@ -14,7 +14,7 @@ const TabContent: React.FC<TabContentProps> = ({ allposts, myposts }) => {
   const items = [
     {
       key: 'allposts',
-      label: <span style={{ color: activeTab === 'allposts' ? 'blue' : 'black' }}>All Posts</span>,
+      label: <span style={{ color: activeTab === 'allposts' ? '#1677ff' : 'black' }}>All Posts</span>,
       children: (
         <div style={{ maxHeight: '550px', overflowY: 'auto' }}>
             <PostList posts={allposts} />
@@ -23,7 +23,7 @@ const TabContent: React.FC<TabContentProps> = ({ allposts, myposts }) => {
     },
     {
       key: 'myposts',
-      label: <span style={{ color: activeTab === 'myposts' ? 'blue' : 'black' }}>My Posts</span>,
+      label: <span style={{ color: activeTab === 'myposts' ? '#1677ff' : 'black' }}>My Posts</span>,
       children: (
         <div style={{ maxHeight: '550px', overflowY: 'auto' }}>
             <PostList posts={myposts} />
