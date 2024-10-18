@@ -117,20 +117,22 @@ async def find_most_similar(
     """Find the GPTData instance with the most similar embedding to the new_embedding."""
     max_similarity = -1.0
     most_similar_data = None
-    
+
     if not gpt_data_list:
         return None
-    
+
     # Compute all similarity scores
     async for data in gpt_data_list:
         similarity = cosine_similarity(data.tech_post_embedding, new_embedding)
         if similarity > max_similarity:
             max_similarity = similarity
             most_similar_data = data
-    
+    print(most_similar_data.tech_post_id)
     return most_similar_data
 
-async def gpt_pre_answer_tech_post(problem, history_answer):
+async def gpt_pre_answer_tech_post(problem, history_answer_list_async):
+    history_answer_list = [comment.content for comment in history_answer_list_async]
+    history_answer = ";".join(history_answer_list)
     if not OPENAI_API_KEY:
         return {"message": "API key not set"}
 
