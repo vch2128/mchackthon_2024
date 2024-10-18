@@ -289,17 +289,25 @@ async def gpt_get_similar_techpost_id(paragraph: ParagraphResponseCreate) -> New
     return NewSingleResponse(
         msg=gpt_data.tech_post_id
     )
+
+class NewSearchResponseCreate(BaseModel):
+    history_answer_list: List[str]
+    msg: str
+
+class NewSearchResponse(BaseModel):
+    msg: str
     
 @app.post("/api/search/techpost", status_code=status.HTTP_201_CREATED)
 async def gpt_get_presearched_answer(
-        history_answer_list: List[str]
-    ) -> NewSingleResponse:
-    answer = await gpt_pre_answer_tech_post(problem.msg, history_answer_list)
-    return NewSingleResponse(
+        inputData: NewSearchResponseCreate
+    ) -> NewSearchResponse:
+    print("ytytyt", inputData.msg)
+    print("ytytyt", inputData.history_answer_list)
+    answer = await gpt_pre_answer_tech_post(inputData.msg, inputData.history_answer_list)
+    return NewSearchResponse(
         msg=answer
     )
-    
-    
+
     
 @app.post("/api/login")
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):

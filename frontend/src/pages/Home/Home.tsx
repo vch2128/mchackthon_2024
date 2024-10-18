@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import './Home.css'; // Import the CSS file
+import { useNavigate } from 'react-router-dom';
+import { UserContext } from '../../context/UserContext';
+import { Button, Modal } from 'antd';
 
 const Home: React.FC = () => {
   const [loadingTech, setLoadingTech] = useState(false);
@@ -10,7 +13,30 @@ const Home: React.FC = () => {
   const [techProb, setTechProb] = useState<string | null>(null);
   const [emoProb, setEmoProb] = useState<string | null>(null);
   const [paragraph, setParagraph] = useState(''); // Adding paragraph state for input form
+  
   const [hash, setHash] = useState(window.location.hash);
+  const { user } = useContext(UserContext);
+  const [open, setOpen] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [modalText, setModalText] = useState('Content of the modal');
+
+  const showModal = () => {
+    setOpen(true);
+  };
+
+  const handleOk = () => {
+    setModalText('The modal will be closed after two seconds');
+    setConfirmLoading(true);
+    setTimeout(() => {
+      setOpen(false);
+      setConfirmLoading(false);
+    }, 2000);
+  };
+
+  const handleCancel = () => {
+    console.log('Clicked cancel button');
+    setOpen(false);
+  };
 
   useEffect(() => {
     const handleHashChange = () => {
@@ -29,7 +55,28 @@ const Home: React.FC = () => {
       window.removeEventListener('hashchange', handleHashChange);
     };
   }, []);
+  const directlySubmit = async () => {
+    setLoadingTech(true); // Indicate loading state
+    try {
+      const response = await axios.post('/api/techpost',{
+          content: techProb,
+          sender_id: user.id,
+        }, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
 
+      const data = response.data;
+      console.log(data)
+      navigate("/tech")
+    } catch (error) {
+      setErrorTech('Failed to submit the paragraph');
+      console.error('Error submitting paragraph:', error);
+    } finally {
+      setLoadingTech(false);
+    }
+  };
   const handleSubmit = async (paragraph: string) => {
     setLoadingTech(true); // Indicate loading state
     setErrorTech(null);
@@ -79,18 +126,37 @@ const Home: React.FC = () => {
         }
       );
       console.log(response.data);
-      return response.data
+      return response.data.msg
     } catch (error) {
       setErrorTech('Failed to getSimilarTechId');
       console.error('Error submitting getSimilarTechId:', error);
     }
   }
 
-  const getRelatedComments = async (techPostId: string) => {
+  const getCommentsOfTechPost = async(techpost_id: string) => {  //ok
     try {
-      const response = await axios.get(`/api/techposts/techcomments/${techPostId}`);
-      // return a list of data
-      console.log(response)
+      // the response will be a list of comments
+      const response = await axios.get(`/api/techposts/techcomments/${techpost_id}`);
+      return response.data
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
+  const getGPTpreResponse = async(commentsList: string[]) => {  //ok
+    try {
+      const response = await axios.post(
+        '/api/search/techpost',
+        {
+          history_answer_list:commentsList,
+          msg:techProb
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
       return response.data
     } catch (error) {
       setErrorTech('Failed to getSimilarTechId');
@@ -98,27 +164,21 @@ const Home: React.FC = () => {
     }
   }
 
+  const navigate = useNavigate();
   const handleTechProbSubmit = async () => {
     setLoadingTech(true);
     setErrorTech(null);
     try {
       const similarTechPostId = await getSimilarTechId()
-      console.log("similarTechPostId", similarTechPostId)
-      const commentsList = await getRelatedComments(similarTechPostId)
-      console.log("commentsList", commentsList)
-      // const response = await axios.post(
-      //   '/api/submit-techprob',
-      //   {
-      //     techProb,
-      //   },
-      //   {
-      //     headers: {
-      //       'Content-Type': 'application/json',
-      //     },
-      //   }
-      // );
+      const historyComments = await getCommentsOfTechPost(similarTechPostId)
+      const contentList: string[] = historyComments.map((comment) => comment.content);
+      console.log("historyComments", contentList)
+      const reply = await getGPTpreResponse(contentList)
 
-      alert('Technical problem submitted successfully!');
+      console.log("history advice: ", reply)
+      setModalText(reply.msg)
+      showModal()
+
     } catch (error) {
       setErrorTech('Failed to submit the technical problem');
       console.error('Error submitting technical problem:', error);
@@ -151,6 +211,8 @@ const Home: React.FC = () => {
       setLoadingEmo(false);
     }
   };
+
+  
 
   // Function for rendering no response UI
   const renderNoResponseUI = () => (
@@ -206,8 +268,12 @@ const Home: React.FC = () => {
               }}
             ></textarea>
             <br />
-            <button onClick={handleTechProbSubmit} disabled={loadingTech}>
+            <button onClick={directlySubmit} disabled={loadingTech}>
               {loadingTech ? 'Submitting...' : 'Submit Technical'}
+            </button>
+            {' '}
+            <button onClick={handleTechProbSubmit} disabled={loadingTech}>
+              {loadingTech ? 'Submitting...' : 'Get history advice!'}
             </button>
             {errorTech && <p style={{ color: 'red' }}>{errorTech}</p>}
           </div>
@@ -255,6 +321,15 @@ const Home: React.FC = () => {
 
   return (
     <div>
+      <Modal
+        title="History advice!"
+        open={open}
+        onOk={handleOk}
+        confirmLoading={confirmLoading}
+        onCancel={handleCancel}
+      >
+        <p>{modalText}</p>
+      </Modal>
       {hash === '#response' ? renderResponseUI() : renderNoResponseUI()}
     </div>
   );

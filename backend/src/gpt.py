@@ -130,8 +130,7 @@ async def find_most_similar(
     print(most_similar_data.tech_post_id)
     return most_similar_data
 
-async def gpt_pre_answer_tech_post(problem, history_answer_list_async):
-    history_answer_list = [comment.content for comment in history_answer_list_async]
+async def gpt_pre_answer_tech_post(problem, history_answer_list):
     history_answer = ";".join(history_answer_list)
     if not OPENAI_API_KEY:
         return {"message": "API key not set"}
@@ -166,7 +165,7 @@ async def gpt_pre_answer_tech_post(problem, history_answer_list_async):
     
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
-        return {"message": "Error processing the paragraph."} 
+        return "failed"
 # async def main():
 #     result = await get_embedding("I am a bad guy")
 #     print(result)
