@@ -3,15 +3,16 @@ import axios from 'axios';
 import './Home.css'; // Import the CSS file
 
 const Home: React.FC = () => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [loadingTech, setLoadingTech] = useState(false);
+  const [loadingEmo, setLoadingEmo] = useState(false);
+  const [errorTech, setErrorTech] = useState<string | null>(null);
+  const [errorEmo, setErrorEmo] = useState<string | null>(null);
   const [techProb, setTechProb] = useState<string | null>(null);
   const [emoProb, setEmoProb] = useState<string | null>(null);
   const [paragraph, setParagraph] = useState(''); // Adding paragraph state for input form
   const [hash, setHash] = useState(window.location.hash);
 
   useEffect(() => {
-    // Update component when hash changes
     const handleHashChange = () => {
       setHash(window.location.hash);
       if (window.location.hash === '#response') {
@@ -24,15 +25,15 @@ const Home: React.FC = () => {
     };
     window.addEventListener('hashchange', handleHashChange);
 
-    // Cleanup event listener on unmount
     return () => {
       window.removeEventListener('hashchange', handleHashChange);
     };
   }, []);
 
   const handleSubmit = async (paragraph: string) => {
-    setLoading(true);
-    setError(null);
+    setLoadingTech(true); // Indicate loading state
+    setErrorTech(null);
+    setErrorEmo(null);
     setTechProb(null);
     setEmoProb(null);
     try {
@@ -52,18 +53,103 @@ const Home: React.FC = () => {
       setTechProb(data.tech_prob);
       setEmoProb(data.emo_prob);
 
-      // Store data in localStorage
       localStorage.setItem('techProb', data.tech_prob);
       localStorage.setItem('emoProb', data.emo_prob);
 
-      // Change hash to navigate to response UI
       window.location.hash = '#response';
       setHash('#response');
     } catch (error) {
-      setError('Failed to submit the paragraph');
+      setErrorTech('Failed to submit the paragraph');
       console.error('Error submitting paragraph:', error);
     } finally {
-      setLoading(false);
+      setLoadingTech(false);
+    }
+  };
+  const getSimilarTechId = async () => {
+    try {
+      const response = await axios.post(
+        '/api/search/similar',
+        {
+          "problem": techProb,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      console.log(response.data);
+      return response.data
+    } catch (error) {
+      setErrorTech('Failed to getSimilarTechId');
+      console.error('Error submitting getSimilarTechId:', error);
+    }
+  }
+
+  const getRelatedComments = async (techPostId: string) => {
+    try {
+      const response = await axios.get(
+        `/api/techposts/techcomments/${techPostId}`
+      );
+      // return a list of data
+      return response.data
+    } catch (error) {
+      setErrorTech('Failed to getSimilarTechId');
+      console.error('Error submitting getSimilarTechId:', error);
+    }
+  }
+
+  const handleTechProbSubmit = async () => {
+    setLoadingTech(true);
+    setErrorTech(null);
+    try {
+      const similarTechPostId = await getSimilarTechId()
+      console.log("similarTechPostId", similarTechPostId)
+      const commentsList = await getRelatedComments(similarTechPostId)
+      console.log("commentsList", commentsList)
+      // const response = await axios.post(
+      //   '/api/submit-techprob',
+      //   {
+      //     techProb,
+      //   },
+      //   {
+      //     headers: {
+      //       'Content-Type': 'application/json',
+      //     },
+      //   }
+      // );
+
+      alert('Technical problem submitted successfully!');
+    } catch (error) {
+      setErrorTech('Failed to submit the technical problem');
+      console.error('Error submitting technical problem:', error);
+    } finally {
+      setLoadingTech(false);
+    }
+  };
+
+  const handleEmoProbSubmit = async () => {
+    setLoadingEmo(true);
+    setErrorEmo(null);
+    try {
+      const response = await axios.post(
+        '/api/submit-emoprob',
+        {
+          emoProb,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      alert('Emotional problem submitted successfully!');
+    } catch (error) {
+      setErrorEmo('Failed to submit the emotional problem');
+      console.error('Error submitting emotional problem:', error);
+    } finally {
+      setLoadingEmo(false);
     }
   };
 
@@ -75,7 +161,6 @@ const Home: React.FC = () => {
       </div>
 
       <div style={{ marginTop: '100px', marginBottom: '50px' }}>
-        {/* To prevent the form from overlapping */}
         <textarea
           placeholder="Type your paragraph here..."
           value={paragraph}
@@ -87,11 +172,11 @@ const Home: React.FC = () => {
         ></textarea>
         <br />
         <br />
-        <button onClick={() => handleSubmit(paragraph)} disabled={loading}>
-          {loading ? 'Submitting...' : 'Submit'}
+        <button onClick={() => handleSubmit(paragraph)} disabled={loadingTech}>
+          {loadingTech ? 'Submitting...' : 'Submit'}
         </button>
 
-        {error && <p style={{ color: 'red' }}>{error}</p>}
+        {errorTech && <p style={{ color: 'red' }}>{errorTech}</p>}
       </div>
     </div>
   );
@@ -103,7 +188,6 @@ const Home: React.FC = () => {
         <h1>Home Page</h1>
       </div>
       <div style={{ marginTop: '100px', marginBottom: '50px' }}>
-        {/* To prevent the form from overlapping */}
         <div className="container">
           <div className="box box-left">
             <h2>Technical Part:</h2>
@@ -122,6 +206,11 @@ const Home: React.FC = () => {
                 borderRadius: '5px',
               }}
             ></textarea>
+            <br />
+            <button onClick={handleTechProbSubmit} disabled={loadingTech}>
+              {loadingTech ? 'Submitting...' : 'Submit Technical'}
+            </button>
+            {errorTech && <p style={{ color: 'red' }}>{errorTech}</p>}
           </div>
 
           <div className="box box-right">
@@ -141,12 +230,16 @@ const Home: React.FC = () => {
                 borderRadius: '5px',
               }}
             ></textarea>
+            <br />
+            <button onClick={handleEmoProbSubmit} disabled={loadingEmo}>
+              {loadingEmo ? 'Submitting...' : 'Submit Emotional'}
+            </button>
+            {errorEmo && <p style={{ color: 'red' }}>{errorEmo}</p>}
           </div>
         </div>
-        <br/>
+        <br />
         <button
           onClick={() => {
-            // Clear localStorage and go back to input UI
             localStorage.removeItem('techProb');
             localStorage.removeItem('emoProb');
             setTechProb(null);
@@ -163,7 +256,6 @@ const Home: React.FC = () => {
 
   return (
     <div>
-      {/* Conditionally render based on the hash */}
       {hash === '#response' ? renderResponseUI() : renderNoResponseUI()}
     </div>
   );

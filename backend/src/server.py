@@ -10,12 +10,16 @@ from fastapi import FastAPI, status, HTTPException, status, Depends, BackgroundT
 from fastapi.security import OAuth2PasswordRequestForm
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel
+from typing import List
 import uvicorn
 
 from dal_funcs import TechPostDAL, EmployeeDAL, TechCommentDAL, EmoMsgDAL, EmoReplyDAL, GPTDataDAL
 from dal_tables import TechPost, Employee, TechComment, EmoMsg, EmoReply, GPTData
 from authentication import authenticate_user, create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES, pwd_context
 from gpt import gpt_separate_paragraph, get_embedding, find_most_similar, gpt_pre_answer_tech_post
+
+
+import openai
 
 MONGODB_URI = os.environ["MONGODB_URI"]
 DEBUG = os.environ.get("DEBUG", "").strip().lower() in {"1", "true", "on", "yes"}
@@ -100,6 +104,10 @@ async def get_emomsg_by_rcvr(rcvr_id: str) -> list[EmoMsg]:
 @app.get("/api/emoreply/emomsg/{emomsg_id}")
 async def get_emoreply_by_emomsg(emomsg_id: str) -> list[EmoReply]:
     return [i async for i in app.emoreply_dal.list_emo_replies_by_emo_msg(emomsg_id)]
+
+@app.get("/api/emoreply/sender/{sender_id}")
+async def get_emoreply_by_sender(sender_id: str) -> list[EmoReply]:
+    return [i async for i in app.emoreply_dal.list_emo_reply_by_sender(sender_id)]
 
 class EmployeeCreate(BaseModel):
     name: str
@@ -271,15 +279,21 @@ async def gpt_devide_problem(paragraph: ParagraphResponseCreate) -> NewParagraph
     )
     
 
-@app.post("/api/search/techpost", status_code=status.HTTP_201_CREATED)
-async def gpt_get_searched_answer(probelm: ParagraphResponseCreate) -> NewSingleResponse:
-    prob_embed = await get_embedding(probelm.msg)
+@app.post("/api/search/similar", status_code=status.HTTP_201_CREATED)
+async def gpt_get_similar_techpost_id(paragraph: ParagraphResponseCreate) -> NewSingleResponse:
+    prob_embed = await get_embedding(paragraph.msg)
     gpt_data_list = app.gptdata_dal.list_gpt_data()
     gpt_data = await find_most_similar(gpt_data_list, prob_embed)
-    print("gege: ", gpt_data.tech_post_id)
-    history_answer_list_async = [i async for i in app.techcomment_dal.list_tech_comments(gpt_data.tech_post_id)]
-    print(history_answer_list_async)
-    answer = await gpt_pre_answer_tech_post(probelm.msg, history_answer_list_async)
+    print("er", gpt_data)
+    return NewSingleResponse(
+        msg=gpt_data.tech_post_id
+    )
+    
+@app.post("/api/search/techpost", status_code=status.HTTP_201_CREATED)
+async def gpt_get_presearched_answer(
+        history_answer_list: List[str]
+    ) -> NewSingleResponse:
+    answer = await gpt_pre_answer_tech_post(problem.msg, history_answer_list)
     return NewSingleResponse(
         msg=answer
     )
@@ -314,6 +328,59 @@ def main(argv=sys.argv[1:]):
         uvicorn.run("server:app", host="0.0.0.0", port=3001, reload=DEBUG)
     except KeyboardInterrupt:
         pass
+
+
+
+
+
+
+class ParagraphSubmit(BaseModel):
+    paragraph: str
+
+class ParagraphResponse(BaseModel):
+    message: str
+
+@app.post("/api/submit-paragraph", response_model=ParagraphResponse)
+async def submit_paragraph(paragraph_data: ParagraphSubmit):
+    paragraph = paragraph_data.paragraph
+    api_key = "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"
+
+    if not api_key:
+        return {"message": "API key not set"}
+
+    openai.api_key = api_key
+    system_content = "You will help me separate the paragraph into two parts. "\
+                     "The first part contains the mood. "\
+                     "The second part contains the tech problem."
+
+    messages = [
+        {"role": "system", "content": system_content},
+        {"role": "user", "content": paragraph}
+    ]
+
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=messages,
+            max_tokens=100,
+            temperature=0.7
+        )
+
+        result = response['choices'][0]['message']['content'].strip()
+
+        print(f"Response from OpenAI: {result}")
+        print(f"Received paragraph: {paragraph}")
+
+        return {"message": "Paragraph received and processed successfully"}
+
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        return {"message": "Error processing the paragraph"}
+
+
+
+
+
 
 if __name__ == "__main__":
     main()

@@ -17,7 +17,11 @@ env3.*
 env
 docs_build
 site_build
+<<<<<<< HEAD
 .myenv/
+=======
+myenv
+>>>>>>> Frank
 docs.zip
 archive.zip
 
