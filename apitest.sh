@@ -47,8 +47,15 @@
 # curl -X POST "http://localhost:8001/api/techpost" \
 #      -H "Content-Type: application/json" \
 #      -d '{
-#            "content": "In modern IoT ecosystems, managing and processing vast streams of real-time data across distributed nodes poses significant challenges. The primary issue involves ensuring low-latency data ingestion, processing, and analysis while maintaining scalability and fault tolerance. Current architectures often struggle with data synchronization, leading to inconsistencies and delayed insights. Additionally, resource allocation becomes inefficient as the system scales, causing bottlenecks and increased operational costs. Developing an optimized framework that leverages edge computing, efficient load balancing algorithms, and robust data synchronization protocols is essential. The solution must ensure seamless integration, high reliability, and real-time responsiveness to meet the demands of dynamic IoT applications.",
-#            "sender_id": "emplqwere123"
+#            "content": "database schema problem.",
+#            "sender_id": "2f089e4813ad4d028bc543ff1de4e11e"
+#          }'
+
+
+# curl -X POST "http://localhost:8001/api/search/techpost" \
+#      -H "Content-Type: application/json" \
+#      -d '{
+#            "msg": "database schema problem."
 #          }'
 
 # create tech comment

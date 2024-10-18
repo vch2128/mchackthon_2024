@@ -5,9 +5,9 @@ from motor.motor_asyncio import AsyncIOMotorCollection
 from pymongo import ReturnDocument
 from datetime import datetime
 from uuid import uuid4
-from typing import Optional, AsyncGenerator
+from typing import Optional, AsyncGenerator, List
 from gpt import gpt_get_topic
-from dal_tables import Employee, TechPost, TechComment, EmoMsg, EmoReply
+from dal_tables import Employee, TechPost, TechComment, EmoMsg, EmoReply, GPTData
 
 class EmployeeDAL:
     def __init__(self, employee_collection: AsyncIOMotorCollection):
@@ -75,6 +75,7 @@ class TechPostDAL:
         session=None,
     ) -> str:
         gpt_topic = await gpt_get_topic(content)
+        
         response = await self._tech_post_collection.insert_one(
             {
                 "_id": uuid4().hex,
@@ -167,6 +168,13 @@ class TechCommentDAL:
             {"tech_post_id": tech_post_id}, session=session
         ):
             yield TechComment.from_doc(doc)
+            
+    async def list_tech_comments_content_only(self, tech_post_id: str, session=None):
+        async for doc in self._tech_comment_collection.find(
+            {"tech_post_id": tech_post_id}, 
+            session=session
+        ):
+            yield doc.get("content", "")
 
 class EmoMsgDAL:
     def __init__(self, emo_msg_collection: AsyncIOMotorCollection):
@@ -274,3 +282,27 @@ class EmoReplyDAL:
             session=session):
             yield EmoReply.from_doc(doc)
             
+            
+class GPTDataDAL:
+    def __init__(self, gpt_data_collection: AsyncIOMotorCollection):
+        self._gpt_data_collection = gpt_data_collection
+
+    async def create_gpt_data(
+        self,
+        tech_post_id: str,
+        tech_post_embedding: List[float],
+        session=None,
+    ) -> str:
+        response = await self._gpt_data_collection.insert_one(
+            {
+                "_id": uuid4().hex,
+                "tech_post_id": tech_post_id,
+                "tech_post_embedding": tech_post_embedding
+            },
+            session=session,
+        )
+        return str(response.inserted_id)
+    
+    async def list_gpt_data(self, session=None):
+        async for doc in self._gpt_data_collection.find({}, session=session):
+            yield GPTData.from_doc(doc)
