@@ -68,6 +68,37 @@ class EmployeeDAL:
         if doc:
             return Employee.from_doc(doc)
         return None
+    
+    
+    async def find_similar_employee(self, sender_id: str, session=None) -> Optional[Employee]:
+        sender = await self._employee_collection.find_one(
+            {"_id": sender_id}, {"_id": 0, "department": 1, "age": 1, "seniority" : 1, "region" : 1}, session=session
+        )
+        if not sender:
+            raise ValueError("Sender not found")
+    
+        department = sender["department"]
+        age = sender["age"]
+        seniority = sender["seniority"]
+        region = sender["region"]
+
+        
+        # Find up to 3 users with similar background (same department and similar age)
+        similar_employee = await self._employee_collection.find(
+            {
+                "$or": [
+                    {"department": department},
+                    {"age": {"$gte": (age - 5), "$lte": (age + 5)}},
+                    {"seniority": {"$gte": (seniority - 5), "$lte": (seniority + 5)}}
+                ],
+                "region": {"$ne": region},  # Ensure employees come from a different region
+                "_id": {"$ne": sender_id},  # Exclude the sender themselves
+            },
+            session=session
+        ).limit(3).to_list(length=3)
+    
+        return similar_employee
+         
 
 class TechPostDAL:
     def __init__(self, tech_post_collection: AsyncIOMotorCollection):
@@ -188,7 +219,7 @@ class EmoMsgDAL:
         self,
         sender_id: str,
         content: str,
-        rcvr_id: str,
+        rcvr_id: List[str],
         topic: Optional[str] = "No Topic",
         answered: Optional[bool] = False,
         session=None,

@@ -72,6 +72,10 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan, debug=DEBUG)
 
+@app.get("/api/employees/{employee_id}")
+async def get_employee(employee_id: str) -> Employee:
+    return await app.employee_dal.get_employee(employee_id)
+
 @app.get("/api/techposts") # return all techposts
 async def get_all_techposts() -> list[TechPost]:
     return [i async for i in app.techpost_dal.list_tech_posts()]
@@ -230,16 +234,32 @@ async def create_techcomment(tech_comment: TechCommentCreate) -> NewTechCommentR
 
 class NewEmoMsgResponse(BaseModel):
     id: str
+    sender_id: str
     content: str
-    rcvr_id: str
+    rcvr_id : list[str]
 
 class EmoMsgCreate(BaseModel):
     sender_id: str
     content: str
-    rcvr_id: str
 
 # create a emo msg
 @app.post("/api/emomsg", status_code=status.HTTP_201_CREATED)
+async def create_emomsg(emomsg: EmoMsgCreate) -> NewEmoMsgResponse:
+    similar_employee = await app.employee_dal.find_similar_employee(sender_id=emomsg.sender_id)
+    similar_employee_ids = [employee["_id"] for employee in similar_employee]
+    new_id = await app.emomsg_dal.create_emo_msg(
+        sender_id=emomsg.sender_id,
+        content=emomsg.content,
+        rcvr_id=similar_employee_ids
+    )
+    return NewEmoMsgResponse(
+        id=new_id, 
+        sender_id=emomsg.sender_id,
+        content=emomsg.content,
+        rcvr_id=similar_employee_ids
+    )
+    
+@app.post("/api/emomsg_to", status_code=status.HTTP_201_CREATED)
 async def create_emomsg(emomsg: EmoMsgCreate) -> NewEmoMsgResponse:
     new_id = await app.emomsg_dal.create_emo_msg(
         sender_id=emomsg.sender_id,
@@ -248,6 +268,7 @@ async def create_emomsg(emomsg: EmoMsgCreate) -> NewEmoMsgResponse:
     )
     return NewEmoMsgResponse(
         id=new_id, 
+        sender_id=emomsg.sender_id,
         content=emomsg.content,
         rcvr_id=emomsg.rcvr_id
     )
@@ -414,6 +435,10 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
         "id": user.id,
         "name": user.name,
         "department": user.department,  # Corrected spelling from 'departement' to 'department'
+        "age": user.age,
+        "position": user.position,
+        "seniority": user.seniority,
+        "region": user.region,
         "wallet": user.wallet,
         "score": user.score
     }
