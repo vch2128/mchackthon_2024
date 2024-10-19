@@ -7,7 +7,7 @@ from datetime import datetime
 from uuid import uuid4
 from typing import Optional, AsyncGenerator, List
 from gpt import gpt_get_topic
-from dal_tables import Employee, TechPost, TechComment, EmoMsg, EmoReply, GPTData
+from dal_tables import Employee, TechPost, TechComment, EmoMsg, EmoReply, GPTData, GPTEmployeeData
 
 class EmployeeDAL:
     def __init__(self, employee_collection: AsyncIOMotorCollection):
@@ -349,3 +349,40 @@ class GPTDataDAL:
     async def list_gpt_data(self, session=None):
         async for doc in self._gpt_data_collection.find({}, session=session):
             yield GPTData.from_doc(doc)
+            
+            
+class GPTEmployeeDataDAL:
+    def __init__(self, gpt_employee_data_collection: AsyncIOMotorCollection):
+        self._gpt_employee_data_collection = gpt_employee_data_collection
+
+    async def create_gpt_employee_data(
+        self,
+        employee_id: str,
+        employee_embedding: List[float],
+        session=None,
+    ) -> str:
+        response = await self._gpt_employee_data_collection.insert_one(
+            {
+                "_id": uuid4().hex,
+                "employee_id": employee_id,
+                "employee_embedding": employee_embedding
+            },
+            session=session,  # Ensure session is properly handled if provided
+        )
+        return str(response.inserted_id)
+    
+    async def get_an_embedding(
+        self, id: str | ObjectId, session=None
+    ) -> Optional[GPTEmployeeData]:
+        doc = await self._gpt_employee_data_collection.find_one(
+            {"employee_id": str(id)},
+            session=session,
+        )
+        if doc:
+            return GPTEmployeeData.from_doc(doc)
+        return None
+ 
+    async def list_gpt_employee_data(self, session=None):
+        async for doc in self._gpt_employee_data_collection.find({}, session=session):
+            yield GPTEmployeeData.from_doc(doc) 
+    
