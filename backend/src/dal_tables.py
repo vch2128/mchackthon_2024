@@ -32,6 +32,7 @@ class Employee(BaseModel):
             score=doc["score"],
         )
 
+
 class TechPost(BaseModel):
     id: str
     createdAt: datetime
@@ -110,6 +111,7 @@ class EmoReply(BaseModel):
             score=doc["score"]
         )
         
+# store tech_post embedding
 class GPTData(BaseModel):
     id: str
     tech_post_id: str
@@ -121,4 +123,18 @@ class GPTData(BaseModel):
             id=str(doc["_id"]),
             tech_post_id=doc["tech_post_id"],
             tech_post_embedding=doc["tech_post_embedding"]
+        )
+
+# store employee embedding 
+class GPTEmployeeData(BaseModel):
+    id: str
+    employee_id: str
+    employee_embedding: List[float]
+    
+    @staticmethod
+    def from_doc(doc) -> "GPTEmployeeData":
+        return GPTEmployeeData(
+            id=str(doc["_id"]),
+            employee_id=doc["employee_id"],
+            employee_embedding=doc["employee_embedding"]  # Corrected this line
         )
