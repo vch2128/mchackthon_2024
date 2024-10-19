@@ -222,8 +222,8 @@ const Home: React.FC = () => {
       setEmoRcvrId(response.data.msg);
       alert('Emotional problem submitted successfully to a match!');
     } catch (error) {
-      setErrorEmo('Failed to submit the emotional problem');
-      console.error('Error submitting emotional problem:', error);
+      // setErrorEmo('Failed to submit the emotional problem');
+      // console.error('Error submitting emotional problem:', error);
     } finally {
       setLoadingEmo(false);
     }
@@ -247,8 +247,8 @@ const Home: React.FC = () => {
       setEmoRcvrId(response.data.msg);
       alert('Emotional problem submitted successfully to a stranger!');
     } catch (error) {
-      setErrorEmo('Failed to submit the emotional problem');
-      console.error('Error submitting emotional problem:', error);
+      // setErrorEmo('Failed to submit the emotional problem');
+      // console.error('Error submitting emotional problem:', error);
     } finally {
       setLoadingEmo(false);
     }
