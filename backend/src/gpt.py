@@ -6,8 +6,8 @@ from typing import List
 from dal_tables import GPTData, GPTEmployeeData
 import numpy as np
 
-OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
-# OPENAI_API_KEY = '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'
+# OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
+OPENAI_API_KEY = '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'
 
 client = OpenAI(api_key=OPENAI_API_KEY)
 
