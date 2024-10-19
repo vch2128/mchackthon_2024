@@ -66,12 +66,12 @@
 
 
 # create techpost 
-# curl -X POST "http://localhost:8001/api/techpost" \
-#      -H "Content-Type: application/json" \
-#      -d '{
-#            "content": "I have some database schema problem.",
-#            "sender_id": "2f089e4813ad4d028bc543ff1de4e11e"
-#          }'
+curl -X POST "http://localhost:8001/api/techpost" \
+     -H "Content-Type: application/json" \
+     -d '{
+           "content": "I want to learn to use docker",
+           "sender_id": "7144dcaa96534cc6bf35b93efa8b7ee4"
+         }'
 
 
 # # curl -X POST "http://localhost:8001/api/search/techpost" \
@@ -81,6 +81,15 @@
 # #            "sender_id": "d3ba2aed43824cdb92db62342c7a06fe",
 # #            "topic": "how to code"
 # #          }'
+
+
+# curl -X POST "http://localhost:8001/api/search/techpost" \
+#      -H "Content-Type: application/json" \
+#      -d '{
+#            "content": "hello everyone yeahhhh i have a problem of how to code i am a beginner to this. please help me. thank you",
+#            "sender_id": "d3ba2aed43824cdb92db62342c7a06fe",
+#            "topic": "how to code"
+#          }'
 
 # create tech comment
 # curl -X POST "http://localhost:8001/api/techcomment" \
@@ -107,6 +116,15 @@
 #            "emo_msg_id": "61ea989c65b849d88055992f7beaba3e",
 #            "sender_id": "066f32644fac497f9c72bf0e7d12a8c1"
 #          }'
+
+# create emo msg
+curl -X POST "http://localhost:8001/api/emomsg"  \
+       -H "Content-Type: application/json" \
+       -d '{
+             "sender_id": "7144dcaa96534cc6bf35b93efa8b7ee4",
+             "content": "I am happy",
+             "rcvr_id": "83fa6df15b784d60bc760e6413cd8269"
+          }'
 
 # curl -X GET http://localhost:8001/api/techposts/techcomments/708f24c378b64942b61edc3e15533045
 # curl -X GET http://localhost:8001/api/techposts/708f24c378b64942b61edc3e15533045

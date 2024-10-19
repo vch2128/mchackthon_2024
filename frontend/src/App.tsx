@@ -53,36 +53,35 @@ function App() {
       <PageRouter />
       {isAuthenticated && (
         <>
-          <nav>
-            <Link to="/home">Home</Link> |{' '}
-            <Link to="/campaign">Campaign</Link> |{' '}
-            <Link to="/tech">Tech</Link> |{' '}
-            <Link to="/emo">Emo</Link> |{' '}
+          <nav style={{ color: '#8c8c8c' }}>
+            <Link to="/home" style={{ color: '#096dd9' }}>Home</Link> |{' '}
+            <Link to="/campaign" style={{ color: '#096dd9' }}>Campaign</Link> |{' '}
+            <Link to="/tech" style={{ color: '#096dd9' }}>Tech</Link> |{' '}
+            <Link to="/emo" style={{ color: '#096dd9' }}>Emo</Link> |{' '}
             <a
               href="/login"
               onClick={() => {
                 localStorage.removeItem('token');
               }}
+              style={{ color: '#096dd9' }}
             >
               Logout
             </a>
           </nav>
           <br />
           {/* Popover with Avatar positioned at the top-right corner */}
-          <div style={{ position: 'absolute', top: 10, right: 10 }}>
-          <Popover 
-            content={userInfoContent} 
-            title="User Info" 
-            trigger="click"
-            placement="bottomRight"  // Ensure popover appears near the button (comment outside JSX)
-          >
-          <Avatar
-            style={{ cursor: 'pointer' }}
-            icon={<UserOutlined />}
-            size="large"
-          />
-
-
+          <div style={{ position: 'absolute', top: 20, right: 10 }}>
+            <Popover 
+              content={userInfoContent} 
+              title="User Info" 
+              trigger="click"
+              placement="bottomRight"  // Ensure popover appears near the button (comment outside JSX)
+            >
+              <Avatar
+              style={{ cursor: 'pointer' }}
+              icon={<UserOutlined />}
+              size="large"
+             />
             </Popover>
           </div>
         </>
