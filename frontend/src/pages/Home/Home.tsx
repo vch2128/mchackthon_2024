@@ -208,7 +208,7 @@ const Home: React.FC = () => {
         '/api/search/matchrcvr',
         {
           employee_info_list: employeeEmbeddings, // Changed to snake_case
-          msg: user.id // Consider renaming if it's an ID
+          msg: user!.id // Consider renaming if it's an ID
         },
         {
           headers: {
@@ -234,7 +234,7 @@ const Home: React.FC = () => {
         '/api/search/unmatchrcvr',
         {
           employee_info_list: employeeEmbeddings, // Changed to snake_case
-          msg: user.id // Consider renaming if it's an ID
+          msg: user!.id // Consider renaming if it's an ID
         },
         {
           headers: {
@@ -287,11 +287,11 @@ const Home: React.FC = () => {
     setErrorEmo(null);
     try {
       await getUnMatchRcvrId();
-      console.log(ma)
+      // console.log(ma)
       const response = await axios.post(
         '/api/emomsg',
         {
-          sender_id: user.id, // Changed to snake_case
+          sender_id: user!.id, // Changed to snake_case
           content: emoProb, // Consider renaming if it's an ID
           rcvr_id: emoRcvrId
         },
