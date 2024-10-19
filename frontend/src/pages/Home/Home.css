@@ -6,7 +6,7 @@
     left: 0;
     width: 100%;
     background-color: #fff; /* White background */
-    z-index: 1000;
+    z-index: -1;
     padding:2px 0px 2px 0px; 
     border-bottom: 2px solid #ccc; 
     margin-top:2px;

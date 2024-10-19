@@ -13,10 +13,10 @@ from pydantic import BaseModel
 from typing import List
 import uvicorn
 
-from dal_funcs import TechPostDAL, EmployeeDAL, TechCommentDAL, EmoMsgDAL, EmoReplyDAL, GPTDataDAL
-from dal_tables import TechPost, Employee, TechComment, EmoMsg, EmoReply, GPTData
+from dal_funcs import TechPostDAL, EmployeeDAL, TechCommentDAL, EmoMsgDAL, EmoReplyDAL, GPTDataDAL, GPTEmployeeDataDAL
+from dal_tables import TechPost, Employee, TechComment, EmoMsg, EmoReply, GPTData, GPTEmployeeData
 from authentication import authenticate_user, create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES, pwd_context
-from gpt import gpt_separate_paragraph, get_embedding, find_most_similar, gpt_pre_answer_tech_post
+from gpt import gpt_separate_paragraph, get_embedding, find_most_similar, gpt_pre_answer_tech_post, gpt_get_rcvr_id_mostmatched, gpt_get_rcvr_id_mostunmatched
 
 
 import openai
@@ -41,6 +41,7 @@ async def lifespan(app: FastAPI):
     emomsg_collection = db.get_collection("emomsg")
     emoreply_collection = db.get_collection("emoreply")
     gptdata_collection = db.get_collection("gptdata")
+    gptemployeedata_collection = db.get_collection("gptemployeedata")
 
     # Store in app.state:
     app.state.db_client = client
@@ -51,6 +52,7 @@ async def lifespan(app: FastAPI):
     app.state.emomsg_collection = emomsg_collection
     app.state.emoreply_collection = emoreply_collection
     app.state.gptdata_collection = gptdata_collection
+    app.state.gptemployeedata_collection = gptemployeedata_collection
     
     
     app.techpost_dal    = TechPostDAL(techpost_collection)
@@ -59,6 +61,7 @@ async def lifespan(app: FastAPI):
     app.emomsg_dal = EmoMsgDAL(emomsg_collection)
     app.emoreply_dal = EmoReplyDAL(emoreply_collection)
     app.gptdata_dal = GPTDataDAL(gptdata_collection)
+    app.gptemployeedata_dal = GPTEmployeeDataDAL(gptemployeedata_collection)
     
     # Yield back to FastAPI Application:
     yield
@@ -68,6 +71,10 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan, debug=DEBUG)
+
+@app.get("/api/employees/{employee_id}")
+async def get_employee(employee_id: str) -> Employee:
+    return await app.employee_dal.get_employee(employee_id)
 
 @app.get("/api/techposts") # return all techposts
 async def get_all_techposts() -> list[TechPost]:
@@ -117,18 +124,57 @@ async def get_emoreply_by_emomsg(emomsg_id: str) -> list[EmoReply]:
 async def get_emoreply_by_sender(sender_id: str) -> list[EmoReply]:
     return [i async for i in app.emoreply_dal.list_emo_reply_by_sender(sender_id)]
 
+
+@app.get("/api/employee/embeddings")
+async def get_employee_embeddings() -> list[GPTEmployeeData]:
+    return [i async for i in app.gptemployeedata_dal.list_gpt_employee_data()]
+
+@app.get("/api/employee/gptdata/{employee_id}") # return techpost with id = techpost_id
+async def get_employee_embedding_by_id(employee_id: str) -> GPTEmployeeData:
+    employee_data = await app.gptemployeedata_dal.get_an_embedding(employee_id)
+    if employee_data is None:
+        raise HTTPException(status_code=404, detail="Employee not found")
+    return employee_data
+
+# get wallet
+@app.get("/api/employee/get_wallet/{employee_id}")
+async def get_wallet(employee_id: str) -> int:
+    employee_wallet = await app.employee_dal.check_wallet(employee_id)
+    return employee_wallet
+
+# Update wallet
+class UpdateWalletRequest(BaseModel):
+    value: int
+    employee_id: str
+    
+@app.put("/api/employee/update_wallet") 
+async def update_employee_wallet( request: UpdateWalletRequest) -> int:
+    updated_wallet = await app.employee_dal.update_wallet(request.employee_id, request.value)
+    return updated_wallet
+
+
 class EmployeeCreate(BaseModel):
     name: str
     account: str
     password: str
     department: str
+    age : int
+    position: str
+    seniority: int
+    region: str
+    
 
 class NewEmployeeResponse(BaseModel):
     id: str
     name: str
     account: str
     password: str  # Note: Returning passwords is not recommended
-    
+    department: str
+    age : int
+    position: str
+    seniority: int
+    region: str
+
     
 @app.post("/api/employee", status_code=status.HTTP_201_CREATED)
 async def create_employee(employee: EmployeeCreate) -> NewEmployeeResponse:
@@ -138,14 +184,28 @@ async def create_employee(employee: EmployeeCreate) -> NewEmployeeResponse:
         name=employee.name,
         account=employee.account,
         password=hashed_password,
-        department=employee.department
+        department=employee.department,
+        age=employee.age,
+        position=employee.position,
+        seniority=employee.seniority,
+        region=employee.region,
     )
+    info = "Employee info: department =" + str(employee.department) + "; age = " + str(employee.age) + "; company position = " + str(employee.position) + "; seniority = " + str(employee.seniority) + "years; workplace region = " + str(employee.region)
+    new_embedding = await get_embedding(info)
+    eid = await app.gptemployeedata_dal.create_gpt_employee_data(employee_id=new_id, employee_embedding=new_embedding)
     return NewEmployeeResponse(
         id=new_id, 
         name=employee.name,
         account=employee.account,
         password=hashed_password,
+        department=employee.department,
+        age=employee.age,
+        position=employee.position,
+        seniority=employee.seniority,
+        region=employee.region
     )
+    
+    
 
 # Assuming NewTechPostResponse is already defined
 class NewTechPostResponse(BaseModel):
@@ -156,23 +216,21 @@ class TechPostCreate(BaseModel):
     content: str
     sender_id: str
 
-async def process_embedding(new_id: str, context: str):    
-    embed = await get_embedding(context)
-    await app.gptdata_dal.create_gpt_data(
-        tech_post_id=new_id,
-        tech_post_embedding=embed
-    )
     
 # create a techpost with sender_id and content
 @app.post("/api/techpost", status_code=status.HTTP_201_CREATED)
-async def create_techpost(tech_post: TechPostCreate, background_tasks: BackgroundTasks) -> NewTechPostResponse:
+async def create_techpost(tech_post: TechPostCreate) -> NewTechPostResponse:
     new_id = await app.techpost_dal.create_tech_post(
         content=tech_post.content,
         sender_id=tech_post.sender_id,
         answered=True,
     )
     
-    background_tasks.add_task(process_embedding, new_id, tech_post.content)
+    embed = await get_embedding(tech_post.content)
+    await app.gptdata_dal.create_gpt_data(
+        tech_post_id=new_id,
+        tech_post_embedding=embed
+    )
     
     return NewTechPostResponse(
         id=new_id, 
@@ -208,16 +266,32 @@ async def create_techcomment(tech_comment: TechCommentCreate) -> NewTechCommentR
 
 class NewEmoMsgResponse(BaseModel):
     id: str
+    sender_id: str
     content: str
-    rcvr_id: str
+    rcvr_id : list[str]
 
 class EmoMsgCreate(BaseModel):
     sender_id: str
     content: str
-    rcvr_id: str
 
 # create a emo msg
 @app.post("/api/emomsg", status_code=status.HTTP_201_CREATED)
+async def create_emomsg(emomsg: EmoMsgCreate) -> NewEmoMsgResponse:
+    similar_employee = await app.employee_dal.find_similar_employee(sender_id=emomsg.sender_id)
+    similar_employee_ids = [employee["_id"] for employee in similar_employee]
+    new_id = await app.emomsg_dal.create_emo_msg(
+        sender_id=emomsg.sender_id,
+        content=emomsg.content,
+        rcvr_id=similar_employee_ids
+    )
+    return NewEmoMsgResponse(
+        id=new_id, 
+        sender_id=emomsg.sender_id,
+        content=emomsg.content,
+        rcvr_id=similar_employee_ids
+    )
+    
+@app.post("/api/emomsg_to", status_code=status.HTTP_201_CREATED)
 async def create_emomsg(emomsg: EmoMsgCreate) -> NewEmoMsgResponse:
     new_id = await app.emomsg_dal.create_emo_msg(
         sender_id=emomsg.sender_id,
@@ -226,6 +300,7 @@ async def create_emomsg(emomsg: EmoMsgCreate) -> NewEmoMsgResponse:
     )
     return NewEmoMsgResponse(
         id=new_id, 
+        sender_id=emomsg.sender_id,
         content=emomsg.content,
         rcvr_id=emomsg.rcvr_id
     )
@@ -295,14 +370,67 @@ async def gpt_devide_problem(paragraph: ParagraphResponseCreate) -> NewParagraph
 @app.post("/api/search/similar", status_code=status.HTTP_201_CREATED)
 async def gpt_get_similar_techpost_id(paragraph: ParagraphResponseCreate) -> NewSingleResponse:
     prob_embed = await get_embedding(paragraph.msg)
-    print("erqwef")
-    gpt_data_list = app.gptdata_dal.list_gpt_data()
+    gpt_data_list = await app.gptdata_dal.list_gpt_data()
     gpt_data = await find_most_similar(gpt_data_list, prob_embed)
-    print("erqwef")
     return NewSingleResponse(
         msg=gpt_data.tech_post_id
     )
 
+class NewEmployeeSearchResponseCreate(BaseModel):
+    employee_info_list: List[GPTEmployeeData]
+    msg: str
+
+class NewEmployeeSearchResponse(BaseModel):
+    msg: str
+
+@app.post("/api/search/matchrcvr", status_code=status.HTTP_201_CREATED)
+async def get_matched_receiver_id(
+        input_data: NewEmployeeSearchResponseCreate
+    ) -> NewEmployeeSearchResponse:
+    try:
+        embedding_record = await app.gptemployeedata_dal.get_an_embedding(id=input_data.msg)
+        if not embedding_record:
+            raise HTTPException(status_code=404, detail="Embedding not found for the provided ID.")
+        
+        employee_embedding = embedding_record.employee_embedding
+        matched_employee_id = await gpt_get_rcvr_id_mostmatched(
+            new_embedding=employee_embedding,
+            gpt_employee_data_list=input_data.employee_info_list
+        )
+
+        return NewEmployeeSearchResponse(msg=matched_employee_id)
+    
+    except Exception as e:
+        # Log the exception as needed
+        raise HTTPException(status_code=500, detail=str(e))
+class NewEmployeeSearchResponseCreate2(BaseModel):
+    employee_info_list: List[GPTEmployeeData]
+    msg: str
+
+class NewEmployeeSearchResponse2(BaseModel):
+    msg: str
+    
+@app.post("/api/search/unmatchrcvr", status_code=status.HTTP_201_CREATED)
+async def get_unmatched_receiver_id(
+        input_data: NewEmployeeSearchResponseCreate2
+    ) -> NewEmployeeSearchResponse2:
+    try:
+        embedding_record = await app.gptemployeedata_dal.get_an_embedding(id=input_data.msg)
+        if not embedding_record:
+            raise HTTPException(status_code=404, detail="Embedding not found for the provided ID.")
+        
+        employee_embedding = embedding_record.employee_embedding
+        matched_employee_id = await gpt_get_rcvr_id_mostunmatched(
+            new_embedding=employee_embedding,
+            gpt_employee_data_list=input_data.employee_info_list
+        )
+
+        return NewEmployeeSearchResponse2(msg=matched_employee_id)
+    
+    except Exception as e:
+        # Log the exception as needed
+        raise HTTPException(status_code=500, detail=str(e))
+    
 class NewSearchResponseCreate(BaseModel):
     history_answer_list: List[str]
     msg: str
@@ -339,6 +467,10 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
         "id": user.id,
         "name": user.name,
         "department": user.department,  # Corrected spelling from 'departement' to 'department'
+        "age": user.age,
+        "position": user.position,
+        "seniority": user.seniority,
+        "region": user.region,
         "wallet": user.wallet,
         "score": user.score
     }

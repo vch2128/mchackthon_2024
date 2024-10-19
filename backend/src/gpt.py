@@ -3,11 +3,11 @@ import json
 # import asyncio
 from openai import OpenAI
 from typing import List
-from dal_tables import GPTData
+from dal_tables import GPTData, GPTEmployeeData
 import numpy as np
 
-OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
-# OPENAI_API_KEY = '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'
+# OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
+OPENAI_API_KEY = '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'
 
 client = OpenAI(api_key=OPENAI_API_KEY)
 
@@ -166,6 +166,43 @@ async def gpt_pre_answer_tech_post(problem, history_answer_list):
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
         return "failed"
+    
+async def gpt_get_rcvr_id_mostmatched(
+        gpt_employee_data_list: List[GPTEmployeeData],
+        new_embedding: List[float]
+    ) -> str:
+    """Find the GPTData instance with the most similar embedding to the new_embedding."""
+    max_similarity = -1.0
+    most_similar_data = None
+
+    if not gpt_employee_data_list:
+        return "2f089e4813ad4d028bc543ff1de4e11e"
+    # Compute all similarity scores
+    for data in gpt_employee_data_list:
+        similarity = cosine_similarity(data.employee_embedding, new_embedding)
+        if similarity > max_similarity:
+            max_similarity = similarity
+            most_similar_data = data.employee_id
+    return most_similar_data
+
+async def gpt_get_rcvr_id_mostunmatched(
+        gpt_employee_data_list: List[GPTEmployeeData],
+        new_embedding: List[float]
+    ) -> str:
+    """Find the GPTData instance with the most similar embedding to the new_embedding."""
+    min_similarity = 1.0
+    most_similar_data = None
+
+    if not gpt_employee_data_list:
+        return "2f089e4813ad4d028bc543ff1de4e11e"
+    # Compute all similarity scores
+    for data in gpt_employee_data_list:
+        similarity = cosine_similarity(data.employee_embedding, new_embedding)
+        if similarity < min_similarity:
+            min_similarity = similarity
+            most_similar_data = data.employee_id
+    return most_similar_data
+
 # async def main():
 #     result = await get_embedding("I am a bad guy")
 #     print(result)

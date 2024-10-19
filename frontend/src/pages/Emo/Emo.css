@@ -2,17 +2,20 @@
 .emo-layout {
   display: flex;
   height: 100vh;
-  background-color: #f0f2f5;
+  /* background-color: #f0f2f5; */
 }
 
 /* 側邊欄：固定寬度 */
 .emo-sider {
-  position: fixed; /* 固定在左側 */
+  position: fixed;
+  /* 固定在左側 */
   top: 0;
   left: 0;
   height: 100vh;
-  width: 20%; /* 縮小側邊欄的寬度為 15% */
-  min-width: 200px; /* 設置最小寬度避免側邊欄過窄 */
+  width: 20%;
+  /* 縮小側邊欄的寬度為 15% */
+  min-width: 200px;
+  /* 設置最小寬度避免側邊欄過窄 */
   background-color: #fff;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
   overflow: auto;
@@ -29,14 +32,18 @@
 
 /* 主內容區域 */
 .emo-content {
-  position: fixed; /* 固定在左側 */
+  position: fixed;
+  /* 固定在左側 */
   top: 0;
-  left: 23%; /* 確保內容區域從側邊欄後開始顯示 */
+  left: 23%;
+  /* 確保內容區域從側邊欄後開始顯示 */
   padding: 24px;
   background-color: #f0f2f5;
   overflow-y: auto;
-  width: 70%; /* 使用百分比寬度讓內容區佔據 85% 的剩餘空間 */
-  box-sizing: border-box; /* 確保 padding 不影響內容寬度 */
+  width: 70%;
+  /* 使用百分比寬度讓內容區佔據 85% 的剩餘空間 */
+  box-sizing: border-box;
+  /* 確保 padding 不影響內容寬度 */
 }
 
 /* 卡片樣式 */
@@ -64,14 +71,28 @@
 /* 信箱圖示 */
 .mailbox-icon {
   position: fixed;
-  bottom: 20px; 
-  right: 20px; 
-  width: 150px; 
-  height: auto; /* 自動調整高度 */
-  cursor: pointer; /* 當滑鼠懸停時顯示手勢 */
+  bottom: 20px;
+  right: 20px;
+  width: 150px;
+  height: auto;
+  /* 自動調整高度 */
+  cursor: pointer;
+  /* 當滑鼠懸停時顯示手勢 */
   transition: transform 0.3s ease;
 }
 
 .mailbox-icon:hover {
   transform: scale(1.1);
+}
+
+.create-emo-sprite {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  width: 150px;
+  /* Adjust the size as needed */
+  height: 100px;
+  /* Adjust the size as needed */
+  cursor: pointer;
+  object-fit: contain;
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback} from 'react';
 import axios from 'axios';
 import './Home.css'; // Import the CSS file
 import { useNavigate } from 'react-router-dom';
@@ -12,6 +12,7 @@ const Home: React.FC = () => {
   const [errorEmo, setErrorEmo] = useState<string | null>(null);
   const [techProb, setTechProb] = useState<string | null>(null);
   const [emoProb, setEmoProb] = useState<string | null>(null);
+  const [emoRcvrId, setEmoRcvrId] = useState<string | null>(null);
   const [paragraph, setParagraph] = useState(''); // Adding paragraph state for input form
   
   const [hash, setHash] = useState(window.location.hash);
@@ -38,7 +39,7 @@ const Home: React.FC = () => {
     setOpen(false);
   };
 
-  useEffect(() => {
+  useCallback(() => {
     const handleHashChange = () => {
       setHash(window.location.hash);
       if (window.location.hash === '#response') {
@@ -187,14 +188,25 @@ const Home: React.FC = () => {
     }
   };
 
-  const handleEmoProbSubmit = async () => {
-    setLoadingEmo(true);
-    setErrorEmo(null);
+  const getEmployeeGPTData = async () => {
     try {
+      const response = await axios.get("/api/employee/embeddings");
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching employee embeddings:', error);
+      throw error; // Rethrow to allow the caller to handle it
+    }
+  }
+  
+
+  const getMatchRcvrId = async () => {
+    try {
+      const employeeEmbeddings = await getEmployeeGPTData();
       const response = await axios.post(
-        '/api/submit-emoprob',
+        '/api/search/matchrcvr',
         {
-          emoProb,
+          employee_info_list: employeeEmbeddings, // Changed to snake_case
+          msg: user.id // Consider renaming if it's an ID
         },
         {
           headers: {
@@ -202,8 +214,9 @@ const Home: React.FC = () => {
           },
         }
       );
-
-      alert('Emotional problem submitted successfully!');
+      console.log(response.data.msg);
+      setEmoRcvrId(response.data.msg);
+      alert('Emotional problem submitted successfully to a match!');
     } catch (error) {
       setErrorEmo('Failed to submit the emotional problem');
       console.error('Error submitting emotional problem:', error);
@@ -212,7 +225,90 @@ const Home: React.FC = () => {
     }
   };
 
-  
+  const getUnMatchRcvrId = async () => {
+    try {
+      const employeeEmbeddings = await getEmployeeGPTData();
+      const response = await axios.post(
+        '/api/search/unmatchrcvr',
+        {
+          employee_info_list: employeeEmbeddings, // Changed to snake_case
+          msg: user.id // Consider renaming if it's an ID
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      setEmoRcvrId(response.data.msg);
+      alert('Emotional problem submitted successfully to a stranger!');
+    } catch (error) {
+      setErrorEmo('Failed to submit the emotional problem');
+      console.error('Error submitting emotional problem:', error);
+    } finally {
+      setLoadingEmo(false);
+    }
+  };
+
+  const sendEmoProbSubmitToSame = async () => {
+    setLoadingEmo(true);
+    setErrorEmo(null);
+    try {
+      await getMatchRcvrId();
+      // console.log("rcvr",emoProb)
+      const response = await axios.post(
+        '/api/emomsg',
+        {
+          sender_id: user.id, // Changed to snake_case
+          content: emoProb, // Consider renaming if it's an ID
+          rcvr_id: emoRcvrId
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      console.log(response.data);
+      alert('Emotional problem submitted successfully to a match!');
+      navigate('/emo')
+    } catch (error) {
+      setErrorEmo('Failed to submit the emotional problem');
+      console.error('Error submitting emotional problem:', error);
+    } finally {
+      setLoadingEmo(false);
+    }
+  };
+
+  const sendEmoProbSubmitToDiff = async () => {
+    setLoadingEmo(true);
+    setErrorEmo(null);
+    try {
+      await getUnMatchRcvrId();
+      console.log(ma)
+      const response = await axios.post(
+        '/api/emomsg',
+        {
+          sender_id: user.id, // Changed to snake_case
+          content: emoProb, // Consider renaming if it's an ID
+          rcvr_id: emoRcvrId
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      console.log(response.data);
+      alert('Emotional problem submitted successfully to a match!');
+      navigate('/emo')
+    } catch (error) {
+      setErrorEmo('Failed to submit the emotional problem');
+      console.error('Error submitting emotional problem:', error);
+    } finally {
+      setLoadingEmo(false);
+    }
+  };
 
   // Function for rendering no response UI
   const renderNoResponseUI = () => (
@@ -296,8 +392,13 @@ const Home: React.FC = () => {
               }}
             ></textarea>
             <br />
-            <button onClick={handleEmoProbSubmit} disabled={loadingEmo}>
-              {loadingEmo ? 'Submitting...' : 'Submit Emotional'}
+            <button onClick={sendEmoProbSubmitToSame} disabled={loadingEmo}>
+              {loadingEmo ? 'Submitting...' : '傳給同溫層'}
+            </button>
+
+            {' '}
+            <button onClick={sendEmoProbSubmitToDiff} disabled={loadingEmo}>
+              {loadingEmo ? 'Submitting...' : '傳給神秘人士'}
             </button>
             {errorEmo && <p style={{ color: 'red' }}>{errorEmo}</p>}
           </div>
