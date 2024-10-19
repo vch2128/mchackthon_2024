@@ -14,7 +14,7 @@ interface CommentListProps {
 }
 
 const CommentList: React.FC<CommentListProps> = ({ comments, refetchComments, isSender }) => {
-
+  
   const avatarUrl = "https://shoplineimg.com/643616b7087ae8002271ceb2/64e073d381afe80022a66ebc/1200x.webp?source_format=png"; // Define the avatar URL
 
   const handleSetBestComment = async (tech_post_id: string, commentId: string, setBest: boolean, comment_sender_id: string) => {

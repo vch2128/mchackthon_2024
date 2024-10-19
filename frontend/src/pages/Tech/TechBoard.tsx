@@ -45,7 +45,7 @@ const TechBoard: React.FC<TechBoardProps> = ({ isSearching, searchQuery }) => {
   }, [isSearching, searchQuery])
 
   return (
-    <div >
+    <div style={{ marginBottom: '20px' }}>
         {<PostWithTabs allposts={posts} myposts={senderPosts} />}
     </div>
   )
