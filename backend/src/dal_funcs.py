@@ -71,6 +71,31 @@ class EmployeeDAL:
             return Employee.from_doc(doc)
         return None
     
+    async def update_wallet(self, employee_id: str, value: int, session=None) -> int:
+        employee = await self._employee_collection.find_one(
+            {"_id": employee_id},
+            session=session,
+        )
+        if not employee:
+            raise ValueError("Employee not found")
+        if employee["wallet"] + value < 0:
+            raise ValueError("Insufficient funds")
+        new_wallet = employee["wallet"] + value
+        await self._employee_collection.update_one(
+            {"_id": employee_id},
+            {"$set": {"wallet": new_wallet}},
+            session=session,
+        )
+        return new_wallet
+    
+    async def check_wallet(self, employee_id: str, session=None) -> int:
+        employee = await self._employee_collection.find_one(
+            {"_id": employee_id},
+            session=session,
+        )
+        if not employee:
+            raise ValueError("Employee not found")
+        return employee["wallet"]
     
     async def find_similar_employee(self, sender_id: str, session=None) -> Optional[Employee]:
         sender = await self._employee_collection.find_one(
