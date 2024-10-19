@@ -1,7 +1,6 @@
-import React, {useContext, useState, useEffect } from 'react';
 import { List } from 'antd';
 import { Comment } from '@ant-design/compatible';
-import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import { CheckCircleOutlined} from '@ant-design/icons';
 import { Comment_t } from '../types/comment';
 import { updateBestComment } from '../types/post';
 import dayjs from 'dayjs';

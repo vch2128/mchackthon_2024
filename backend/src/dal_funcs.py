@@ -2,6 +2,7 @@
 from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorCollection
 from pymongo import ReturnDocument
+from datetime import datetime
 from uuid import uuid4
 from typing import Optional, AsyncGenerator, List
 from gpt import gpt_get_topic
