@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useContext, useCallback} from 'react';
+import React, { useState, useContext, useCallback} from 'react';
 import axios from 'axios';
 import './Home.css'; // Import the CSS file
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
-// import { Button, Modal } from 'antd';
-import { Modal, Avatar, Popover, Typography, Divider } from 'antd';
+import { Modal, Avatar, Popover, Typography, Divider, notification } from 'antd';
 import { QuestionOutlined } from '@ant-design/icons';
 
 const { Title } = Typography;
@@ -75,6 +74,10 @@ const Home: React.FC = () => {
       const data = response.data;
       console.log(data)
       navigate("/tech")
+      notification.success({
+        message: 'Technical problem submitted successfully!',
+        duration: 3,
+      });
     } catch (error) {
       setErrorTech('Failed to submit the paragraph');
       console.error('Error submitting paragraph:', error);
@@ -133,8 +136,12 @@ const Home: React.FC = () => {
       console.log(response.data);
       return response.data.msg
     } catch (error) {
-      setErrorTech('Failed to getSimilarTechId');
-      console.error('Error submitting getSimilarTechId:', error);
+      notification.error({
+        message: 'Failed to get similar posts. Searching...',
+        duration: 3,
+      });
+      // setErrorTech('Failed to getSimilarTechId');
+      // console.error('Error submitting getSimilarTechId:', error);
     }
   }
 
@@ -185,8 +192,8 @@ const Home: React.FC = () => {
       showModal()
 
     } catch (error) {
-      setErrorTech('Failed to submit the technical problem');
-      console.error('Error submitting technical problem:', error);
+      // setErrorTech('Failed to submit the technical problem');
+      // console.error('Error submitting technical problem:', error);
     } finally {
       setLoadingTech(false);
     }
@@ -210,7 +217,7 @@ const Home: React.FC = () => {
         '/api/search/matchrcvr',
         {
           employee_info_list: employeeEmbeddings, // Changed to snake_case
-          msg: user.id // Consider renaming if it's an ID
+          msg: user!.id // Consider renaming if it's an ID
         },
         {
           headers: {
@@ -220,10 +227,13 @@ const Home: React.FC = () => {
       );
       console.log(response.data.msg);
       setEmoRcvrId(response.data.msg);
-      alert('Emotional problem submitted successfully to a match!');
+      notification.success({
+        message: 'Emotional problem submitted successfully to a match!',
+        duration: 3,
+      });
     } catch (error) {
-      setErrorEmo('Failed to submit the emotional problem');
-      console.error('Error submitting emotional problem:', error);
+      // setErrorEmo('Failed to submit the emotional problem');
+      // console.error('Error submitting emotional problem:', error);
     } finally {
       setLoadingEmo(false);
     }
@@ -236,7 +246,7 @@ const Home: React.FC = () => {
         '/api/search/unmatchrcvr',
         {
           employee_info_list: employeeEmbeddings, // Changed to snake_case
-          msg: user.id // Consider renaming if it's an ID
+          msg: user!.id // Consider renaming if it's an ID
         },
         {
           headers: {
@@ -245,10 +255,13 @@ const Home: React.FC = () => {
         }
       );
       setEmoRcvrId(response.data.msg);
-      alert('Emotional problem submitted successfully to a stranger!');
+      notification.success({
+        message: 'Emotional problem submitted successfully to a stranger!',
+        duration: 3,
+      });
     } catch (error) {
-      setErrorEmo('Failed to submit the emotional problem');
-      console.error('Error submitting emotional problem:', error);
+      // setErrorEmo('Failed to submit the emotional problem');
+      // console.error('Error submitting emotional problem:', error);
     } finally {
       setLoadingEmo(false);
     }
@@ -274,7 +287,10 @@ const Home: React.FC = () => {
         }
       );
       console.log(response.data);
-      alert('Emotional problem submitted successfully to a match!');
+      notification.success({
+        message: 'Emotional problem submitted successfully to a match!',
+        duration: 3,
+      });
       navigate('/emo')
     } catch (error) {
       // setErrorEmo('Failed to submit the emotional problem');
@@ -289,10 +305,14 @@ const Home: React.FC = () => {
     setErrorEmo(null);
     try {
       await getUnMatchRcvrId();
+<<<<<<< HEAD
+=======
+      // console.log(ma)
+>>>>>>> Henry
       const response = await axios.post(
         '/api/emomsg',
         {
-          sender_id: user.id, // Changed to snake_case
+          sender_id: user!.id, // Changed to snake_case
           content: emoProb, // Consider renaming if it's an ID
           rcvr_id: emoRcvrId
         },
@@ -303,7 +323,10 @@ const Home: React.FC = () => {
         }
       );
       console.log(response.data);
-      alert('Emotional problem submitted successfully to a match!');
+      notification.success({
+        message: 'Emotional problem submitted successfully to a stranger!',
+        duration: 3,
+      });
       navigate('/emo')
     } catch (error) {
       // setErrorEmo('Failed to submit the emotional problem');
@@ -315,10 +338,12 @@ const Home: React.FC = () => {
 
   // Function for rendering no response UI
   const renderNoResponseUI = () => (
-    <div>
-      <Title level={2}>Welcome,  {user?.name}</Title>
-      <Divider />
-      <div style={{ marginTop: '50px', marginBottom: '50px' }}>
+    <div style={{ height: '100vh', overflowY: 'auto' ,scrollbarWidth: 'none', msOverflowStyle: 'none'}}>
+      <div className="fixed-header2">
+        <h1>Home Page</h1>
+      </div>
+
+      <div style={{ marginTop: '100px', marginBottom: '50px' }}>
         <textarea
           placeholder="Tell me about your problems..."
           value={paragraph}
@@ -339,16 +364,16 @@ const Home: React.FC = () => {
     </div>
   );
 
-  // Function for rendering response UI
   const renderResponseUI = () => (
-    <div>
+    <div style={{ height: '100vh', overflowY: 'auto' ,scrollbarWidth: 'none', msOverflowStyle: 'none'}}>
 
-      <Title level={2}>Home Page</Title>
-      <Divider />
-
-      <div style={{ marginTop: '30px', marginBottom: '30px' }}>
-        <div className="container">
-          <div className="box box-left">
+      <div style={{ marginTop: '50px', marginBottom: '50px' }}>
+        <div className="fixed-header">
+          <h1>Home Page</h1>
+        </div>
+        
+        <div className="container" style={{ display: 'flex', flexWrap: 'wrap' }}>
+          <div className="box box-left" style={{ flex: '1', minWidth: '300px' }}>
             <h2>Technical Part:</h2>
             <textarea
               value={techProb || ''}
@@ -356,15 +381,18 @@ const Home: React.FC = () => {
                 setTechProb(e.target.value)
               }
               rows={20}
-              cols={80}
+              cols={75}
               placeholder="Technical part will be displayed here..."
               style={{
                 backgroundColor: '#f0f0f0',
                 color: 'black',
                 padding: '10px',
                 borderRadius: '5px',
+                width: '100%',
+                boxSizing: 'border-box',
               }}
             ></textarea>
+            <br />
             <br />
             <button onClick={directlySubmit} disabled={loadingTech}>
               {loadingTech ? 'Submitting...' : 'Submit Technical'}
@@ -375,8 +403,8 @@ const Home: React.FC = () => {
             </button>
             {errorTech && <p style={{ color: 'red' }}>{errorTech}</p>}
           </div>
-
-          <div className="box box-right">
+  
+          <div className="box box-right" style={{ flex: '1', minWidth: '300px' }}>
             <h2>Emotional Part:</h2>
             <textarea
               value={emoProb || ''}
@@ -391,13 +419,15 @@ const Home: React.FC = () => {
                 color: 'black',
                 padding: '10px',
                 borderRadius: '5px',
+                width: '100%',
+                boxSizing: 'border-box',
               }}
             ></textarea>
+            <br />
             <br />
             <button onClick={sendEmoProbSubmitToSame} disabled={loadingEmo}>
               {loadingEmo ? 'Submitting...' : '傳給同溫層'}
             </button>
-
             {' '}
             <button onClick={sendEmoProbSubmitToDiff} disabled={loadingEmo}>
               {loadingEmo ? 'Submitting...' : '傳給神秘人士'}
@@ -421,6 +451,8 @@ const Home: React.FC = () => {
       </div>
     </div>
   );
+  
+  
 
   return (
     <div>
