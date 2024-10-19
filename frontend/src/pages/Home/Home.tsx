@@ -3,7 +3,11 @@ import axios from 'axios';
 import './Home.css'; // Import the CSS file
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
-import { Button, Modal } from 'antd';
+// import { Button, Modal } from 'antd';
+import { Modal, Avatar, Popover, Typography, Divider } from 'antd';
+import { QuestionOutlined } from '@ant-design/icons';
+
+const { Title } = Typography;
 
 const Home: React.FC = () => {
   const [loadingTech, setLoadingTech] = useState(false);
@@ -273,8 +277,8 @@ const Home: React.FC = () => {
       alert('Emotional problem submitted successfully to a match!');
       navigate('/emo')
     } catch (error) {
-      setErrorEmo('Failed to submit the emotional problem');
-      console.error('Error submitting emotional problem:', error);
+      // setErrorEmo('Failed to submit the emotional problem');
+      // console.error('Error submitting emotional problem:', error);
     } finally {
       setLoadingEmo(false);
     }
@@ -285,7 +289,6 @@ const Home: React.FC = () => {
     setErrorEmo(null);
     try {
       await getUnMatchRcvrId();
-      console.log(ma)
       const response = await axios.post(
         '/api/emomsg',
         {
@@ -303,8 +306,8 @@ const Home: React.FC = () => {
       alert('Emotional problem submitted successfully to a match!');
       navigate('/emo')
     } catch (error) {
-      setErrorEmo('Failed to submit the emotional problem');
-      console.error('Error submitting emotional problem:', error);
+      // setErrorEmo('Failed to submit the emotional problem');
+      // console.error('Error submitting emotional problem:', error);
     } finally {
       setLoadingEmo(false);
     }
@@ -313,13 +316,11 @@ const Home: React.FC = () => {
   // Function for rendering no response UI
   const renderNoResponseUI = () => (
     <div>
-      <div className="fixed-header">
-        <h1>Home Page</h1>
-      </div>
-
-      <div style={{ marginTop: '100px', marginBottom: '50px' }}>
+      <Title level={2}>Welcome,  {user?.name}</Title>
+      <Divider />
+      <div style={{ marginTop: '50px', marginBottom: '50px' }}>
         <textarea
-          placeholder="Type your paragraph here..."
+          placeholder="Tell me about your problems..."
           value={paragraph}
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
             setParagraph(e.target.value)
@@ -341,10 +342,11 @@ const Home: React.FC = () => {
   // Function for rendering response UI
   const renderResponseUI = () => (
     <div>
-      <div className="fixed-header">
-        <h1>Home Page</h1>
-      </div>
-      <div style={{ marginTop: '100px', marginBottom: '50px' }}>
+
+      <Title level={2}>Home Page</Title>
+      <Divider />
+
+      <div style={{ marginTop: '30px', marginBottom: '30px' }}>
         <div className="container">
           <div className="box box-left">
             <h2>Technical Part:</h2>
@@ -422,6 +424,25 @@ const Home: React.FC = () => {
 
   return (
     <div>
+      <div style={{ position: 'absolute', top: 70, right: 10 }}>
+        <Popover 
+          content={
+            <>
+              Describe the issue you're facing at work today, and we'll assist you in finding a solution.
+              <br />
+              You can also connect with others who are dealing with similar challenges.
+            </>}
+          title="Help" 
+          trigger="click"
+          placement="bottomRight"  // Ensure popover appears near the button (comment outside JSX)
+        >
+          <Avatar
+            style={{ cursor: 'pointer' }}
+            icon={<QuestionOutlined />}
+            size="large"
+          />
+       </Popover>
+      </div>
       <Modal
         title="History advice!"
         open={open}

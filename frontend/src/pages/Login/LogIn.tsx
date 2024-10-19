@@ -4,7 +4,9 @@ import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
+import { Typography, Row, Col } from 'antd';
 
+const { Title } = Typography;
 const Login: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -38,8 +40,11 @@ const Login: React.FC = () => {
   };
   const onpage = ( location.pathname == '/login' )
   return (<>
-    { onpage && 
-      (<form onSubmit={handleLogin}>
+    <Row justify="center" align="middle" >
+        <Title level={2}>Login</Title>
+        { onpage && 
+      (
+      <form onSubmit={handleLogin}>
       <div>
         <label>Username:</label>
         <input
@@ -56,9 +61,10 @@ const Login: React.FC = () => {
           onChange={(e) => setPassword(e.target.value)}
         />
       </div>
-      <button type="submit">submit</button>
-    </form>)
-    }
+          <button type="submit">submit</button>
+        </form>)
+      }
+    </Row>
   </>);
 };
 

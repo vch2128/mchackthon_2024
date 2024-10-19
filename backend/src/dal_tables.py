@@ -38,7 +38,7 @@ class TechPost(BaseModel):
     topic: str
     content: str
     sender_id: str
-    answered: bool
+    answered: bool = False
     best_comment_id: Optional[str]
 
     @staticmethod
@@ -49,7 +49,7 @@ class TechPost(BaseModel):
             topic=doc["topic"],
             content=doc["content"],
             sender_id=str(doc["sender_id"]),
-            answered=doc["answered"],
+            answered=doc.get("answered", False),
             best_comment_id=str(doc["best_comment_id"]) if "best_comment_id" in doc else None,
         )
 
@@ -59,6 +59,7 @@ class TechComment(BaseModel):
     content: str
     sender_id: str
     tech_post_id: str
+    is_best: bool
 
     @staticmethod
     def from_doc(doc) -> "TechComment":
@@ -68,6 +69,7 @@ class TechComment(BaseModel):
             content=doc["content"],
             sender_id=str(doc["sender_id"]),
             tech_post_id=str(doc["tech_post_id"]),
+            is_best=doc.get("is_best", False)
         )
 
 class EmoMsg(BaseModel):
