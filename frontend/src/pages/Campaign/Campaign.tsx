@@ -1,34 +1,40 @@
-import React, { useState, useContext, useEffect} from 'react';
+import React, { useState, useContext, useEffect, useCallback} from 'react';
 import { UserContext } from '../../context/UserContext';
 import { useLocation } from 'react-router-dom';
 import {
   Layout,
-  Typography,
   List,
   Card,
   Button,
-  Drawer,
   Modal,
+  message,
+  Popconfirm
 } from 'antd';
+import axios from 'axios';
+import dining from '../../assets/dining.png';
 
-import teddyBear from './images/teddy-bear.jpg';
-import chocolateBox from './images/chocolate-box.jpg';
-import flowerBouquet from './images/flower-bouquet.jpg';
 
-const { Header, Content } = Layout;
-const { Title } = Typography;
+const { Content } = Layout;
 
-interface Product {
+interface CampaignData {
   id: string;
   name: string;
+  description: string;
   price: number;
-  image: string;
-  num: number;
-  expire: Date;
+  image_path: string;
+  quantity: number;
+  expire: string; // Store as string since ISO date strings are usually used in APIs
+  attenders_id: string[];
 }
 
-interface CartItem extends Product {
-  quantity: number;
+interface CampaignUpdate {
+  name?: string;
+  description?: string;
+  price?: number;
+  image_path?: string;
+  quantity?: number;
+  lasting_hours?: number;
+  attenders_id?: string[];
 }
 
 const CountdownTimer = ({ expire }: { expire: Date }) => {
@@ -51,12 +57,12 @@ const CountdownTimer = ({ expire }: { expire: Date }) => {
   const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
 
   useEffect(() => {
-    const timer = setTimeout(() => {
+    const interval = setInterval(() => {
       setTimeLeft(calculateTimeLeft());
     }, 1000);
-
-    return () => clearTimeout(timer); // Clean up the timer on component unmount
-  }, [timeLeft, expire]);
+  
+    return () => clearInterval(interval); // Clean up the interval on component unmount
+  }, [expire]);
 
   return (
     <div>
@@ -65,110 +71,218 @@ const CountdownTimer = ({ expire }: { expire: Date }) => {
   );
 };
 
-const Campaign: React.FC = () => {
-  const [cart, setCart] = useState<CartItem[]>([]);
-  const [cartVisible, setCartVisible] = useState<boolean>(false);
-  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-  const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
-
-  const { user } = useContext(UserContext);
-  
-  const products: Product[] = [
-    { id: "1", name: 'Teddy Bear', price: 25.0, image: teddyBear, num: 4, expire: new Date(new Date().setHours(new Date().getHours() + 2)) },
-    { id: "2", name: 'Chocolate Box', price: 15.0, image: chocolateBox, num: 4, expire: new Date(new Date().setHours(new Date().getHours() + 2)) },
-    { id: "3", name: 'Flower Bouquet', price: 30.0, image: flowerBouquet, num: 4, expire: new Date(new Date().setHours(new Date().getHours() + 2)) },
-    { id: "4", name: 'Flower Bouquet', price: 30.0, image: flowerBouquet, num: 4, expire: new Date(new Date().setHours(new Date().getHours() + 2)) },
-    { id: "5", name: 'Flower Bouquet', price: 30.0, image: flowerBouquet, num: 4, expire: new Date(new Date().setHours(new Date().getHours() + 2)) },
-    { id: "6", name: 'Flower Bouquet', price: 30.0, image: flowerBouquet, num: 4, expire: new Date(new Date().setHours(new Date().getHours() + 2)) },
-    { id: "7", name: 'Flower Bouquet', price: 30.0, image: flowerBouquet, num: 4, expire: new Date(new Date().setHours(new Date().getHours() + 2)) },    
-  ];
-
-  const isVerified = async (product: Product) => {
-    if (user){
-      if (user.wallet > product.price && product.num > 0){
-        return true;
-      }
-    }
-    return false;
-  };
-
-  const handleOrder = async (product: Product): Promise<void> => {
-    const flag = await isVerified(product);
-    if (flag){
-      setCart(
-        cart.map((item) =>
-          item.id === product.id
-            ? { ...item, num: item.num-1 }
-            : item
-        )
-      );
-    }else {
-      return 
-    }
-  }
-
-  const removeFromCart = (productToRemove: CartItem): void => {
-    setCart(cart.filter((product) => product.id !== productToRemove.id));
-  };
-
-  const hideCart = (): void => {
-    setCartVisible(false);
-  };
-
-  const checkout = (): void => {
-    setIsModalVisible(true);
-  };
-
-  const handleOk = (): void => {
-    setCart([]);
-    setIsModalVisible(false);
-    hideCart();
-  };
-
-  const handleCancel = (): void => {
-    setIsModalVisible(false);
-  };
-
-  const onQuantityChange = (productId: string, value: number | null): void => {
-    if (value && value > 0) {
-      setQuantities({ ...quantities, [productId]: value });
+const updateCampaign = async (campaignId: string, campaignUpdate: CampaignUpdate) => {
+  try {
+    const response = await axios.put(`/api/campaign/${campaignId}`, campaignUpdate, {
+      headers: { 'Content-Type': 'application/json' },
+    });
+    console.log('Campaign updated successfully:', response.data);
+    return response.data; // Return the updated campaign data
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error('Error updating campaign:', error.response?.data);
     } else {
-      setQuantities({ ...quantities, [productId]: 1 });
+      console.error('Unexpected error:', error);
     }
+    throw error;
+  }
+};
+
+
+const getEmployeeWallet = async (employeeId: string): Promise<number> => {
+  try {
+    const response = await axios.get(`/api/employee/get_wallet/${employeeId}`);
+    return response.data; // This will return the wallet value (int)
+  } catch (error) {
+    console.error('Error fetching wallet:', error);
+    throw error; // Re-throw the error to handle it elsewhere if needed
+  }
+};
+interface UpdateWalletRequest {
+  employee_id: string;
+  value: number;
+}
+
+const updateEmployeeWallet = async (data: UpdateWalletRequest): Promise<number> => {
+  try {
+    const response = await axios.put('/api/employee/update_wallet', data, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    return response.data; // This will return the updated wallet value (int)
+  } catch (error) {
+    console.error('Error updating wallet:', error);
+    throw error; // Re-throw the error to handle it elsewhere if needed
+  }
+};
+
+const getCampaign = async (campaignId: string) => {
+  try {
+    const response = await axios.get(`/api/campaign/${campaignId}`);
+    return response.data;  // Return the campaign data
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
+const Campaign: React.FC = () => {
+  const { user } = useContext(UserContext);
+  const [campaigns, setCampaigns] = useState([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedCampaign, setSelectedCampaign] = useState<CampaignData | null>(null);
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const success = () => {
+    messageApi.open({
+      type: 'success',
+      content: 'Enjoy your trip',
+    });
+  };
+
+  const error_ = (text: string) => {
+    messageApi.open({
+      type: 'error',
+      content: text,
+    });
+  };
+
+  useEffect(() => {
+    const getCampaigns = async () => {
+      try {
+        const response = await axios.get("/api/campaigns");
+        console.log("get campaigns", response.data);
+        setCampaigns(response.data);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+    getCampaigns();
+  }, []);
+  
+
+  const isVerified = async (campaign: CampaignData) => {
+    const moneyRemain = await getEmployeeWallet(user.id)
+    const instantCampaign = await getCampaign(campaign.id)
+    if (instantCampaign==null || moneyRemain==null){
+      return false;
+    } else {
+      return (moneyRemain >= instantCampaign.price && instantCampaign.quantity > 0);
+    }
+  };
+
+  const handleOrder = async (campaign: CampaignData): Promise<void> => {
+    setConfirmLoading(true); // Set loading state
+
+    const getCampaigns = async () => {
+      try {
+        const response = await axios.get("/api/campaigns");
+        console.log("get campaigns", response.data);
+        setCampaigns(response.data);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+
+    const flag = await isVerified(campaign);
+    if (flag) {
+      try {
+        const updatedAttenders = [...campaign.attenders_id, String(user.id)];
+        const campaignUpdate: CampaignUpdate = {
+          quantity: campaign.quantity - 1,
+          attenders_id: updatedAttenders,
+        };
+        
+        const updateWallet : UpdateWalletRequest = {
+          employee_id: user.id,
+          value: -campaign.price,
+        };
+  
+        await updateEmployeeWallet(updateWallet);
+        await updateCampaign(campaign.id, campaignUpdate);
+        await getCampaigns()
+        // Update the local state with the updated campaign data
+        success(); // Show success message
+        setTimeout(() => {
+          window.location.reload(); // Reload the page after a successful order
+        }, 500); // Optional delay for the success message to be seen
+      } catch (err) {
+        console.log("fail to place order:", err)
+        error_("Failed to place order!"); // Show error message
+      } finally {
+        setConfirmLoading(false); // Reset loading state
+        setOpenPopconfirmId(null); // Close the popconfirm
+      }
+    } else {
+      error_("Insufficient funds or no available quantity.");
+      setConfirmLoading(false); // Reset loading state if order fails
+    }
+  };
+
+  const showCampaignDetails = (campaign: CampaignData) => {
+    setSelectedCampaign(campaign);  // Set the selected campaign
+    setIsModalVisible(true);  // Show the modal
+  };
+
+  const handleCloseModal = () => {
+    setIsModalVisible(false);  // Hide the modal
+  };
+
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [openPopconfirmId, setOpenPopconfirmId] = useState<string | null>(null);
+  const showPopconfirm = (campaignId: string) => {
+    setOpenPopconfirmId(campaignId); // Set the campaign ID to open Popconfirm for
+  };
+  
+  const handleCancel = () => {
+    setOpenPopconfirmId(null); // Close all Popconfirms by resetting the state
   };
 
   const renderProducts = (): JSX.Element => (
     <List
       grid={{ gutter: [40, 20], column: 2 }} // Adjust rowGutter to increase vertical spacing
-      dataSource={products}
-      renderItem={(product: Product) => (
-        <List.Item key={product.id}>
-          <CountdownTimer expire={product.expire} />
+      dataSource={campaigns.filter((campaign: CampaignData) => new Date(campaign.expire) > new Date())} // Filter out expired campaigns
+      renderItem={(campaign: CampaignData) => (
+        <List.Item key={campaign.id}>
+          <CountdownTimer expire={new Date(campaign.expire)} />
           <Card
             hoverable
             style={{ width: '100%', height: 400 }}
             cover={
-              <img
-                alt={product.name}
-                src={product.image}
-                style={{ height: 250, objectFit: 'contain', margin: 10 }}
-              />
+              <div 
+                style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 250, overflow: 'hidden' }}
+                onClick={() => showCampaignDetails(campaign)}>
+                <img
+                  alt={campaign.name}
+                  src={dining}
+                  style={{ height: '100%', width: '100%', objectFit: 'cover' }}
+                />
+              </div>
             }
             actions={[
               <div key="input" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-                <span>剩餘數量: {product.num}</span>
+                <span>Remains: {campaign.quantity}</span>
               </div>, 
-              <Button
-                type="primary"
-                onClick={() => handleOrder(product)}
+              <Popconfirm
+                title="Confirmation"
+                description="Click OK to confirm the order! Wish you a good day."
+                open={openPopconfirmId === campaign.id} // Only open for the current campaign
+                onConfirm={() => handleOrder(campaign)} // Pass campaign to handleOrder
+                okButtonProps={{ loading: confirmLoading }}
+                onCancel={handleCancel}
               >
-                立即卡位
-              </Button>,
+                <Button
+                  type="primary"
+                  onClick={() => showPopconfirm(campaign.id)} // Open Popconfirm for this campaign
+                >
+                  Order
+                </Button>
+              </Popconfirm>
             ]}
           >
             <Card.Meta
-              title={product.name}
-              description={`$${product.price.toFixed(2)}`}
+              title={campaign.name}
+              description={`$${campaign.price.toFixed(2)}`}
             />
           </Card>
         </List.Item>
@@ -176,73 +290,9 @@ const Campaign: React.FC = () => {
     />
   );
   
-
-  const renderCart = (): JSX.Element => (
-    <>
-      <Drawer
-        title="Your Cart"
-        placement="right"
-        onClose={hideCart}
-        visible={cartVisible}
-        bodyStyle={{ paddingBottom: 80 }}
-      >
-        {cart.length === 0 ? (
-          <p>Your cart is empty</p>
-        ) : (
-          <>
-            <List
-              dataSource={cart}
-              renderItem={(product: CartItem) => (
-                <List.Item
-                  key={product.id}
-                  actions={[
-                    <Button
-                      type="link"
-                      onClick={() => removeFromCart(product)}
-                      key="remove"
-                    >
-                      Remove
-                    </Button>,
-                  ]}
-                >
-                  <List.Item.Meta
-                    title={`${product.name} x${product.quantity}`}
-                    description={`$${(product.price * product.quantity).toFixed(
-                      2
-                    )}`}
-                  />
-                </List.Item>
-              )}
-            />
-            <Title level={4}>
-              Total: $
-              {cart
-                .reduce(
-                  (total: number, product: CartItem) =>
-                    total + product.price * product.quantity,
-                  0
-                )
-                .toFixed(2)}
-            </Title>
-            <Button type="primary" onClick={checkout}>
-              Proceed to Checkout
-            </Button>
-          </>
-        )}
-      </Drawer>
-      <Modal
-        title="Order Confirmation"
-        visible={isModalVisible}
-        onOk={handleOk}
-        onCancel={handleCancel}
-      >
-        <p>Thank you for your purchase!</p>
-      </Modal>
-    </>
-  );
-
   return (
     <Layout >
+      {contextHolder} 
       <Content
         style={{
           padding: '20px',
@@ -254,12 +304,29 @@ const Campaign: React.FC = () => {
           msOverflowStyle: 'none', // Internet Explorer and Edge
         }}
       >
-        <br></br>
-        <br></br>
-        {renderCart()}
+        
         <br></br>
         <br></br>
         {renderProducts()}
+        <Modal
+          title={selectedCampaign?.name}
+          visible={isModalVisible}
+          onCancel={handleCloseModal}
+          footer={[
+            <Button key="back" onClick={handleCloseModal}>
+              Close
+            </Button>
+          ]}
+        >
+          {selectedCampaign && (
+            <div>
+              <p><strong>Description:</strong> {selectedCampaign.description}</p>
+              <p><strong>Price:</strong> ${selectedCampaign.price.toFixed(2)}</p>
+              <p><strong>Quantity Left:</strong> {selectedCampaign.quantity}</p>
+              <p><strong>Expires At:</strong> {new Date(selectedCampaign.expire).toLocaleString()}</p>
+            </div>
+          )}
+        </Modal>
       </Content>
     </Layout>
   );

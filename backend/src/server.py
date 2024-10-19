@@ -9,11 +9,11 @@ from fastapi import FastAPI, status, HTTPException, status, Depends, BackgroundT
 from fastapi.security import OAuth2PasswordRequestForm
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 import uvicorn
 
-from dal_funcs import TechPostDAL, EmployeeDAL, TechCommentDAL, EmoMsgDAL, EmoReplyDAL, GPTDataDAL, GPTEmployeeDataDAL
-from dal_tables import TechPost, Employee, TechComment, EmoMsg, EmoReply, GPTData, GPTEmployeeData
+from dal_funcs import TechPostDAL, EmployeeDAL, TechCommentDAL, EmoMsgDAL, EmoReplyDAL, GPTDataDAL, GPTEmployeeDataDAL, CampaignDataDAL
+from dal_tables import TechPost, Employee, TechComment, EmoMsg, EmoReply, GPTData, GPTEmployeeData, CampaignData
 from authentication import authenticate_user, create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES, pwd_context
 from gpt import gpt_separate_paragraph, get_embedding, find_most_similar, gpt_pre_answer_tech_post, gpt_get_rcvr_id_mostmatched, gpt_get_rcvr_id_mostunmatched
 
@@ -41,7 +41,8 @@ async def lifespan(app: FastAPI):
     emoreply_collection = db.get_collection("emoreply")
     gptdata_collection = db.get_collection("gptdata")
     gptemployeedata_collection = db.get_collection("gptemployeedata")
-
+    campaigndata_collection = db.get_collection("campaigndata")
+    
     # Store in app.state:
     app.state.db_client = client
     app.state.db = db
@@ -52,7 +53,7 @@ async def lifespan(app: FastAPI):
     app.state.emoreply_collection = emoreply_collection
     app.state.gptdata_collection = gptdata_collection
     app.state.gptemployeedata_collection = gptemployeedata_collection
-    
+    app.state.campaigndata_collection = campaigndata_collection
     
     app.techpost_dal    = TechPostDAL(techpost_collection)
     app.employee_dal    = EmployeeDAL(employee_collection)
@@ -61,7 +62,7 @@ async def lifespan(app: FastAPI):
     app.emoreply_dal = EmoReplyDAL(emoreply_collection)
     app.gptdata_dal = GPTDataDAL(gptdata_collection)
     app.gptemployeedata_dal = GPTEmployeeDataDAL(gptemployeedata_collection)
-    
+    app.campaigndata_dal = CampaignDataDAL(campaigndata_collection)
     # Yield back to FastAPI Application:
     yield
 
@@ -134,6 +135,18 @@ async def get_employee_embedding_by_id(employee_id: str) -> GPTEmployeeData:
     if employee_data is None:
         raise HTTPException(status_code=404, detail="Employee not found")
     return employee_data
+
+# get a campaign
+@app.get("/api/campaign/{campaign_id}")
+async def get_a_campaign(campaign_id: str) -> CampaignData:
+    campaign = await app.campaigndata_dal.get_a_campaign(campaign_id)
+    if not campaign:
+        raise HTTPException(status_code=404, detail="Campaign not found")
+    return campaign
+
+@app.get("/api/campaigns")
+async def get_all_campaigns() -> List[CampaignData]:
+    return [i async for i in app.campaigndata_dal.list_all_campaigns()]
 
 # get wallet
 @app.get("/api/employee/get_wallet/{employee_id}")
@@ -369,7 +382,7 @@ async def gpt_devide_problem(paragraph: ParagraphResponseCreate) -> NewParagraph
 @app.post("/api/search/similar", status_code=status.HTTP_201_CREATED)
 async def gpt_get_similar_techpost_id(paragraph: ParagraphResponseCreate) -> NewSingleResponse:
     prob_embed = await get_embedding(paragraph.msg)
-    gpt_data_list = await app.gptdata_dal.list_gpt_data()
+    gpt_data_list = app.gptdata_dal.list_gpt_data()
     gpt_data = await find_most_similar(gpt_data_list, prob_embed)
     return NewSingleResponse(
         msg=gpt_data.tech_post_id
@@ -441,14 +454,73 @@ class NewSearchResponse(BaseModel):
 async def gpt_get_presearched_answer(
         inputData: NewSearchResponseCreate
     ) -> NewSearchResponse:
-    print("ytytyt", inputData.msg)
-    print("ytytyt", inputData.history_answer_list)
     answer = await gpt_pre_answer_tech_post(inputData.msg, inputData.history_answer_list)
     return NewSearchResponse(
         msg=answer
     )
 
+# Pydantic model for Campaign Creation
+class CampaignCreate(BaseModel):
+    name: str
+    description: str
+    price: int
+    image_path: str
+    quantity: int
+    lasting_hours: int
+    attenders_id: Optional[List[str]] = []
+
+# Pydantic model for Campaign Update
+class CampaignUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    price: Optional[int] = None
+    image_path: Optional[str] = ""
+    quantity: Optional[int] = None
+    lasting_hours: Optional[int] = None
+    attenders_id: Optional[List[str]] = []
+
+# create campaign
+@app.post("/api/campaign", status_code=status.HTTP_201_CREATED)
+async def create_campaign(campaign: CampaignCreate) -> CampaignData:
+    campaign_id = await app.campaigndata_dal.create_campaign(
+        name=campaign.name,
+        description=campaign.description,
+        price=campaign.price,
+        image_path=campaign.image_path,
+        quantity=campaign.quantity,
+        lasting_hours=campaign.lasting_hours,
+        attenders_id=campaign.attenders_id
+    )
+    created_campaign = await app.campaigndata_dal.get_a_campaign(campaign_id)
+    if not created_campaign:
+        raise HTTPException(status_code=500, detail="Failed to create campaign")
+    return created_campaign
+
+#update the campaign
+@app.put("/api/campaign/{campaign_id}", status_code=status.HTTP_200_OK)
+async def update_campaign(campaign_id: str, campaign_update: CampaignUpdate):
+    # Attempt to update the campaign using the provided fields
+    updated = await app.campaigndata_dal.update_campaign(
+        id=campaign_id,
+        name=campaign_update.name,
+        description=campaign_update.description,
+        price=campaign_update.price,
+        image_path=campaign_update.image_path,
+        quantity=campaign_update.quantity,
+        lasting_hours=campaign_update.lasting_hours,
+        attenders_id=campaign_update.attenders_id
+    )
     
+    if not updated:
+        raise HTTPException(status_code=404, detail="Campaign not found or no changes made")
+
+    # Fetch the updated campaign details to return
+    updated_campaign = await app.campaigndata_dal.get_a_campaign(campaign_id)
+    if not updated_campaign:
+        raise HTTPException(status_code=500, detail="Failed to update campaign")
+
+    return updated_campaign
+
 @app.post("/api/login")
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     user = await authenticate_user(form_data.username, form_data.password, app.employee_dal)
