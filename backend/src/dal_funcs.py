@@ -19,6 +19,10 @@ class EmployeeDAL:
         account: str,
         password: str,
         department: str, 
+        age: int,
+        seniority: int,
+        region: str,
+        position: str,
         wallet: Optional[int] = 30, 
         score: Optional[int] = 0,
         session=None
@@ -30,6 +34,10 @@ class EmployeeDAL:
                 "account": account,
                 "password": password,
                 "department": department,
+                "age": age,
+                "seniority": seniority,
+                "region": region,
+                "position": position,
                 "wallet": wallet,
                 "score": score,
             },
@@ -186,7 +194,6 @@ class EmoMsgDAL:
         session=None,
     ) -> str:
         gpt_topic = await gpt_get_topic(content)
-        gpt_rcvr_id = await gpt_get_rcvr_id(sender_id)
         response = await self._emo_msg_collection.insert_one(
             {
                 "_id": uuid4().hex,
@@ -329,10 +336,22 @@ class GPTEmployeeDataDAL:
                 "employee_id": employee_id,
                 "employee_embedding": employee_embedding
             },
-            session=session,
+            session=session,  # Ensure session is properly handled if provided
         )
         return str(response.inserted_id)
     
+    async def get_an_embedding(
+        self, id: str | ObjectId, session=None
+    ) -> Optional[GPTEmployeeData]:
+        doc = await self._gpt_employee_data_collection.find_one(
+            {"employee_id": str(id)},
+            session=session,
+        )
+        if doc:
+            return GPTEmployeeData.from_doc(doc)
+        return None
+ 
     async def list_gpt_employee_data(self, session=None):
-        async for doc in self._gpt_data_collection.find({}, session=session):
-            yield GPTData.from_doc(doc)
+        async for doc in self._gpt_employee_data_collection.find({}, session=session):
+            yield GPTEmployeeData.from_doc(doc) 
+    

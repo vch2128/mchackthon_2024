@@ -8,6 +8,10 @@ class Employee(BaseModel):
     account: str
     password: str
     department: str
+    age : int
+    position: str
+    seniority: int
+    region: str
     wallet: int
     score: int
 
@@ -19,9 +23,14 @@ class Employee(BaseModel):
             account=doc["account"],
             password=doc["password"],
             department=doc["department"],
+            age=doc["age"],
+            position=doc["position"],
+            seniority=doc["seniority"],
+            region=doc["region"],
             wallet=doc["wallet"],
             score=doc["score"],
         )
+
 
 class TechPost(BaseModel):
     id: str
@@ -126,5 +135,5 @@ class GPTEmployeeData(BaseModel):
         return GPTEmployeeData(
             id=str(doc["_id"]),
             employee_id=doc["employee_id"],
-            tech_post_embedding=doc["employee_embedding"]
+            employee_embedding=doc["employee_embedding"]  # Corrected this line
         )

@@ -170,21 +170,37 @@ async def gpt_pre_answer_tech_post(problem, history_answer_list):
 async def gpt_get_rcvr_id_mostmatched(
         gpt_employee_data_list: List[GPTEmployeeData],
         new_embedding: List[float]
-    ) -> GPTData:
+    ) -> str:
     """Find the GPTData instance with the most similar embedding to the new_embedding."""
     max_similarity = -1.0
     most_similar_data = None
 
     if not gpt_employee_data_list:
         return "2f089e4813ad4d028bc543ff1de4e11e"
-
     # Compute all similarity scores
-    async for data in gpt_employee_data_list:
-        similarity = cosine_similarity(data.tech_post_embedding, new_embedding)
+    for data in gpt_employee_data_list:
+        similarity = cosine_similarity(data.employee_embedding, new_embedding)
         if similarity > max_similarity:
             max_similarity = similarity
-            most_similar_data = data
-    print(most_similar_data.tech_post_id)
+            most_similar_data = data.employee_id
+    return most_similar_data
+
+async def gpt_get_rcvr_id_mostunmatched(
+        gpt_employee_data_list: List[GPTEmployeeData],
+        new_embedding: List[float]
+    ) -> str:
+    """Find the GPTData instance with the most similar embedding to the new_embedding."""
+    min_similarity = 1.0
+    most_similar_data = None
+
+    if not gpt_employee_data_list:
+        return "2f089e4813ad4d028bc543ff1de4e11e"
+    # Compute all similarity scores
+    for data in gpt_employee_data_list:
+        similarity = cosine_similarity(data.employee_embedding, new_embedding)
+        if similarity < min_similarity:
+            min_similarity = similarity
+            most_similar_data = data.employee_id
     return most_similar_data
 
 # async def main():
