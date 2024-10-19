@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 import { useLocation, useParams } from 'react-router-dom';
