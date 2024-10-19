@@ -2,32 +2,46 @@
 import './App.css';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import PageRouter from './PageRouter';
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { UserContext } from './context/UserContext';
-import { Layout, Menu, Avatar, Popover, Button } from 'antd';
+import { Avatar, Popover} from 'antd';
 import { UserOutlined } from '@ant-design/icons'
+import axios from 'axios';
 
-function App() {
+interface Employee {
+  id: string;
+  name: string;
+  account: string;
+  password: string;
+  department: string;
+  age: number;
+  position: string;
+  seniority: number;
+  region: string;
+  wallet: number;
+  score: number;
+}
+
+const App: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   // const [techPost, setTechPost] = useState(null);
-  const { user } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
 
-  const findUserID = async() => {  //ok
-    try {
-      // const response = await axios.get(`/api/techposts/${techpost_id}`);
-      // console.log("get tech post");
-      // setTechPost(response.data)
-      // return response.data;
-      console.log(user?.id)
-      console.log(user?.score)
-      console.log(user?.wallet)
-    } catch (error) {
-      console.error('Error:', error);
-      return null;
+  useEffect(() => {
+    const fetchEmployee = async () => {
+      try {
+        if (user && user.id) {
+          const response = await axios.get<Employee>(`/api/employees/${user.id}`);
+          setUser(response.data);  // Update the user in UserContext
+        }
+      } catch (err) {
+        console.log(err)
+      }
     }
-  }
 
+    fetchEmployee()
+  }, [])
   // Check if the user is authenticated by looking for a token in localStorage
   const isAuthenticated = !!localStorage.getItem('token');
   useEffect(() => {
