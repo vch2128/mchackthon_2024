@@ -111,9 +111,36 @@ function Emo() {
 
   // Fetch All Mailbox Data
   const fetchMailboxData = useCallback(async () => {
-    await Promise.all([fetchEmoMsgs(), fetchEmoreply()]);
+    try {
+      await fetchEmoreply();
+      await fetchEmoMsgs();
+    } catch (error) {
+      message.error('Error fetching mailbox data');
+    }
   }, [fetchEmoMsgs, fetchEmoreply]);
 
+
+  const UpdateWallet = useCallback(async () => {
+    try {
+      const value = 10;
+      const response = await fetch(`/api/employee/update_wallet`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          value: value,
+          employee_id: currentUserId,
+        }),
+      });
+      if (response.ok) {
+        message.success('成功回覆，謝謝你回覆他人的煩惱');
+      }
+    } catch (error) {
+      message.error('Unable to update wallet');
+    }
+  }, [currentUserId]);
+  
   // Initial Fetches
   useEffect(() => {
     if (currentUserId) {
@@ -124,6 +151,12 @@ function Emo() {
   useEffect(() => {
     fetchReplies();
   }, [selectedParagraph, fetchReplies]);
+
+  useEffect(() => {
+    if (currentUserId) {
+      fetchMailboxData();
+    }
+  }, [currentUserId, fetchMailboxData]);
 
   // Refresh Paragraphs and Replies
   const refreshParagraphs = () => {
@@ -137,8 +170,8 @@ function Emo() {
 
   // Handle Mailbox Icon Click
   const handleMailboxClick = () => {
-    setIsModalVisible(true);
     fetchMailboxData();
+    setIsModalVisible(true);
   };
 
   // Handle Message Click (Unreplied)
@@ -172,13 +205,12 @@ function Emo() {
       });
 
       if (response.ok) {
-        message.success('回覆提交成功');
-        setEmoMsgs((prevEmoMsgs) => prevEmoMsgs.filter((msg) => msg.id !== selectedMsg.id));
+        fetchMailboxData();
+        UpdateWallet();
         setReplyContent('');
         setSelectedMsg(null);
         fetchEmoreply();
         // Refetch unreplied and replied messages after submitting a reply
-        fetchMailboxData();  // This will refresh both sections
       } else {
         const errorData = await response.json();
         message.error(errorData.state || '回覆提交失敗');
