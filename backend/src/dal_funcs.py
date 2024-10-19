@@ -69,6 +69,7 @@ class EmployeeDAL:
             return Employee.from_doc(doc)
         return None
     
+    
     async def find_similar_employee(self, sender_id: str, session=None) -> Optional[Employee]:
         sender = await self._employee_collection.find_one(
             {"_id": sender_id}, {"_id": 0, "department": 1, "age": 1, "seniority" : 1, "region" : 1}, session=session
