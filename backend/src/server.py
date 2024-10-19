@@ -1,7 +1,6 @@
 from contextlib import asynccontextmanager
 from datetime import datetime, timedelta
 
-
 import os
 import sys
 
@@ -96,6 +95,14 @@ async def get_others_techposts(sender_id: str) -> list[TechPost]:
 @app.get("/api/techposts/techcomments/{techpost_id}")
 async def get_tech_comments_by_techpost(techpost_id: str) -> list[TechComment]:
     return [i async for i in app.techcomment_dal.list_tech_comments(techpost_id)]
+
+@app.get("/api/techposts/search/all/{search_query}")
+async def search_techposts(search_query: str) -> list[TechPost]:
+    return [i async for i in app.techpost_dal.list_tech_posts_by_search(search_query)]
+
+@app.get("/api/techposts/search/my/{search_query}/{sender_id}")
+async def search_techposts_ids(search_query: str, sender_id: str) -> list[TechPost]:
+    return [i async for i in app.techpost_dal.list_tech_posts_by_search_my(search_query, sender_id)]
 
 @app.get("/api/emomsg/{emomsg_id}")
 async def get_an_emomsg(emomsg_id: str) -> EmoMsg:
@@ -227,7 +234,8 @@ class TechPostCreate(BaseModel):
 async def create_techpost(tech_post: TechPostCreate) -> NewTechPostResponse:
     new_id = await app.techpost_dal.create_tech_post(
         content=tech_post.content,
-        sender_id=tech_post.sender_id
+        sender_id=tech_post.sender_id,
+        answered=False,
     )
     
     embed = await get_embedding(tech_post.content)
@@ -241,6 +249,10 @@ async def create_techpost(tech_post: TechPostCreate) -> NewTechPostResponse:
         content=tech_post.content,
     )
 
+@app.patch("/api/techpost/bestcomment/{techpost_id}/{best_comment_id}/{setBest}")
+async def update_best_comment(techpost_id: str, best_comment_id: str, setBest: bool):
+    await app.techpost_dal.update_best_comment(techpost_id, best_comment_id, setBest)
+    await app.techcomment_dal.set_as_best_comment(best_comment_id, techpost_id, setBest)
 
 class NewTechCommentResponse(BaseModel):
     id: str
@@ -370,7 +382,7 @@ async def gpt_devide_problem(paragraph: ParagraphResponseCreate) -> NewParagraph
 @app.post("/api/search/similar", status_code=status.HTTP_201_CREATED)
 async def gpt_get_similar_techpost_id(paragraph: ParagraphResponseCreate) -> NewSingleResponse:
     prob_embed = await get_embedding(paragraph.msg)
-    gpt_data_list = await app.gptdata_dal.list_gpt_data()
+    gpt_data_list = app.gptdata_dal.list_gpt_data()
     gpt_data = await find_most_similar(gpt_data_list, prob_embed)
     return NewSingleResponse(
         msg=gpt_data.tech_post_id
@@ -442,8 +454,6 @@ class NewSearchResponse(BaseModel):
 async def gpt_get_presearched_answer(
         inputData: NewSearchResponseCreate
     ) -> NewSearchResponse:
-    print("ytytyt", inputData.msg)
-    print("ytytyt", inputData.history_answer_list)
     answer = await gpt_pre_answer_tech_post(inputData.msg, inputData.history_answer_list)
     return NewSearchResponse(
         msg=answer
