@@ -2,9 +2,9 @@
 import './App.css';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import PageRouter from './PageRouter';
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { UserContext } from './context/UserContext';
-import { Layout, Menu, Avatar, Popover, Button } from 'antd';
+import { Avatar, Popover} from 'antd';
 import { UserOutlined } from '@ant-design/icons'
 
 function App() {
@@ -13,20 +13,6 @@ function App() {
   // const [techPost, setTechPost] = useState(null);
   const { user } = useContext(UserContext);
 
-  const findUserID = async() => {  //ok
-    try {
-      // const response = await axios.get(`/api/techposts/${techpost_id}`);
-      // console.log("get tech post");
-      // setTechPost(response.data)
-      // return response.data;
-      console.log(user?.id)
-      console.log(user?.score)
-      console.log(user?.wallet)
-    } catch (error) {
-      console.error('Error:', error);
-      return null;
-    }
-  }
 
   // Check if the user is authenticated by looking for a token in localStorage
   const isAuthenticated = !!localStorage.getItem('token');

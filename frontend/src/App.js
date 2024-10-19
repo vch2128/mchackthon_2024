@@ -79,18 +79,11 @@ function App() {
   if (selectedItem === null) {
     return (
       <div className="App">
-        {/* <ListToDoLists
-          listSummaries={listSummaries}
-          handleSelectList={handleSelectList}
-          handleNewToDoList={handleNewToDoList}
-          handleDeleteToDoList={handleDeleteToDoList}
-        /> */
         <TechBoard
           techBoard={techBoard}
           handleSelectTechPost={handleSelectTechPost}
           handleNewTechPost={handleNewTechPost}
         />
-  }
       </div>
     );
   } else {
