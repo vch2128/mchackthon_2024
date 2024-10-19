@@ -1,4 +1,3 @@
-// src/components/Emo.jsx
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { UserContext } from '../../context/UserContext';
 import { Layout, message } from 'antd';
@@ -112,10 +111,14 @@ function Emo() {
     }
   }, [currentUserId]);
 
-  // Fetch All Mailbox Data
-  const fetchMailboxData = useCallback(async () => {
-    await Promise.all([fetchEmoMsgs(), fetchEmoreply()]);
-  }, [fetchEmoMsgs, fetchEmoreply]);
+  // Separate useEffect for fetching mailbox data to avoid dependency loop
+  useEffect(() => {
+    fetchEmoMsgs();
+  }, [fetchEmoMsgs]);
+
+  useEffect(() => {
+    fetchEmoreply();
+  }, [fetchEmoreply]);
 
   // Initial Fetches
   useEffect(() => {
@@ -141,7 +144,7 @@ function Emo() {
   // Handle Mailbox Icon Click
   const handleMailboxClick = () => {
     setIsModalVisible(true);
-    fetchMailboxData();
+    // You can fetch mailbox data here if needed, but it's already handled by separate useEffect
   };
 
   // Handle Message Click (Unreplied)
@@ -175,13 +178,11 @@ function Emo() {
       });
 
       if (response.ok) {
-        message.success('回覆提交成功');
-        setEmoMsgs((prevEmoMsgs) => prevEmoMsgs.filter((msg) => msg.id !== selectedMsg.id));
+        fetchEmoMsgs(); // Refresh unread messages
+        fetchEmoreply(); // Refresh replied messages
+        UpdateWallet();
         setReplyContent('');
         setSelectedMsg(null);
-        fetchEmoreply();
-        // Refetch unreplied and replied messages after submitting a reply
-        fetchMailboxData();  // This will refresh both sections
       } else {
         const errorData = await response.json();
         message.error(errorData.state || '回覆提交失敗');
@@ -190,6 +191,27 @@ function Emo() {
       message.error('回覆提交失敗');
     }
   };
+
+  const UpdateWallet = useCallback(async () => {
+    try {
+      const value = 10;
+      const response = await fetch(`/api/employee/update_wallet`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          value: value,
+          employee_id: currentUserId,
+        }),
+      });
+      if (response.ok) {
+        message.success('成功回覆，謝謝你回覆他人的煩惱');
+      }
+    } catch (error) {
+      message.error('Unable to update wallet');
+    }
+  }, [currentUserId]);
 
   return (
     <>

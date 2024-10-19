@@ -275,8 +275,8 @@ const Home: React.FC = () => {
       alert('Emotional problem submitted successfully to a match!');
       navigate('/emo')
     } catch (error) {
-      setErrorEmo('Failed to submit the emotional problem');
-      console.error('Error submitting emotional problem:', error);
+      // setErrorEmo('Failed to submit the emotional problem');
+      // console.error('Error submitting emotional problem:', error);
     } finally {
       setLoadingEmo(false);
     }
@@ -287,7 +287,6 @@ const Home: React.FC = () => {
     setErrorEmo(null);
     try {
       await getUnMatchRcvrId();
-      console.log(ma)
       const response = await axios.post(
         '/api/emomsg',
         {
@@ -305,8 +304,8 @@ const Home: React.FC = () => {
       alert('Emotional problem submitted successfully to a match!');
       navigate('/emo')
     } catch (error) {
-      setErrorEmo('Failed to submit the emotional problem');
-      console.error('Error submitting emotional problem:', error);
+      // setErrorEmo('Failed to submit the emotional problem');
+      // console.error('Error submitting emotional problem:', error);
     } finally {
       setLoadingEmo(false);
     }
