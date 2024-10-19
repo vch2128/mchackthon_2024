@@ -1,0 +1,25 @@
+[
+{
+  "name": "Emma Ye",
+  "account": "70gXoMI5",
+  "password": "L0Tr1Ypz",
+  "department": "R&D",
+  "age": 32,
+  "position": "Intern",
+  "region": "Tainan",
+  "seniority": 0,
+  "description": "Strong background in materials science and engineering. In their free time, Loves cycling and participating in local races."
+}
+,
+{
+  "name": "Richard Han",
+  "account": "LEJySdDU",
+  "password": "W0IYsLI5",
+  "department": "Manufacturing",
+  "age": 37,
+  "position": "Engineer",
+  "region": "Taipei",
+  "seniority": 4,
+  "description": "Proficient in lean manufacturing principles, reducing waste and improving productivity. In their free time, Passionate about photography and capturing moments."
+}
+]

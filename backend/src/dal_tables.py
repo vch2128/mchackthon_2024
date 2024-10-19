@@ -15,6 +15,7 @@ class Employee(BaseModel):
     region: str
     wallet: int
     score: int
+    description: Optional[str] = None
 
     @staticmethod
     def from_doc(doc) -> "Employee":
@@ -30,6 +31,7 @@ class Employee(BaseModel):
             region=doc["region"],
             wallet=doc["wallet"],
             score=doc["score"],
+            description=doc.get("description", None)
         )
 
 class TechPost(BaseModel):

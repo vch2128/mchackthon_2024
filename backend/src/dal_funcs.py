@@ -24,6 +24,7 @@ class EmployeeDAL:
         position: str,
         wallet: Optional[int] = 30, 
         score: Optional[int] = 0,
+        description: Optional[str] = None,
         session=None
     ) -> str:
         response = await self._employee_collection.insert_one(
@@ -39,6 +40,7 @@ class EmployeeDAL:
                 "position": position,
                 "wallet": wallet,
                 "score": score,
+                "description": description,
             },
             session=session,
         )
