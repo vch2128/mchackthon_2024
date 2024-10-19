@@ -69,20 +69,18 @@ function App() {
           </nav>
           <br />
           {/* Popover with Avatar positioned at the top-right corner */}
-          <div style={{ position: 'absolute', top: 10, right: 10 }}>
-          <Popover 
-            content={userInfoContent} 
-            title="User Info" 
-            trigger="click"
-            placement="bottomRight"  // Ensure popover appears near the button (comment outside JSX)
-          >
-          <Avatar
-            style={{ cursor: 'pointer' }}
-            icon={<UserOutlined />}
-            size="large"
-          />
-
-
+          <div style={{ position: 'absolute', top: 20, right: 10 }}>
+            <Popover 
+              content={userInfoContent} 
+              title="User Info" 
+              trigger="click"
+              placement="bottomRight"  // Ensure popover appears near the button (comment outside JSX)
+            >
+              <Avatar
+              style={{ cursor: 'pointer' }}
+              icon={<UserOutlined />}
+              size="large"
+             />
             </Popover>
           </div>
         </>

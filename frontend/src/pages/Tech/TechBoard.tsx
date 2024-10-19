@@ -15,7 +15,7 @@ const TechBoard: React.FC = () => {
       const posts = await getPosts()
       const sortedPosts = posts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       setPosts(sortedPosts)
-      const senderPosts = await getSenderPosts(user.id)
+      const senderPosts = await getSenderPosts(user!.id)
       setSenderPosts(senderPosts)
     } catch (error) {
       console.error('Error fetching posts:', error)

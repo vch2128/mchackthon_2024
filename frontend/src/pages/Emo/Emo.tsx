@@ -5,6 +5,9 @@ import './Emo.css';
 const { Sider, Content } = Layout;
 import mailboxIcon from './images/mailbox.png';
 
+import { Avatar, Popover} from 'antd';
+import { QuestionOutlined } from '@ant-design/icons';
+
 import SidebarMenu from './components/SidebarMenu';
 import ContentArea from './components/ContentArea';
 import MailboxModal from './components/MailboxModal';
@@ -161,61 +164,81 @@ function Emo() {
   };
 
   return (
-    <Layout className="emo-layout">
-      {/* 側邊欄：顯示段落列表 */}
-      <Sider width={250} className="emo-sider">
-        <h2>我的情緒樹洞</h2>
-        <SidebarMenu
-          paragraphs={paragraphs}
-          selectedParagraphId={selectedParagraph ? selectedParagraph.id : null}
-          onParagraphClick={handleParagraphClick}
+    <>
+      <div style={{ position: 'absolute', top: 70, right: 10, zIndex: 1000 }}>
+        <Popover 
+          content={
+            <>
+              Help others who are facing challenges. You will earn
+              <br />
+              rewards by providing answers to their questions.
+            </>
+          }
+          title="Help"
+          trigger="click"
+          placement="bottomRight"
+        >
+          <Avatar
+            style={{ cursor: 'pointer' }}
+            icon={<QuestionOutlined />}
+            size="large"
+          />
+        </Popover>
+      </div>
+        
+  
+      <Layout className="emo-layout">
+        <Sider width={250} className="emo-sider">
+          <h2>我的情緒樹洞</h2>
+          <SidebarMenu
+            paragraphs={paragraphs}
+            selectedParagraphId={selectedParagraph ? selectedParagraph.id : null}
+            onParagraphClick={handleParagraphClick}
+            formatDate={formatDate}
+          />
+        </Sider>
+  
+        <Layout>
+          <Content className="emo-content">
+            {selectedParagraph && (
+              <ContentArea
+                selectedParagraph={selectedParagraph}
+                replies={replies}
+                formatDate={formatDate}
+              />
+            )}
+          </Content>
+        </Layout>
+  
+        <img
+          src={mailboxIcon}
+        alt="Mailbox Icon"
+          className="mailbox-icon"
+          onClick={handleMailboxClick}
+        />
+  
+        <MailboxModal
+          visible={isModalVisible}
+          onClose={() => setIsModalVisible(false)}
+          emoMsgs={emoMsgs}
+          EmoMsgReply={EmoMsgReply}
+          onMsgClick={handleMsgClick}
           formatDate={formatDate}
         />
-      </Sider>
-
-      {/* 內容區域：顯示選定段落和回覆 */}
-      <Layout>
-        <Content className="emo-content">
-          {selectedParagraph && (
-            <ContentArea
-              selectedParagraph={selectedParagraph}
-              replies={replies}
-              formatDate={formatDate}
-            />
-          )}
-        </Content>
+  
+        <ReplyModal
+          selectedMsg={selectedMsg}
+          visible={!!selectedMsg}
+          onClose={() => setSelectedMsg(null)}
+          replyContent={replyContent}
+          onReplyChange={handleReplyChange}
+          onReplySubmit={handleReplySubmit}
+          formatDate={formatDate}
+        />
       </Layout>
-
-      {/* 郵箱圖標 */}
-      <img
-        src={mailboxIcon}
-        alt="Mailbox Icon"
-        className="mailbox-icon"
-        onClick={handleMailboxClick}
-      />
-
-      {/* 郵箱模態框 */}
-      <MailboxModal
-        visible={isModalVisible}
-        onClose={() => setIsModalVisible(false)}
-        emoMsgs={emoMsgs}
-        EmoMsgReply={EmoMsgReply}
-        onMsgClick={handleMsgClick}
-        formatDate={formatDate}
-      />
-
-      {/* 回覆模態框 */}
-      <ReplyModal
-        selectedMsg={selectedMsg}
-        visible={!!selectedMsg}
-        onClose={() => setSelectedMsg(null)}
-        replyContent={replyContent}
-        onReplyChange={handleReplyChange}
-        onReplySubmit={handleReplySubmit}
-        formatDate={formatDate}
-      />
-    </Layout>
+    </>
   );
+  
 }
 
 export default Emo;
