@@ -10,7 +10,6 @@ import { UserOutlined } from '@ant-design/icons'
 function App() {
   const location = useLocation();
   const navigate = useNavigate();
-  // const [techPost, setTechPost] = useState(null);
   const { user } = useContext(UserContext);
 
 
