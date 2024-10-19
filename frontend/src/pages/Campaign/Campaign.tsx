@@ -3,20 +3,18 @@ import { UserContext } from '../../context/UserContext';
 import { useLocation } from 'react-router-dom';
 import {
   Layout,
-  Typography,
   List,
   Card,
   Button,
-  Drawer,
   Modal,
+  message,
   Popconfirm
 } from 'antd';
 import axios from 'axios';
 import dining from '../../assets/dining.png';
 
 
-const { Header, Content } = Layout;
-const { Title } = Typography;
+const { Content } = Layout;
 
 interface CampaignData {
   id: string;
@@ -38,10 +36,6 @@ interface CampaignUpdate {
   lasting_hours?: number;
   attenders_id?: string[];
 }
-
-type CampaignProps = {
-  campaign: CampaignData;
-};
 
 const CountdownTimer = ({ expire }: { expire: Date }) => {
   const calculateTimeLeft = () => {
@@ -123,11 +117,36 @@ const updateEmployeeWallet = async (data: UpdateWalletRequest): Promise<number> 
   }
 };
 
+const getCampaign = async (campaignId: string) => {
+  try {
+    const response = await axios.get(`/api/campaign/${campaignId}`);
+    return response.data;  // Return the campaign data
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
 const Campaign: React.FC = () => {
   const { user } = useContext(UserContext);
   const [campaigns, setCampaigns] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedCampaign, setSelectedCampaign] = useState<CampaignData | null>(null);
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const success = () => {
+    messageApi.open({
+      type: 'success',
+      content: 'Enjoy your trip',
+    });
+  };
+
+  const error_ = (text: string) => {
+    messageApi.open({
+      type: 'error',
+      content: text,
+    });
+  };
+
   useEffect(() => {
     const getCampaigns = async () => {
       try {
@@ -144,27 +163,59 @@ const Campaign: React.FC = () => {
 
   const isVerified = async (campaign: CampaignData) => {
     const moneyRemain = await getEmployeeWallet(user.id)
-    return moneyRemain > campaign.price && campaign.quantity > 0;
+    const instantCampaign = await getCampaign(campaign.id)
+    if (instantCampaign==null || moneyRemain==null){
+      return false;
+    } else {
+      return (moneyRemain >= instantCampaign.price && instantCampaign.quantity > 0);
+    }
   };
 
   const handleOrder = async (campaign: CampaignData): Promise<void> => {
-    showPopconfirm()
+    setConfirmLoading(true); // Set loading state
+
+    const getCampaigns = async () => {
+      try {
+        const response = await axios.get("/api/campaigns");
+        console.log("get campaigns", response.data);
+        setCampaigns(response.data);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+
     const flag = await isVerified(campaign);
     if (flag) {
-      const updatedAttenders = [...campaign.attenders_id, String(user.id)];
-      const campaignUpdate: CampaignUpdate = {
-        quantity: campaign.quantity - 1, // Reduce quantity
-        attenders_id: updatedAttenders,
-      };
-      
-      const updateWallet : UpdateWalletRequest = {
-        employee_id: user.id,
-        value: -campaign.price,
+      try {
+        const updatedAttenders = [...campaign.attenders_id, String(user.id)];
+        const campaignUpdate: CampaignUpdate = {
+          quantity: campaign.quantity - 1,
+          attenders_id: updatedAttenders,
+        };
+        
+        const updateWallet : UpdateWalletRequest = {
+          employee_id: user.id,
+          value: -campaign.price,
+        };
+  
+        await updateEmployeeWallet(updateWallet);
+        await updateCampaign(campaign.id, campaignUpdate);
+        await getCampaigns()
+        // Update the local state with the updated campaign data
+        success(); // Show success message
+        setTimeout(() => {
+          window.location.reload(); // Reload the page after a successful order
+        }, 500); // Optional delay for the success message to be seen
+      } catch (err) {
+        console.log("fail to place order:", err)
+        error_("Failed to place order!"); // Show error message
+      } finally {
+        setConfirmLoading(false); // Reset loading state
+        setOpenPopconfirmId(null); // Close the popconfirm
       }
-      await updateEmployeeWallet(updateWallet);
-      await updateCampaign(campaign.id, campaignUpdate);
     } else {
-      return;
+      error_("Insufficient funds or no available quantity.");
+      setConfirmLoading(false); // Reset loading state if order fails
     }
   };
 
@@ -177,26 +228,16 @@ const Campaign: React.FC = () => {
     setIsModalVisible(false);  // Hide the modal
   };
 
-  const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
-
-  const showPopconfirm = () => {
-    setOpen(true);
+  const [openPopconfirmId, setOpenPopconfirmId] = useState<string | null>(null);
+  const showPopconfirm = (campaignId: string) => {
+    setOpenPopconfirmId(campaignId); // Set the campaign ID to open Popconfirm for
   };
-
-  const handleOk = () => {
-    setConfirmLoading(true);
-
-    setTimeout(() => {
-      setOpen(false);
-      setConfirmLoading(false);
-    }, 2000);
-  };
-
+  
   const handleCancel = () => {
-    console.log('Clicked cancel button');
-    setOpen(false);
+    setOpenPopconfirmId(null); // Close all Popconfirms by resetting the state
   };
+
   const renderProducts = (): JSX.Element => (
     <List
       grid={{ gutter: [40, 20], column: 2 }} // Adjust rowGutter to increase vertical spacing
@@ -225,17 +266,17 @@ const Campaign: React.FC = () => {
               <Popconfirm
                 title="Confirmation"
                 description="Click OK to confirm the order! Wish you a good day."
-                open={open}
-                onConfirm={handleOk}
+                open={openPopconfirmId === campaign.id} // Only open for the current campaign
+                onConfirm={() => handleOrder(campaign)} // Pass campaign to handleOrder
                 okButtonProps={{ loading: confirmLoading }}
                 onCancel={handleCancel}
               >
                 <Button
                   type="primary"
-                  onClick={() => handleOrder(campaign)}
+                  onClick={() => showPopconfirm(campaign.id)} // Open Popconfirm for this campaign
                 >
                   Order
-                </Button>,
+                </Button>
               </Popconfirm>
             ]}
           >
@@ -251,6 +292,7 @@ const Campaign: React.FC = () => {
   
   return (
     <Layout >
+      {contextHolder} 
       <Content
         style={{
           padding: '20px',
