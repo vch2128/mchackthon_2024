@@ -75,3 +75,13 @@
 .mailbox-icon:hover {
   transform: scale(1.1);
 }
+
+.create-emo-sprite {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  width: 150px;  /* Adjust the size as needed */
+  height: 100px; /* Adjust the size as needed */
+  cursor: pointer;
+  object-fit: contain; 
+}
