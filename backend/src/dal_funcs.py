@@ -55,6 +55,8 @@ class EmployeeDAL:
         if doc:
             return Employee.from_doc(doc)
         return None
+
+        
     
     async def list_employees(self, session=None):
         async for doc in self._employee_collection.find({}, session=session):
@@ -99,6 +101,25 @@ class EmployeeDAL:
     
         return similar_employee
          
+
+    async def get_wallet_and_score(
+        self, id: str | ObjectId, session=None
+    ) -> Optional[dict[str, int]]:
+        """
+        Get wallet and score of an employee by their ID.
+        Returns a dictionary containing 'wallet' and 'score'.
+        """
+        # Fetch only the wallet and score fields
+        doc = await self._employee_collection.find_one(
+            {"_id": str(id)},
+            {"wallet": 1, "score": 1, "_id": 0},  # Project only wallet and score
+            session=session,
+        )
+        if doc:
+            return {"wallet": doc.get("wallet", 0), "score": doc.get("score", 0)}
+        return None
+
+
 
 class TechPostDAL:
     def __init__(self, tech_post_collection: AsyncIOMotorCollection):
