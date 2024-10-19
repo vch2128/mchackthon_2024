@@ -168,7 +168,8 @@ async def process_embedding(new_id: str, context: str):
 async def create_techpost(tech_post: TechPostCreate, background_tasks: BackgroundTasks) -> NewTechPostResponse:
     new_id = await app.techpost_dal.create_tech_post(
         content=tech_post.content,
-        sender_id=tech_post.sender_id
+        sender_id=tech_post.sender_id,
+        answered=True,
     )
     
     background_tasks.add_task(process_embedding, new_id, tech_post.content)
@@ -178,6 +179,10 @@ async def create_techpost(tech_post: TechPostCreate, background_tasks: Backgroun
         content=tech_post.content,
     )
 
+@app.patch("/api/techpost/bestcomment/{techpost_id}/{best_comment_id}/{setBest}")
+async def update_best_comment(techpost_id: str, best_comment_id: str, setBest: bool):
+    await app.techpost_dal.update_best_comment(techpost_id, best_comment_id, setBest)
+    await app.techcomment_dal.set_as_best_comment(best_comment_id, techpost_id, setBest)
 
 class NewTechCommentResponse(BaseModel):
     id: str

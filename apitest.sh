@@ -44,21 +44,22 @@
 #         }'
 
 # create techpost 
-# curl -X POST "http://localhost:8001/api/techpost" \
-#      -H "Content-Type: application/json" \
-#      -d '{
-#            "content": "I have some database schema problem.",
-#            "sender_id": "2f089e4813ad4d028bc543ff1de4e11e"
-#          }'
-
-
-curl -X POST "http://localhost:8001/api/search/techpost" \
+curl -X POST "http://localhost:8001/api/techpost" \
      -H "Content-Type: application/json" \
      -d '{
-           "content": "hello everyone yeahhhh i have a problem of how to code i am a beginner to this. please help me. thank you",
-           "sender_id": "d3ba2aed43824cdb92db62342c7a06fe",
-           "topic": "how to code"
+           "content": "I have some database schema problem.",
+           "sender_id": "2f089e4813ad4d028bc543ff1de4e11e",
+           "answered": true
          }'
+
+
+# curl -X POST "http://localhost:8001/api/search/techpost" \
+#      -H "Content-Type: application/json" \
+#      -d '{
+#            "content": "hello everyone yeahhhh i have a problem of how to code i am a beginner to this. please help me. thank you",
+#            "sender_id": "d3ba2aed43824cdb92db62342c7a06fe",
+#            "topic": "how to code"
+#          }'
 
 # create tech comment
 # curl -X POST "http://localhost:8001/api/techcomment" \
@@ -69,13 +70,13 @@ curl -X POST "http://localhost:8001/api/search/techpost" \
 #          }'
 
 # create tech comment
-curl -X POST "http://localhost:8001/api/techcomment" \
-     -H "Content-Type: application/json" \
-     -d '{
-           "content": "Database schema should use MongoDB",
-           "sender_id": "emplqwere123",
-           "techpost_id": "708f24c378b64942b61edc3e15533045"
-         }'
+# curl -X POST "http://localhost:8001/api/techcomment" \
+#      -H "Content-Type: application/json" \
+#      -d '{
+#            "content": "Database schema should use MongoDB",
+#            "sender_id": "emplqwere123",
+#            "techpost_id": "708f24c378b64942b61edc3e15533045"
+#          }'
 
 # create emo reply
 # curl -X POST "http://localhost:8001/api/emoreply" \

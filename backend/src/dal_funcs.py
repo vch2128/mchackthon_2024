@@ -156,11 +156,24 @@ class TechPostDAL:
         }
         # Retrieve matching documents with an async cursor
         cursor = self._tech_post_collection.find(query, session=session)
-
         # Iterate asynchronously over the results
         async for doc in cursor:
             yield TechPost.from_doc(doc)
             
+    async def update_best_comment(self, tech_post_id: str, best_comment_id: str, setBest: bool, session=None):
+        update = (
+            {"$set": {"best_comment_id": best_comment_id, "answered": True}}
+            if setBest
+            else {"$unset": {"best_comment_id": ""}, "$set": {"answered": False}}
+        )
+        
+        result = await self._tech_post_collection.update_one(
+            {"_id": tech_post_id},
+            update,
+            session=session
+        )
+        
+        return result.modified_count > 0
             
 class TechCommentDAL:
     def __init__(self, tech_comment_collection: AsyncIOMotorCollection):
@@ -207,7 +220,23 @@ class TechCommentDAL:
         return [comment async for comment in self._tech_comment_collection.find(
             {"tech_post_id": tech_post_id}, session=session
         ).to_list(length=None)]
-
+        
+    async def set_as_best_comment(self, id: str, tech_post_id: str, setBest: bool, session=None):
+        # First, remove the 'is_best' flag from all comments for this post
+        await self._tech_comment_collection.update_many(
+            {"tech_post_id": tech_post_id},
+            {"$set": {"is_best": False}},
+            session=session
+        )
+        
+        # Then, set the new best comment
+        if setBest:
+            result = await self._tech_comment_collection.update_one(
+                {"_id": id},
+                {"$set": {"is_best": True}},
+                session=session
+            )
+            
 class EmoMsgDAL:
     def __init__(self, emo_msg_collection: AsyncIOMotorCollection):
         self._emo_msg_collection = emo_msg_collection

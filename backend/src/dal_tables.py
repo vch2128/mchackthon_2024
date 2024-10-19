@@ -29,7 +29,7 @@ class TechPost(BaseModel):
     topic: str
     content: str
     sender_id: str
-    answered: bool
+    answered: bool = False
     best_comment_id: Optional[str]
 
     @staticmethod
@@ -40,7 +40,7 @@ class TechPost(BaseModel):
             topic=doc["topic"],
             content=doc["content"],
             sender_id=str(doc["sender_id"]),
-            answered=doc["answered"],
+            answered=doc.get("answered", False),
             best_comment_id=str(doc["best_comment_id"]) if "best_comment_id" in doc else None,
         )
 
