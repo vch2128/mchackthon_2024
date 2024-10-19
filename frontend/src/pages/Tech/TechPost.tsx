@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 import { useLocation, useParams } from 'react-router-dom';
-import { UserContext} from '../../context/UserContext';
+import { UserContext } from '../../context/UserContext';
 import { Input, Form, Button, Typography, Divider, Row, Col } from 'antd';
 import CommentList from './components/CommentList';
 import { Comment } from '@ant-design/compatible';

@@ -125,6 +125,41 @@ class TechPostDAL:
             session=session,
         ):
             yield TechPost.from_doc(doc)
+    
+    async def list_tech_posts_by_search(
+        self, search_query: str, session=None
+    ):
+        query = {
+        "$or": [
+            {"content": {"$regex": search_query, "$options": "i"}},
+            {"topic": {"$regex": search_query, "$options": "i"}}
+            ]
+        }
+        # Retrieve matching documents with an async cursor
+        cursor = self._tech_post_collection.find(query, session=session)
+
+        # Iterate asynchronously over the results
+        async for doc in cursor:
+            yield TechPost.from_doc(doc)
+    
+    async def list_tech_posts_by_search_my(
+        self, search_query: str, sender_id: str, session=None
+    ):
+        query = {
+            "$and": [
+                {"sender_id": sender_id},
+                {"$or": [
+                    {"content": {"$regex": search_query, "$options": "i"}},
+                    {"topic": {"$regex": search_query, "$options": "i"}}
+                ]}
+            ]
+        }
+        # Retrieve matching documents with an async cursor
+        cursor = self._tech_post_collection.find(query, session=session)
+
+        # Iterate asynchronously over the results
+        async for doc in cursor:
+            yield TechPost.from_doc(doc)
             
             
 class TechCommentDAL:
@@ -136,6 +171,7 @@ class TechCommentDAL:
         content: str,
         sender_id: str,
         tech_post_id: str,
+        is_best: Optional[bool] = False,
         session=None,
     ) -> str:
         response = await self._tech_comment_collection.insert_one(

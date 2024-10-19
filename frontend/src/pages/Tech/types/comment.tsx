@@ -7,6 +7,7 @@ export type Comment_t = {
     content: string
     sender_id: string
     tech_post_id: string
+    is_best: boolean
 }
 
 // services for comments

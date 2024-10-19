@@ -89,6 +89,14 @@ async def get_others_techposts(sender_id: str) -> list[TechPost]:
 async def get_tech_comments_by_techpost(techpost_id: str) -> list[TechComment]:
     return [i async for i in app.techcomment_dal.list_tech_comments(techpost_id)]
 
+@app.get("/api/techposts/search/all/{search_query}")
+async def search_techposts(search_query: str) -> list[TechPost]:
+    return [i async for i in app.techpost_dal.list_tech_posts_by_search(search_query)]
+
+@app.get("/api/techposts/search/my/{search_query}/{sender_id}")
+async def search_techposts_ids(search_query: str, sender_id: str) -> list[TechPost]:
+    return [i async for i in app.techpost_dal.list_tech_posts_by_search_my(search_query, sender_id)]
+
 @app.get("/api/emomsg/{emomsg_id}")
 async def get_an_emomsg(emomsg_id: str) -> EmoMsg:
     return await app.emomsg_dal.get_emo_msg(emomsg_id)
