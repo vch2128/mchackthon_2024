@@ -382,7 +382,7 @@ async def gpt_devide_problem(paragraph: ParagraphResponseCreate) -> NewParagraph
 @app.post("/api/search/similar", status_code=status.HTTP_201_CREATED)
 async def gpt_get_similar_techpost_id(paragraph: ParagraphResponseCreate) -> NewSingleResponse:
     prob_embed = await get_embedding(paragraph.msg)
-    gpt_data_list = await app.gptdata_dal.list_gpt_data()
+    gpt_data_list = app.gptdata_dal.list_gpt_data()
     gpt_data = await find_most_similar(gpt_data_list, prob_embed)
     return NewSingleResponse(
         msg=gpt_data.tech_post_id
@@ -454,8 +454,6 @@ class NewSearchResponse(BaseModel):
 async def gpt_get_presearched_answer(
         inputData: NewSearchResponseCreate
     ) -> NewSearchResponse:
-    print("ytytyt", inputData.msg)
-    print("ytytyt", inputData.history_answer_list)
     answer = await gpt_pre_answer_tech_post(inputData.msg, inputData.history_answer_list)
     return NewSearchResponse(
         msg=answer

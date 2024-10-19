@@ -73,7 +73,7 @@ const Home: React.FC = () => {
 
       const data = response.data;
       console.log(data)
-      navigate("/tech")
+      // navigate("/tech")
       notification.success({
         message: 'Technical problem submitted successfully!',
         duration: 3,
@@ -140,8 +140,6 @@ const Home: React.FC = () => {
         message: 'Failed to get similar posts. Searching...',
         duration: 3,
       });
-      // setErrorTech('Failed to getSimilarTechId');
-      // console.error('Error submitting getSimilarTechId:', error);
     }
   }
 
@@ -176,7 +174,7 @@ const Home: React.FC = () => {
     }
   }
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const handleTechProbSubmit = async () => {
     setLoadingTech(true);
     setErrorTech(null);
@@ -291,7 +289,7 @@ const Home: React.FC = () => {
         message: 'Emotional problem submitted successfully to a match!',
         duration: 3,
       });
-      navigate('/emo')
+      // navigate('/emo')
     } catch (error) {
       // setErrorEmo('Failed to submit the emotional problem');
       // console.error('Error submitting emotional problem:', error);
@@ -305,10 +303,7 @@ const Home: React.FC = () => {
     setErrorEmo(null);
     try {
       await getUnMatchRcvrId();
-<<<<<<< HEAD
-=======
       // console.log(ma)
->>>>>>> Henry
       const response = await axios.post(
         '/api/emomsg',
         {
@@ -327,7 +322,7 @@ const Home: React.FC = () => {
         message: 'Emotional problem submitted successfully to a stranger!',
         duration: 3,
       });
-      navigate('/emo')
+      // navigate('/emo')
     } catch (error) {
       // setErrorEmo('Failed to submit the emotional problem');
       // console.error('Error submitting emotional problem:', error);
