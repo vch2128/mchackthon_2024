@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useContext, useCallback} from 'react';
+import React, { useState, useContext, useCallback} from 'react';
 import axios from 'axios';
 import './Home.css'; // Import the CSS file
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
-// import { Button, Modal } from 'antd';
-import { Modal, Avatar, Popover, Typography, Divider } from 'antd';
+import { Modal, Avatar, Popover, Typography, Divider, notification } from 'antd';
 import { QuestionOutlined } from '@ant-design/icons';
 
 const { Title } = Typography;
@@ -75,6 +74,10 @@ const Home: React.FC = () => {
       const data = response.data;
       console.log(data)
       navigate("/tech")
+      notification.success({
+        message: 'Technical problem submitted successfully!',
+        duration: 3,
+      });
     } catch (error) {
       setErrorTech('Failed to submit the paragraph');
       console.error('Error submitting paragraph:', error);
@@ -133,8 +136,12 @@ const Home: React.FC = () => {
       console.log(response.data);
       return response.data.msg
     } catch (error) {
-      setErrorTech('Failed to getSimilarTechId');
-      console.error('Error submitting getSimilarTechId:', error);
+      notification.error({
+        message: 'Failed to get similar posts. Searching...',
+        duration: 3,
+      });
+      // setErrorTech('Failed to getSimilarTechId');
+      // console.error('Error submitting getSimilarTechId:', error);
     }
   }
 
@@ -185,8 +192,8 @@ const Home: React.FC = () => {
       showModal()
 
     } catch (error) {
-      setErrorTech('Failed to submit the technical problem');
-      console.error('Error submitting technical problem:', error);
+      // setErrorTech('Failed to submit the technical problem');
+      // console.error('Error submitting technical problem:', error);
     } finally {
       setLoadingTech(false);
     }
@@ -220,7 +227,10 @@ const Home: React.FC = () => {
       );
       console.log(response.data.msg);
       setEmoRcvrId(response.data.msg);
-      alert('Emotional problem submitted successfully to a match!');
+      notification.success({
+        message: 'Emotional problem submitted successfully to a match!',
+        duration: 3,
+      });
     } catch (error) {
       // setErrorEmo('Failed to submit the emotional problem');
       // console.error('Error submitting emotional problem:', error);
@@ -245,7 +255,10 @@ const Home: React.FC = () => {
         }
       );
       setEmoRcvrId(response.data.msg);
-      alert('Emotional problem submitted successfully to a stranger!');
+      notification.success({
+        message: 'Emotional problem submitted successfully to a stranger!',
+        duration: 3,
+      });
     } catch (error) {
       // setErrorEmo('Failed to submit the emotional problem');
       // console.error('Error submitting emotional problem:', error);
@@ -274,7 +287,10 @@ const Home: React.FC = () => {
         }
       );
       console.log(response.data);
-      alert('Emotional problem submitted successfully to a match!');
+      notification.success({
+        message: 'Emotional problem submitted successfully to a match!',
+        duration: 3,
+      });
       navigate('/emo')
     } catch (error) {
       // setErrorEmo('Failed to submit the emotional problem');
@@ -303,7 +319,10 @@ const Home: React.FC = () => {
         }
       );
       console.log(response.data);
-      alert('Emotional problem submitted successfully to a match!');
+      notification.success({
+        message: 'Emotional problem submitted successfully to a stranger!',
+        duration: 3,
+      });
       navigate('/emo')
     } catch (error) {
       // setErrorEmo('Failed to submit the emotional problem');
