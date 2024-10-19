@@ -299,6 +299,10 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
         "id": user.id,
         "name": user.name,
         "department": user.department,  # Corrected spelling from 'departement' to 'department'
+        "age": user.age,
+        "position": user.position,
+        "seniority": user.seniority,
+        "region": user.region,
         "wallet": user.wallet,
         "score": user.score
     }
