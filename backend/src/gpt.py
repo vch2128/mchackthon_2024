@@ -191,7 +191,7 @@ async def gpt_get_rcvr_id_mostunmatched(
     ) -> str:
     """Find the GPTData instance with the most similar embedding to the new_embedding."""
     min_similarity = 1.0
-    most_similar_data = None
+    most_similar_data = "2f089e4813ad4d028bc543ff1de4e11e"
 
     if not gpt_employee_data_list:
         return "2f089e4813ad4d028bc543ff1de4e11e"

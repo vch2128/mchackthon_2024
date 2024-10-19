@@ -7,6 +7,8 @@ import CommentList from './components/CommentList';
 import { Comment } from '@ant-design/compatible';
 import { notification } from 'antd';
 import { Comment_t, updateWallet } from './types/comment';
+import { Avatar, Popover} from 'antd';
+import { QuestionOutlined } from '@ant-design/icons';
 
 const { Title, Paragraph } = Typography;
 const { TextArea } = Input;
@@ -107,7 +109,28 @@ const TechPost =() => {
   
 
   return (<>
+    <div style={{ position: 'absolute', top: 70, right: 10 }}>
+      <Popover 
+        content={
+          <>
+            Help others who are facing challenges. You will earn
+            <br />
+            rewards by providing answers to their questions.
+          </>
+        }
+        title="Help"
+        trigger="click"
+        placement="bottomRight"
+      >
+        <Avatar
+          style={{ cursor: 'pointer' }}
+          icon={<QuestionOutlined />}
+          size="large"
+        />
+      </Popover>
+    </div>
     {
+      
       onpage && (<>
       <Row justify="center">
         <Col xs={24} sm={24} md={24} lg={24} xl={24}>

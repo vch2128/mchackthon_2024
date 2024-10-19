@@ -15,13 +15,13 @@ const TechBoard: React.FC<TechBoardProps> = ({ isSearching, searchQuery }) => {
   const { user } = useContext(UserContext);
   
   const refreshPosts = async () => {
-    console.log('User ID:', user.id); // Print user ID to the terminal
+    console.log('User ID:', user!.id); // Print user ID to the terminal
     if (!isSearching){
       try {
         const posts = await getPosts()
         const sortedPosts = posts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
         setPosts(sortedPosts)
-        const senderPosts = await getSenderPosts(user.id)
+        const senderPosts = await getSenderPosts(user!.id)
         const sortedSenderPosts = senderPosts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
         setSenderPosts(sortedSenderPosts)
       } catch (error) {
@@ -31,7 +31,7 @@ const TechBoard: React.FC<TechBoardProps> = ({ isSearching, searchQuery }) => {
       try{
         const posts = await getSearchPosts(searchQuery)
         setPosts(posts)
-        const senderPosts = await getSearchPostsMy(searchQuery, user.id)
+        const senderPosts = await getSearchPostsMy(searchQuery, user!.id)
         setSenderPosts(senderPosts)
       }catch(error){
         console.error('Error fetching search posts:', error)
