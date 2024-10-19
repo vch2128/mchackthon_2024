@@ -305,10 +305,6 @@ const Home: React.FC = () => {
     setErrorEmo(null);
     try {
       await getUnMatchRcvrId();
-<<<<<<< HEAD
-=======
-      // console.log(ma)
->>>>>>> Henry
       const response = await axios.post(
         '/api/emomsg',
         {

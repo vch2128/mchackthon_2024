@@ -6,10 +6,10 @@ import { UserContext } from '../../context/UserContext';
 import { Input, Form, Button, Typography, Divider, Row, Col } from 'antd';
 import CommentList from './components/CommentList';
 import { Comment } from '@ant-design/compatible';
-import { notification } from 'antd';
-import { Comment_t, updateWallet } from './types/comment';
-import { Avatar, Popover} from 'antd';
 import { QuestionOutlined } from '@ant-design/icons';
+import { notification, Avatar, Popover } from 'antd';
+import { Comment_t, updateWallet } from './types/comment';
+import { getPostSender } from './types/post';
 
 const { Title, Paragraph } = Typography;
 const { TextArea } = Input;
@@ -24,8 +24,11 @@ const TechPost =() => {
   const [techPost, setTechPost] = useState(null);
   const [comments, setComments] = useState<Comment_t[]>([]);
   const [isSender, setIsSender] = useState<boolean>(false);
-  const avatarUrl = "https://shoplineimg.com/643616b7087ae8002271ceb2/64e073d381afe80022a66ebc/1200x.webp?source_format=png"; // Define the avatar URL
-
+  
+  let avatarUrl = "https://shoplineimg.com/643616b7087ae8002271ceb2/64e073d381afe80022a66ebc/1200x.webp?source_format=png";
+  if(isSender){
+    avatarUrl = "https://shopage.s3.amazonaws.com/media/f857/846201608331_89697379488539675730.webp";
+  }
 
   useEffect(() => {
     if (onpage) {
@@ -86,10 +89,16 @@ const TechPost =() => {
         },
       });
       console.log(response.data);
-      updateWallet(user.id, 10);
-      // Clear the comment input
       setCommentContent('');
       getCommentsOfTechPost();
+
+      const postSender = await getPostSender(techpost_id);
+      if(postSender !== user.id){
+        updateWallet(user.id, 10);
+        console.log("update wallet");
+        console.log("post sender: ", postSender);
+        console.log("comment sender: ", user.id);
+      }
       // Show a success notification
       notification.success({
         message: 'Comment added successfully',

@@ -65,7 +65,7 @@ export type Post = {
     }
   }
 
-  export const getPostSender = async (tech_post_id: string): Promise<Post> => {
+  export const getPostSender = async (tech_post_id: string): Promise<string> => {
     const response = await axios.get(`/api/techposts/${tech_post_id}`);
     return response.data.sender_id;
   }

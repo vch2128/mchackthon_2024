@@ -15,9 +15,9 @@
 # curl -X POST "http://localhost:8001/api/employee" \
 #      -H "Content-Type: application/json" \
 #      -d '{
-#             "name": "deseee",
-#             "account": "143rqwefqwf",
-#             "password": "66eee",
+#             "name": "bonnie",
+#             "account": "bonniech",
+#             "password": "bonnie",
 #             "department": "cs engineering",
 #             "age": 45,
 #             "position": "product manager",
