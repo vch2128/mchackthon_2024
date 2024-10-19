@@ -6,6 +6,9 @@ import './Emo.css';
 const { Sider, Content } = Layout;
 import mailboxIcon from './images/mailbox.png';
 
+import { Avatar, Popover} from 'antd';
+import { QuestionOutlined } from '@ant-design/icons';
+
 import SidebarMenu from './components/SidebarMenu';
 import ContentArea from './components/ContentArea';
 import MailboxModal from './components/MailboxModal';
@@ -189,65 +192,81 @@ function Emo() {
   };
 
   return (
-    <Layout className="emo-layout">
-      {/* Sidebar: Display Paragraph List */}
-      <Sider width={250} className="emo-sider">
-        <h2>我的情緒樹洞</h2>
-        <SidebarMenu
-          paragraphs={paragraphs}
-          selectedParagraphId={selectedParagraph ? selectedParagraph.id : null}
-          onParagraphClick={handleParagraphClick}
+    <>
+      <div style={{ position: 'absolute', top: 70, right: 10, zIndex: 1000 }}>
+        <Popover 
+          content={
+            <>
+              Help others who are facing challenges. You will earn
+              <br />
+              rewards by providing answers to their questions.
+            </>
+          }
+          title="Help"
+          trigger="click"
+          placement="bottomRight"
+        >
+          <Avatar
+            style={{ cursor: 'pointer' }}
+            icon={<QuestionOutlined />}
+            size="large"
+          />
+        </Popover>
+      </div>
+        
+  
+      <Layout className="emo-layout">
+        <Sider width={250} className="emo-sider">
+          <h2>我的情緒樹洞</h2>
+          <SidebarMenu
+            paragraphs={paragraphs}
+            selectedParagraphId={selectedParagraph ? selectedParagraph.id : null}
+            onParagraphClick={handleParagraphClick}
+            formatDate={formatDate}
+          />
+        </Sider>
+  
+        <Layout>
+          <Content className="emo-content">
+            {selectedParagraph && (
+              <ContentArea
+                selectedParagraph={selectedParagraph}
+                replies={replies}
+                formatDate={formatDate}
+              />
+            )}
+          </Content>
+        </Layout>
+  
+        <img
+          src={mailboxIcon}
+        alt="Mailbox Icon"
+          className="mailbox-icon"
+          onClick={handleMailboxClick}
+        />
+  
+        <MailboxModal
+          visible={isModalVisible}
+          onClose={() => setIsModalVisible(false)}
+          emoMsgs={emoMsgs}
+          EmoMsgReply={EmoMsgReply}
+          onMsgClick={handleMsgClick}
           formatDate={formatDate}
         />
-      </Sider>
-
-      {/* Content Area: Display Selected Paragraph and Replies */}
-      <Layout>
-        <Content className="emo-content">
-          {selectedParagraph && (
-            <ContentArea
-              selectedParagraph={selectedParagraph}
-              replies={replies}
-              formatDate={formatDate}
-            />
-          )}
-        </Content>
+  
+        <ReplyModal
+          selectedMsg={selectedMsg}
+          visible={!!selectedMsg}
+          onClose={() => setSelectedMsg(null)}
+          replyContent={replyContent}
+          onReplyChange={handleReplyChange}
+          onReplySubmit={handleReplySubmit}
+          formatDate={formatDate}
+        />
       </Layout>
-
-      {/* Mailbox Icon */}
-      <img
-        src={mailboxIcon}
-        alt="Mailbox Icon"
-        className="mailbox-icon"
-        onClick={handleMailboxClick}
-      />
-
-      {/* Mailbox Modal */}
-      <MailboxModal
-        visible={isModalVisible}
-        onClose={() => setIsModalVisible(false)}
-        emoMsgs={emoMsgs}
-        EmoMsgReply={EmoMsgReply}
-        MsgofReply={MsgofReply}
-        onMsgClick={handleMsgClick}
-        formatDate={formatDate}
-      />
-
-      {/* Reply Modal */}
-      <ReplyModal
-        selectedMsg={selectedMsg}
-        visible={!!selectedMsg}
-        onClose={() => setSelectedMsg(null)}
-        replyContent={replyContent}
-        onReplyChange={handleReplyChange}
-        onReplySubmit={handleReplySubmit}
-        formatDate={formatDate}
-      />
-
-      {/* Create Emotion Message Component */}
-      <CreateEmoMsg currentUserId={currentUserId} onMessageCreated={refreshParagraphs} />
-    </Layout>
+    </>
   );
+  
 }
 
 export default Emo;
