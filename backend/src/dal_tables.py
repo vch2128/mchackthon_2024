@@ -137,3 +137,26 @@ class GPTEmployeeData(BaseModel):
             employee_id=doc["employee_id"],
             employee_embedding=doc["employee_embedding"]  # Corrected this line
         )
+        
+class CampaignData(BaseModel):
+    id: str
+    name: str
+    description: str
+    price: int
+    image_path: str
+    quantity: int
+    expire: datetime
+    attenders_id: List[str]
+    
+    @staticmethod
+    def from_doc(doc) -> "CampaignData":
+        return CampaignData(
+            id=str(doc["_id"]),
+            name=doc["name"],
+            description=doc["description"],
+            price=doc["price"], # Corrected this line
+            image_path=doc["image_path"],
+            quantity=doc["quantity"],
+            expire=doc["expire"], 
+            attenders_id=doc["attenders_id"]
+        )

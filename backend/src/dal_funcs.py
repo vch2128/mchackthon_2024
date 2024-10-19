@@ -3,11 +3,11 @@
 from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorCollection
 from pymongo import ReturnDocument
-from datetime import datetime
+from datetime import datetime, timedelta
 from uuid import uuid4
-from typing import Optional, AsyncGenerator, List
+from typing import Optional, AsyncGenerator, List, Union
 from gpt import gpt_get_topic
-from dal_tables import Employee, TechPost, TechComment, EmoMsg, EmoReply, GPTData, GPTEmployeeData
+from dal_tables import Employee, TechPost, TechComment, EmoMsg, EmoReply, GPTData, GPTEmployeeData, CampaignData
 
 class EmployeeDAL:
     def __init__(self, employee_collection: AsyncIOMotorCollection):
@@ -432,3 +432,87 @@ class GPTEmployeeDataDAL:
         async for doc in self._gpt_employee_data_collection.find({}, session=session):
             yield GPTEmployeeData.from_doc(doc) 
     
+class CampaignDataDAL:
+    def __init__(self, campaign_data_collection: AsyncIOMotorCollection):
+        self._campaign_data_collection = campaign_data_collection
+
+    async def create_campaign(
+        self,
+        name: str,
+        description: str,
+        price: int,
+        image_path: str,
+        quantity: int,
+        lasting_hours: int,
+        attenders_id: Optional[List[str]] = None,
+        session=None,
+    ) -> str:
+        response = await self._campaign_data_collection.insert_one(
+            {
+                "_id": uuid4().hex,
+                "name": name,
+                "description": description,
+                "price": price,
+                "image_path": image_path,
+                "quantity": quantity,
+                "expire": datetime.utcnow() + timedelta(hours=lasting_hours),
+                "attenders_id": attenders_id if attenders_id else []
+            },
+            session=session,
+        )
+        return str(response.inserted_id)
+
+    async def get_a_campaign(
+        self, id: str | ObjectId, session=None
+    ) -> Optional[CampaignData]:
+        doc = await self._campaign_data_collection.find_one(
+            {"_id": str(id)},
+            session=session,
+        )
+        if doc:
+            return CampaignData.from_doc(doc)
+        return None
+
+    async def list_all_campaigns(self, session=None):
+        async for doc in self._campaign_data_collection.find(
+            {}, session=session
+        ):
+            yield CampaignData.from_doc(doc)
+            
+    async def update_campaign(
+        self,
+        id: Union[str, ObjectId],
+        name: Optional[str] = None,
+        description:Optional[str] = None,
+        price: Optional[int] = None,
+        image_path: Optional[str] = None,
+        quantity: Optional[int] = None,
+        lasting_hours: Optional[int] = None,
+        attenders_id: Optional[List[str]] = None,
+        session=None,
+    ) -> bool:
+        update_data = {}
+        if name:
+            update_data["name"] = name
+        if description:
+            update_data["description"] = description
+        if price:
+            update_data["price"] = price
+        if image_path:
+            update_data["image_path"] = image_path
+        if quantity:
+            update_data["quantity"] = quantity
+        if lasting_hours:
+            update_data["expire"] = datetime.utcnow() + timedelta(hours=lasting_hours)
+        if attenders_id is not None:
+            update_data["attenders_id"] = attenders_id
+        
+        if not update_data:
+            return False  # No updates to apply
+
+        result = await self._campaign_data_collection.update_one(
+            {"_id": str(id)},
+            {"$set": update_data},
+            session=session,
+        )
+        return result.modified_count > 0

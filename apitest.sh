@@ -124,4 +124,17 @@
 # test wallet api
 # curl -X PUT http://localhost:8001/api/employee/wallet/
 # curl -X PUT "http://localhost:8001/api/employee/update_wallet" -H "Content-Type: application/json" -d '{"value": 100, "employee_id": "7144dcaa96534cc6bf35b93efa8b7ee4"}'
-curl -X GET http://localhost:8001/api/employee/get_wallet/7144dcaa96534cc6bf35b93efa8b7ee4
+# curl -X GET http://localhost:8001/api/employee/get_wallet/7144dcaa96534cc6bf35b93efa8b7ee4
+# curl -X GET http://localhost:8001/api/campaigns
+curl -X POST "http://localhost:8001/api/campaign" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Campaign Name",
+    "description": "This is a test campaign",
+    "price": 1,
+    "image_path": "/images/campaign.jpg",
+    "quantity": 50,
+    "lasting_hours": 72,
+    "attenders_id": ["1", "2", "3"]
+  }'
+
