@@ -1,3 +1,4 @@
+// @ts-ignore
 import { useEffect, useState, useContext } from 'react'
 import { getPosts, getSenderPosts, Post } from './types/post'
 import PostWithTabs from './components/PostWithTabs'
@@ -9,7 +10,7 @@ const TechBoard: React.FC = () => {
   const { user } = useContext(UserContext);
   
   const refreshPosts = async () => {
-    console.log('User ID:', user.id); // Print user ID to the terminal
+    // console.log('User ID:', user.id); // Print user ID to the terminal
     try {
       const posts = await getPosts()
       const sortedPosts = posts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())

@@ -128,6 +128,23 @@ async def get_employee_embedding_by_id(employee_id: str) -> GPTEmployeeData:
         raise HTTPException(status_code=404, detail="Employee not found")
     return employee_data
 
+# get wallet
+@app.get("/api/employee/get_wallet/{employee_id}")
+async def get_wallet(employee_id: str) -> int:
+    employee_wallet = await app.employee_dal.check_wallet(employee_id)
+    return employee_wallet
+
+# Update wallet
+class UpdateWalletRequest(BaseModel):
+    value: int
+    employee_id: str
+    
+@app.put("/api/employee/update_wallet") 
+async def update_employee_wallet( request: UpdateWalletRequest) -> int:
+    updated_wallet = await app.employee_dal.update_wallet(request.employee_id, request.value)
+    return updated_wallet
+
+
 class EmployeeCreate(BaseModel):
     name: str
     account: str
@@ -149,7 +166,7 @@ class NewEmployeeResponse(BaseModel):
     position: str
     seniority: int
     region: str
-    
+
     
 @app.post("/api/employee", status_code=status.HTTP_201_CREATED)
 async def create_employee(employee: EmployeeCreate) -> NewEmployeeResponse:
@@ -179,6 +196,8 @@ async def create_employee(employee: EmployeeCreate) -> NewEmployeeResponse:
         seniority=employee.seniority,
         region=employee.region
     )
+    
+    
 
 # Assuming NewTechPostResponse is already defined
 class NewTechPostResponse(BaseModel):

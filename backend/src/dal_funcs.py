@@ -55,6 +55,8 @@ class EmployeeDAL:
         if doc:
             return Employee.from_doc(doc)
         return None
+
+        
     
     async def list_employees(self, session=None):
         async for doc in self._employee_collection.find({}, session=session):
@@ -69,6 +71,31 @@ class EmployeeDAL:
             return Employee.from_doc(doc)
         return None
     
+    async def update_wallet(self, employee_id: str, value: int, session=None) -> int:
+        employee = await self._employee_collection.find_one(
+            {"_id": employee_id},
+            session=session,
+        )
+        if not employee:
+            raise ValueError("Employee not found")
+        if employee["wallet"] + value < 0:
+            raise ValueError("Insufficient funds")
+        new_wallet = employee["wallet"] + value
+        await self._employee_collection.update_one(
+            {"_id": employee_id},
+            {"$set": {"wallet": new_wallet}},
+            session=session,
+        )
+        return new_wallet
+    
+    async def check_wallet(self, employee_id: str, session=None) -> int:
+        employee = await self._employee_collection.find_one(
+            {"_id": employee_id},
+            session=session,
+        )
+        if not employee:
+            raise ValueError("Employee not found")
+        return employee["wallet"]
     
     async def find_similar_employee(self, sender_id: str, session=None) -> Optional[Employee]:
         sender = await self._employee_collection.find_one(
@@ -99,6 +126,25 @@ class EmployeeDAL:
     
         return similar_employee
          
+
+    async def get_wallet_and_score(
+        self, id: str | ObjectId, session=None
+    ) -> Optional[dict[str, int]]:
+        """
+        Get wallet and score of an employee by their ID.
+        Returns a dictionary containing 'wallet' and 'score'.
+        """
+        # Fetch only the wallet and score fields
+        doc = await self._employee_collection.find_one(
+            {"_id": str(id)},
+            {"wallet": 1, "score": 1, "_id": 0},  # Project only wallet and score
+            session=session,
+        )
+        if doc:
+            return {"wallet": doc.get("wallet", 0), "score": doc.get("score", 0)}
+        return None
+
+
 
 class TechPostDAL:
     def __init__(self, tech_post_collection: AsyncIOMotorCollection):

@@ -26,13 +26,13 @@
 #          }'
 
 # id = 83fa6df15b784d60bc760e6413cd8269
-curl -X POST "http://localhost:8001/api/emomsg" \
-     -H "Content-Type: application/json" \
-     -d '{
-            "sender_id": "Andrew",
-            "content": "143rqwefqwf",
-            "rcvr_id": "6666"
-         }'
+# curl -X POST "http://localhost:8001/api/emomsg" \
+#      -H "Content-Type: application/json" \
+#      -d '{
+#             "sender_id": "Andrew",
+#             "content": "143rqwefqwf",
+#             "rcvr_id": "6666"
+#          }'
 # curl -X POST "http://localhost:8001/api/employee" \
 #      -H "Content-Type: application/json" \
 #      -d '{
@@ -120,3 +120,8 @@ curl -X POST "http://localhost:8001/api/emomsg" \
 
 # curl -X GET http://localhost:8001/api/employee/embeddings
 # curl -X GET http://localhost:8001/api/employee/gptdata/cda5b4b3229d4bac8ae3d37f12619a7b
+
+# test wallet api
+# curl -X PUT http://localhost:8001/api/employee/wallet/
+# curl -X PUT "http://localhost:8001/api/employee/update_wallet" -H "Content-Type: application/json" -d '{"value": 100, "employee_id": "7144dcaa96534cc6bf35b93efa8b7ee4"}'
+curl -X GET http://localhost:8001/api/employee/get_wallet/7144dcaa96534cc6bf35b93efa8b7ee4
