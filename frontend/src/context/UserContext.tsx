@@ -2,12 +2,17 @@
 import React, { createContext, useState, ReactNode, useEffect } from 'react';
 
 interface User {
-  id: string;
-  name: string;
-  account: string;
-  department: string;
-  wallet: number;
-  score: number;
+  id: string
+  name: string
+  account: string
+  password: string
+  department: string
+  age : number
+  position: string
+  seniority: number
+  region: string
+  wallet: number
+  score: number
   // Add other user-related fields as needed
 }
 

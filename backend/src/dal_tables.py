@@ -1,5 +1,6 @@
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import Optional
+from typing import List
 from datetime import datetime
 
 class Employee(BaseModel):
@@ -8,6 +9,10 @@ class Employee(BaseModel):
     account: str
     password: str
     department: str
+    age : int
+    position: str
+    seniority: int
+    region: str
     wallet: int
     score: int
 
@@ -19,6 +24,10 @@ class Employee(BaseModel):
             account=doc["account"],
             password=doc["password"],
             department=doc["department"],
+            age=doc["age"],
+            position=doc["position"],
+            seniority=doc["seniority"],
+            region=doc["region"],
             wallet=doc["wallet"],
             score=doc["score"],
         )
@@ -69,7 +78,7 @@ class EmoMsg(BaseModel):
     sender_id: str
     topic: str
     content: str
-    rcvr_id: str
+    rcvr_id: List[str]  
     answered: bool
 
     @staticmethod
@@ -80,7 +89,7 @@ class EmoMsg(BaseModel):
             sender_id=doc["sender_id"],
             topic=doc["topic"],
             content=doc["content"],
-            rcvr_id=str(doc["rcvr_id"]),
+            rcvr_id=[str(rcvr) for rcvr in doc["rcvr_id"]], 
             answered=doc["answered"]
         )
 
@@ -103,6 +112,7 @@ class EmoReply(BaseModel):
             score=doc["score"]
         )
         
+# store tech_post embedding
 class GPTData(BaseModel):
     id: str
     tech_post_id: str
@@ -114,4 +124,18 @@ class GPTData(BaseModel):
             id=str(doc["_id"]),
             tech_post_id=doc["tech_post_id"],
             tech_post_embedding=doc["tech_post_embedding"]
+        )
+
+# store employee embedding 
+class GPTEmployeeData(BaseModel):
+    id: str
+    employee_id: str
+    employee_embedding: List[float]
+    
+    @staticmethod
+    def from_doc(doc) -> "GPTEmployeeData":
+        return GPTEmployeeData(
+            id=str(doc["_id"]),
+            employee_id=doc["employee_id"],
+            employee_embedding=doc["employee_embedding"]  # Corrected this line
         )

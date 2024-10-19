@@ -41,7 +41,7 @@ const Login: React.FC = () => {
     { onpage && 
       (<form onSubmit={handleLogin}>
       <div>
-        <label>Account:</label>
+        <label>Username:</label>
         <input
           type="text"
           value={username}

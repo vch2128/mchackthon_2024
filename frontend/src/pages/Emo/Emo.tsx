@@ -1,5 +1,6 @@
 // src/components/Emo.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
+import { UserContext } from '../../context/UserContext';
 import { Layout, message } from 'antd';
 import './Emo.css';
 const { Sider, Content } = Layout;
@@ -9,10 +10,11 @@ import SidebarMenu from './components/SidebarMenu';
 import ContentArea from './components/ContentArea';
 import MailboxModal from './components/MailboxModal';
 import ReplyModal from './components/ReplyModal';
+import CreateEmoMsg from './components/CreateEmoMsg'; // Import the new component
 
 function Emo() {
-  // 假設 currentUserId 可用，請根據實際情況替換
-  const currentUserId = '83fa6df15b784d60bc760e6413cd8269';
+  const { user } = useContext(UserContext);
+  const currentUserId = user.id;
 
   const [paragraphs, setParagraphs] = useState([]);
   const [selectedParagraph, setSelectedParagraph] = useState(null);
@@ -22,8 +24,8 @@ function Emo() {
   const [selectedMsg, setSelectedMsg] = useState(null);
   const [replyContent, setReplyContent] = useState('');
   const [EmoMsgReply, setEmoMsgReply] = useState([]);
+  const [MsgofReply, setMsgofReply] = useState([]);
 
-  // 日期格式化函數
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('zh-TW', {
@@ -33,99 +35,123 @@ function Emo() {
     });
   };
 
-  // 獲取段落
-  useEffect(() => {
-    const fetchParagraphs = async () => {
-      try {
-        const response = await fetch(`/api/emomsg/sender/${currentUserId}`);
-        if (response.ok) {
-          const data = await response.json();
-          setParagraphs(data);
-          if (data.length > 0) {
-            setSelectedParagraph(data[0]);
-          }
-        } else {
-          message.error('無法獲取情緒段落');
+  // Fetch Paragraphs
+  const fetchParagraphs = useCallback(async () => {
+    try {
+      const response = await fetch(`/api/emomsg/sender/${currentUserId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setParagraphs(data);
+        if (data.length > 0) {
+          setSelectedParagraph(data[0]);
         }
-      } catch (error) {
-        message.error('無法獲取情緒段落');
+      } else {
+        message.error('Unable to fetch emotion paragraphs');
       }
-    };
-
-    fetchParagraphs();
+    } catch (error) {
+      message.error('Unable to fetch emotion paragraphs');
+    }
   }, [currentUserId]);
 
-  // 獲取回覆
-  useEffect(() => {
+  // Fetch Replies for Selected Paragraph
+  const fetchReplies = useCallback(async () => {
     if (selectedParagraph) {
-      const fetchReplies = async () => {
-        try {
-          const response = await fetch(`/api/emoreply/emomsg/${selectedParagraph.id}`);
-          if (response.ok) {
-            const data = await response.json();
-            setReplies(data);
-          } else {
-            message.error('無法獲取回覆');
-          }
-        } catch (error) {
+      try {
+        const response = await fetch(`/api/emoreply/emomsg/${selectedParagraph.id}`);
+        if (response.ok) {
+          const data = await response.json();
+          setReplies(data);
+        } else {
           message.error('無法獲取回覆');
         }
-      };
-
-      fetchReplies();
+      } catch (error) {
+        message.error('無法獲取回覆');
+      }
     }
   }, [selectedParagraph]);
 
-  // 處理段落點擊
+  // Fetch Received Messages (Unreplied)
+  const fetchEmoMsgs = useCallback(async () => {
+    try {
+      const response = await fetch(`/api/emomsg/rcvr/${currentUserId}`);
+      if (response.ok) {
+        const data = await response.json();
+        const repliedMsgIds = new Set(EmoMsgReply.map(reply => reply.emo_msg_id));
+        const filteredEmoMsgs = data.filter(msg => !repliedMsgIds.has(msg.id));
+        setEmoMsgs(filteredEmoMsgs);
+      }
+    } catch (error) {
+      message.error('無法獲取郵箱消息');
+    }
+  }, [currentUserId, EmoMsgReply]);
+
+  // Fetch Sent Replies and Corresponding Original Messages
+  const fetchEmoreply = useCallback(async () => {
+    try {
+      const response = await fetch(`/api/emoreply/sender/${currentUserId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setEmoMsgReply(data);
+        // Fetch all original messages corresponding to the replies
+        const msgPromises = data.map(reply => 
+          fetch(`/api/emomsg/${reply.emo_msg_id}`)
+            .then(res => res.json())
+            .catch(() => null) // Handle individual fetch errors
+        );
+        const msgs = await Promise.all(msgPromises);
+        // Filter out any null responses due to fetch errors
+        setMsgofReply(msgs.filter(msg => msg !== null));
+      } else {
+        message.error('無法獲取回覆');
+      }
+    } catch (error) {
+      message.error('無法獲取回覆');
+    }
+  }, [currentUserId]);
+
+  // Fetch All Mailbox Data
+  const fetchMailboxData = useCallback(async () => {
+    await Promise.all([fetchEmoMsgs(), fetchEmoreply()]);
+  }, [fetchEmoMsgs, fetchEmoreply]);
+
+  // Initial Fetches
+  useEffect(() => {
+    if (currentUserId) {
+      fetchParagraphs();
+    }
+  }, [currentUserId, fetchParagraphs]);
+
+  useEffect(() => {
+    fetchReplies();
+  }, [selectedParagraph, fetchReplies]);
+
+  // Refresh Paragraphs and Replies
+  const refreshParagraphs = () => {
+    fetchParagraphs();
+  };
+
+  // Handle Paragraph Click
   const handleParagraphClick = (para) => {
     setSelectedParagraph(para);
   };
 
-  // 處理郵箱圖標點擊
+  // Handle Mailbox Icon Click
   const handleMailboxClick = () => {
     setIsModalVisible(true);
-
-    const fetchEmoMsgs = async () => {
-      try {
-        const response = await fetch(`/api/emomsg/rcvr/${currentUserId}`);
-        if (response.ok) {
-          const data = await response.json();
-          setEmoMsgs(data);
-        } else {
-          message.error('無法獲取郵箱消息');
-        }
-      } catch (error) {
-        message.error('無法獲取郵箱消息');
-      }
-    };
-
-    const fetchEmoreply = async () => {
-      try {
-        const response = await fetch(`/api/emoreply/sender/${currentUserId}`);
-        if (response.ok) {
-          const data = await response.json();
-          setEmoMsgReply(data);
-        }
-      }
-      catch (error) {
-        message.error('無法獲取回覆');
-      }
-    }
-    fetchEmoreply();
-    fetchEmoMsgs();
+    fetchMailboxData();
   };
 
-  // 處理郵件點擊
+  // Handle Message Click (Unreplied)
   const handleMsgClick = (msg) => {
     setSelectedMsg(msg);
   };
 
-  // 處理回覆內容改變
+  // Handle Reply Content Change
   const handleReplyChange = (e) => {
     setReplyContent(e.target.value);
   };
 
-  // 處理回覆提交
+  // Handle Reply Submission
   const handleReplySubmit = async () => {
     if (!replyContent.trim()) {
       message.error('請輸入回覆內容');
@@ -147,10 +173,12 @@ function Emo() {
 
       if (response.ok) {
         message.success('回覆提交成功');
+        setEmoMsgs((prevEmoMsgs) => prevEmoMsgs.filter((msg) => msg.id !== selectedMsg.id));
         setReplyContent('');
         setSelectedMsg(null);
-        // 從 emoMsgs 中移除已回覆的消息
-        setEmoMsgs(emoMsgs.filter((msg) => msg.id !== selectedMsg.id));
+        fetchEmoreply();
+        // Refetch unreplied and replied messages after submitting a reply
+        fetchMailboxData();  // This will refresh both sections
       } else {
         const errorData = await response.json();
         message.error(errorData.state || '回覆提交失敗');
@@ -162,7 +190,7 @@ function Emo() {
 
   return (
     <Layout className="emo-layout">
-      {/* 側邊欄：顯示段落列表 */}
+      {/* Sidebar: Display Paragraph List */}
       <Sider width={250} className="emo-sider">
         <h2>我的情緒樹洞</h2>
         <SidebarMenu
@@ -173,7 +201,7 @@ function Emo() {
         />
       </Sider>
 
-      {/* 內容區域：顯示選定段落和回覆 */}
+      {/* Content Area: Display Selected Paragraph and Replies */}
       <Layout>
         <Content className="emo-content">
           {selectedParagraph && (
@@ -186,7 +214,7 @@ function Emo() {
         </Content>
       </Layout>
 
-      {/* 郵箱圖標 */}
+      {/* Mailbox Icon */}
       <img
         src={mailboxIcon}
         alt="Mailbox Icon"
@@ -194,17 +222,18 @@ function Emo() {
         onClick={handleMailboxClick}
       />
 
-      {/* 郵箱模態框 */}
+      {/* Mailbox Modal */}
       <MailboxModal
         visible={isModalVisible}
         onClose={() => setIsModalVisible(false)}
         emoMsgs={emoMsgs}
         EmoMsgReply={EmoMsgReply}
+        MsgofReply={MsgofReply}
         onMsgClick={handleMsgClick}
         formatDate={formatDate}
       />
 
-      {/* 回覆模態框 */}
+      {/* Reply Modal */}
       <ReplyModal
         selectedMsg={selectedMsg}
         visible={!!selectedMsg}
@@ -214,6 +243,9 @@ function Emo() {
         onReplySubmit={handleReplySubmit}
         formatDate={formatDate}
       />
+
+      {/* Create Emotion Message Component */}
+      <CreateEmoMsg currentUserId={currentUserId} onMessageCreated={refreshParagraphs} />
     </Layout>
   );
 }

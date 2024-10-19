@@ -1,3 +1,4 @@
+// @ts-ignore
 import { useEffect, useState, useContext } from 'react'
 import { getPosts, getSearchPostsMy, getSearchPosts, getSenderPosts, Post } from './types/post'
 import PostWithTabs from './components/PostWithTabs'
