@@ -66,12 +66,12 @@
 
 
 # create techpost 
-# curl -X POST "http://localhost:8001/api/techpost" \
-#      -H "Content-Type: application/json" \
-#      -d '{
-#            "content": "I have some database schema problem.",
-#            "sender_id": "2f089e4813ad4d028bc543ff1de4e11e"
-#          }'
+curl -X POST "http://localhost:8001/api/techpost" \
+     -H "Content-Type: application/json" \
+     -d '{
+           "content": "I want to learn to use docker",
+           "sender_id": "7144dcaa96534cc6bf35b93efa8b7ee4"
+         }'
 
 
 # # curl -X POST "http://localhost:8001/api/search/techpost" \
@@ -133,4 +133,4 @@
 # test wallet api
 # curl -X PUT http://localhost:8001/api/employee/wallet/
 # curl -X PUT "http://localhost:8001/api/employee/update_wallet" -H "Content-Type: application/json" -d '{"value": 100, "employee_id": "7144dcaa96534cc6bf35b93efa8b7ee4"}'
-curl -X GET http://localhost:8001/api/employee/get_wallet/7144dcaa96534cc6bf35b93efa8b7ee4
+# curl -X GET http://localhost:8001/api/employee/get_wallet/7144dcaa96534cc6bf35b93efa8b7ee4

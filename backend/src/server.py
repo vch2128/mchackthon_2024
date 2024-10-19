@@ -223,7 +223,7 @@ async def create_techpost(tech_post: TechPostCreate) -> NewTechPostResponse:
     new_id = await app.techpost_dal.create_tech_post(
         content=tech_post.content,
         sender_id=tech_post.sender_id,
-        answered=True,
+        answered=False,
     )
     
     embed = await get_embedding(tech_post.content)
