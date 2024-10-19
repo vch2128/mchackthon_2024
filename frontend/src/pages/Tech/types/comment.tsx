@@ -24,3 +24,15 @@ export const addComment = async (comment: Comment): Promise<Comment> => {
     return response.data
 }
 
+export const updateWallet = async (employee_id: string, value: number): Promise<void> => {
+    try{
+        console.log("update wallet", employee_id, value);
+        await axios.put(`/api/employee/update_wallet`, {
+            value: value,
+            employee_id: employee_id
+        });
+    } catch (error) {
+        console.error(`Error updating wallet for ${employee_id}:`, error);
+        throw error;
+    }
+}

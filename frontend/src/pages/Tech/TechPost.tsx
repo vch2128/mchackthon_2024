@@ -6,7 +6,7 @@ import { Input, Form, Button, Typography, Divider, Row, Col } from 'antd';
 import CommentList from './components/CommentList';
 import { Comment } from '@ant-design/compatible';
 import { notification } from 'antd';
-import { Comment_t } from './types/comment';
+import { Comment_t, updateWallet } from './types/comment';
 
 const { Title, Paragraph } = Typography;
 const { TextArea } = Input;
@@ -37,7 +37,7 @@ const TechPost =() => {
       console.log("get tech post");
       if (user) {
         setIsSender(response.data.sender_id === user.id);
-        console.log("compare", response.data.sender_id === user.id);
+        //console.log("compare", response.data.sender_id === user.id);
       }
       setTechPost(response.data)
       return response.data;
@@ -47,9 +47,8 @@ const TechPost =() => {
     }
   }
 
-  // Add this new useEffect hook
   useEffect(() => {
-    console.log("is sender (updated)", isSender);
+    //console.log("is sender (updated)", isSender);
   }, [isSender]);
 
   const getCommentsOfTechPost = async() => {  
@@ -84,7 +83,7 @@ const TechPost =() => {
         },
       });
       console.log(response.data);
-      
+      updateWallet(user.id, 10);
       // Clear the comment input
       setCommentContent('');
       getCommentsOfTechPost();
