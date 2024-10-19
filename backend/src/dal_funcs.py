@@ -1,3 +1,4 @@
+# dal_func.py
 
 from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorCollection
@@ -18,10 +19,6 @@ class EmployeeDAL:
         account: str,
         password: str,
         department: str, 
-        age: int,
-        seniority: int,
-        region: str,
-        position: str,
         wallet: Optional[int] = 30, 
         score: Optional[int] = 0,
         session=None
@@ -33,10 +30,6 @@ class EmployeeDAL:
                 "account": account,
                 "password": password,
                 "department": department,
-                "age": age,
-                "seniority": seniority,
-                "region": region,
-                "position": position,
                 "wallet": wallet,
                 "score": score,
             },
@@ -54,8 +47,6 @@ class EmployeeDAL:
         if doc:
             return Employee.from_doc(doc)
         return None
-
-        
     
     async def list_employees(self, session=None):
         async for doc in self._employee_collection.find({}, session=session):
@@ -69,81 +60,6 @@ class EmployeeDAL:
         if doc:
             return Employee.from_doc(doc)
         return None
-    
-    async def update_wallet(self, employee_id: str, value: int, session=None) -> int:
-        employee = await self._employee_collection.find_one(
-            {"_id": employee_id},
-            session=session,
-        )
-        if not employee:
-            raise ValueError("Employee not found")
-        if employee["wallet"] + value < 0:
-            raise ValueError("Insufficient funds")
-        new_wallet = employee["wallet"] + value
-        await self._employee_collection.update_one(
-            {"_id": employee_id},
-            {"$set": {"wallet": new_wallet}},
-            session=session,
-        )
-        return new_wallet
-    
-    async def check_wallet(self, employee_id: str, session=None) -> int:
-        employee = await self._employee_collection.find_one(
-            {"_id": employee_id},
-            session=session,
-        )
-        if not employee:
-            raise ValueError("Employee not found")
-        return employee["wallet"]
-    
-    async def find_similar_employee(self, sender_id: str, session=None) -> Optional[Employee]:
-        sender = await self._employee_collection.find_one(
-            {"_id": sender_id}, {"_id": 0, "department": 1, "age": 1, "seniority" : 1, "region" : 1}, session=session
-        )
-        if not sender:
-            raise ValueError("Sender not found")
-    
-        department = sender["department"]
-        age = sender["age"]
-        seniority = sender["seniority"]
-        region = sender["region"]
-
-        
-        # Find up to 3 users with similar background (same department and similar age)
-        similar_employee = await self._employee_collection.find(
-            {
-                "$or": [
-                    {"department": department},
-                    {"age": {"$gte": (age - 5), "$lte": (age + 5)}},
-                    {"seniority": {"$gte": (seniority - 5), "$lte": (seniority + 5)}}
-                ],
-                "region": {"$ne": region},  # Ensure employees come from a different region
-                "_id": {"$ne": sender_id},  # Exclude the sender themselves
-            },
-            session=session
-        ).limit(3).to_list(length=3)
-    
-        return similar_employee
-         
-
-    async def get_wallet_and_score(
-        self, id: str | ObjectId, session=None
-    ) -> Optional[dict[str, int]]:
-        """
-        Get wallet and score of an employee by their ID.
-        Returns a dictionary containing 'wallet' and 'score'.
-        """
-        # Fetch only the wallet and score fields
-        doc = await self._employee_collection.find_one(
-            {"_id": str(id)},
-            {"wallet": 1, "score": 1, "_id": 0},  # Project only wallet and score
-            session=session,
-        )
-        if doc:
-            return {"wallet": doc.get("wallet", 0), "score": doc.get("score", 0)}
-        return None
-
-
 
 class TechPostDAL:
     def __init__(self, tech_post_collection: AsyncIOMotorCollection):
@@ -329,7 +245,7 @@ class EmoMsgDAL:
         self,
         sender_id: str,
         content: str,
-        rcvr_id: List[str],
+        rcvr_id: str,
         topic: Optional[str] = "No Topic",
         answered: Optional[bool] = False,
         session=None,
@@ -459,8 +375,7 @@ class GPTDataDAL:
     async def list_gpt_data(self, session=None):
         async for doc in self._gpt_data_collection.find({}, session=session):
             yield GPTData.from_doc(doc)
-            
-            
+
 class GPTEmployeeDataDAL:
     def __init__(self, gpt_employee_data_collection: AsyncIOMotorCollection):
         self._gpt_employee_data_collection = gpt_employee_data_collection
@@ -495,4 +410,3 @@ class GPTEmployeeDataDAL:
     async def list_gpt_employee_data(self, session=None):
         async for doc in self._gpt_employee_data_collection.find({}, session=session):
             yield GPTEmployeeData.from_doc(doc) 
-    
