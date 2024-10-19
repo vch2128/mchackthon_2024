@@ -54,4 +54,18 @@ export type Post = {
       // depending on how you want to handle errors in the calling code
       throw error;
     }
-  };
+  }
+
+  export const updateBestComment = async (techpost_id: string, best_comment_id: string, setBest: boolean): Promise<void> => {
+    try{
+      await axios.patch(`/api/techpost/bestcomment/${techpost_id}/${best_comment_id}/${setBest}`);
+    } catch (error) {
+      console.error(`Error updating best comment for ${techpost_id}:`, error);
+      throw error;
+    }
+  }
+
+  export const getPostSender = async (tech_post_id: string): Promise<Post> => {
+    const response = await axios.get(`/api/techposts/${tech_post_id}`);
+    return response.data.sender_id;
+  }

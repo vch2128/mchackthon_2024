@@ -20,6 +20,7 @@ const TechPost =() => {
   const [commentContent, setCommentContent] = useState('')
   const [techPost, setTechPost] = useState(null);
   const [comments, setComments] = useState<Comment_t[]>([]);
+  const [isSender, setIsSender] = useState<boolean>(false);
   const avatarUrl = "https://shoplineimg.com/643616b7087ae8002271ceb2/64e073d381afe80022a66ebc/1200x.webp?source_format=png"; // Define the avatar URL
 
 
@@ -30,10 +31,14 @@ const TechPost =() => {
     }
   }, [onpage])
 
-  const getTechPost = async() => {  //ok
+  const getTechPost = async() => {  
     try {
       const response = await axios.get(`/api/techposts/${techpost_id}`);
       console.log("get tech post");
+      if (user) {
+        setIsSender(response.data.sender_id === user.id);
+        console.log("compare", response.data.sender_id === user.id);
+      }
       setTechPost(response.data)
       return response.data;
     } catch (error) {
@@ -42,13 +47,23 @@ const TechPost =() => {
     }
   }
 
-  const getCommentsOfTechPost = async() => {  //ok
+  // Add this new useEffect hook
+  useEffect(() => {
+    console.log("is sender (updated)", isSender);
+  }, [isSender]);
+
+  const getCommentsOfTechPost = async() => {  
     try {
       // the response will be a list of comments
       const response = await axios.get(`/api/techposts/techcomments/${techpost_id}`);
       console.log("get comments");
-      setComments(response.data);
-      return response.data
+      const sortedComments = response.data.sort((a, b) => {
+        if (a.is_best) return -1;
+        if (b.is_best) return 1;
+        return 0;
+      });
+      setComments(sortedComments);
+      return sortedComments;
     } catch (error) {
       console.error('Error:', error);
     }
@@ -68,13 +83,11 @@ const TechPost =() => {
           'Content-Type': 'application/json',
         },
       });
-      
-      // Add the new comment to the existing comments
-      setComments(prevComments => [...prevComments, response.data]);
+      console.log(response.data);
       
       // Clear the comment input
       setCommentContent('');
-      
+      getCommentsOfTechPost();
       // Show a success notification
       notification.success({
         message: 'Comment added successfully',
@@ -92,6 +105,8 @@ const TechPost =() => {
     }
   }
 
+  
+
   return (<>
     {
       onpage && (<>
@@ -103,8 +118,8 @@ const TechPost =() => {
           </Typography>
 
       <Divider />
-
-      <CommentList comments={comments} />
+        {/* <p>Comments</p> */}
+      <CommentList comments={comments} refetchComments={getCommentsOfTechPost} isSender={isSender}/>
       
       < Comment
         style={{paddingLeft: '15px', paddingRight: '20px'}}

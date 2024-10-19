@@ -21,7 +21,8 @@ const TechBoard: React.FC<TechBoardProps> = ({ isSearching, searchQuery }) => {
         const sortedPosts = posts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
         setPosts(sortedPosts)
         const senderPosts = await getSenderPosts(user.id)
-        setSenderPosts(senderPosts)
+        const sortedSenderPosts = senderPosts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        setSenderPosts(sortedSenderPosts)
       } catch (error) {
         console.error('Error fetching posts:', error)
       }
