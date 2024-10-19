@@ -1,5 +1,6 @@
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import Optional
+from typing import List
 from datetime import datetime
 
 class Employee(BaseModel):
@@ -76,7 +77,7 @@ class EmoMsg(BaseModel):
     sender_id: str
     topic: str
     content: str
-    rcvr_id: str
+    rcvr_id: List[str]  
     answered: bool
 
     @staticmethod
@@ -87,7 +88,7 @@ class EmoMsg(BaseModel):
             sender_id=doc["sender_id"],
             topic=doc["topic"],
             content=doc["content"],
-            rcvr_id=str(doc["rcvr_id"]),
+            rcvr_id=[str(rcvr) for rcvr in doc["rcvr_id"]], 
             answered=doc["answered"]
         )
 
