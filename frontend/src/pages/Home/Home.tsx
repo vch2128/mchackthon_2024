@@ -3,7 +3,9 @@ import axios from 'axios';
 import './Home.css'; // Import the CSS file
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
-import { Button, Modal } from 'antd';
+// import { Button, Modal } from 'antd';
+import { Modal, Avatar, Popover, Button } from 'antd';
+import { QuestionOutlined } from '@ant-design/icons';
 
 const Home: React.FC = () => {
   const [loadingTech, setLoadingTech] = useState(false);
@@ -351,6 +353,25 @@ const Home: React.FC = () => {
 
   return (
     <div>
+      <div style={{ position: 'absolute', top: 70, right: 10 }}>
+        <Popover 
+          content={
+            <>
+              Describe the issue you're facing at work today, and we'll assist you in finding a solution.
+              <br />
+              You can also connect with others who are dealing with similar challenges.
+            </>}
+          title="Help" 
+          trigger="click"
+          placement="bottomRight"  // Ensure popover appears near the button (comment outside JSX)
+        >
+          <Avatar
+            style={{ cursor: 'pointer' }}
+            icon={<QuestionOutlined />}
+            size="large"
+          />
+       </Popover>
+      </div>
       <Modal
         title="History advice!"
         open={open}
