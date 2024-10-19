@@ -6,6 +6,10 @@ interface User {
   name: string;
   account: string;
   department: string;
+  age: number;
+  position: string;
+  seniority: number;
+  region: string;
   wallet: number;
   score: number;
   // Add other user-related fields as needed

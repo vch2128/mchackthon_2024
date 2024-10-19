@@ -69,6 +69,10 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan, debug=DEBUG)
 
+@app.get("/api/employees/{employee_id}")
+async def get_employee(employee_id: str) -> Employee:
+    return await app.employee_dal.get_employee(employee_id)
+
 @app.get("/api/techposts") # return all techposts
 async def get_all_techposts() -> list[TechPost]:
     return [i async for i in app.techpost_dal.list_tech_posts()]
@@ -221,9 +225,14 @@ class NewEmoMsgResponse(BaseModel):
 class EmoMsgCreate(BaseModel):
     sender_id: str
     content: str
+    
+class EmoMsg_Testing_Create(BaseModel):
+    sender_id: str
+    content: str
+    rcvr_id: list[str]
 
 # create a emo msg
-@app.post("/api/emomsg", status_code=status.HTTP_201_CREATED)
+@app.post("/api/emomsg/ToPeople", status_code=status.HTTP_201_CREATED)
 async def create_emomsg(emomsg: EmoMsgCreate) -> NewEmoMsgResponse:
     similar_employee = await app.employee_dal.find_similar_employee(sender_id=emomsg.sender_id)
     similar_employee_ids = [employee["_id"] for employee in similar_employee]
@@ -237,6 +246,20 @@ async def create_emomsg(emomsg: EmoMsgCreate) -> NewEmoMsgResponse:
         sender_id=emomsg.sender_id,
         content=emomsg.content,
         rcvr_id=similar_employee_ids
+    )
+    
+@app.post("/api/emomsg_to", status_code=status.HTTP_201_CREATED)
+async def create_emomsg(emomsg: EmoMsg_Testing_Create) -> NewEmoMsgResponse:
+    new_id = await app.emomsg_dal.create_emo_msg(
+        sender_id=emomsg.sender_id,
+        content=emomsg.content,
+        rcvr_id=emomsg.rcvr_id
+    )
+    return NewEmoMsgResponse(
+        id=new_id, 
+        sender_id=emomsg.sender_id,
+        content=emomsg.content,
+        rcvr_id=emomsg.rcvr_id
     )
 
 class NewEmoReplyResponse(BaseModel):
