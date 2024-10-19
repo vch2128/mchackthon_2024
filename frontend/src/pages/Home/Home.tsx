@@ -4,8 +4,10 @@ import './Home.css'; // Import the CSS file
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
 // import { Button, Modal } from 'antd';
-import { Modal, Avatar, Popover, Button } from 'antd';
+import { Modal, Avatar, Popover, Typography, Divider } from 'antd';
 import { QuestionOutlined } from '@ant-design/icons';
+
+const { Title } = Typography;
 
 const Home: React.FC = () => {
   const [loadingTech, setLoadingTech] = useState(false);
@@ -314,13 +316,11 @@ const Home: React.FC = () => {
   // Function for rendering no response UI
   const renderNoResponseUI = () => (
     <div>
-      <div className="fixed-header">
-        <h1>Home Page</h1>
-      </div>
-
-      <div style={{ marginTop: '100px', marginBottom: '50px' }}>
+      <Title level={2}>Welcome,  {user?.name}</Title>
+      <Divider />
+      <div style={{ marginTop: '50px', marginBottom: '50px' }}>
         <textarea
-          placeholder="Type your paragraph here..."
+          placeholder="Tell me about your problems..."
           value={paragraph}
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
             setParagraph(e.target.value)
@@ -342,10 +342,11 @@ const Home: React.FC = () => {
   // Function for rendering response UI
   const renderResponseUI = () => (
     <div>
-      <div className="fixed-header">
-        <h1>Home Page</h1>
-      </div>
-      <div style={{ marginTop: '100px', marginBottom: '50px' }}>
+
+      <Title level={2}>Home Page</Title>
+      <Divider />
+
+      <div style={{ marginTop: '30px', marginBottom: '30px' }}>
         <div className="container">
           <div className="box box-left">
             <h2>Technical Part:</h2>
