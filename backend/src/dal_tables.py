@@ -32,7 +32,6 @@ class Employee(BaseModel):
             score=doc["score"],
         )
 
-
 class TechPost(BaseModel):
     id: str
     createdAt: datetime
