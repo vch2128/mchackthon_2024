@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback} from 'react';
 import axios from 'axios';
 import './Home.css'; // Import the CSS file
 import { useNavigate } from 'react-router-dom';
@@ -38,7 +38,7 @@ const Home: React.FC = () => {
     setOpen(false);
   };
 
-  useEffect(() => {
+  useCallback(() => {
     const handleHashChange = () => {
       setHash(window.location.hash);
       if (window.location.hash === '#response') {
@@ -187,7 +187,32 @@ const Home: React.FC = () => {
     }
   };
 
-  const handleEmoProbSubmit = async () => {
+  const sendEmoProbSubmitToSame = async () => {
+    setLoadingEmo(true);
+    setErrorEmo(null);
+    try {
+      const response = await axios.post(
+        '/api/submit-emoprob',
+        {
+          emoProb,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      alert('Emotional problem submitted successfully!');
+    } catch (error) {
+      setErrorEmo('Failed to submit the emotional problem');
+      console.error('Error submitting emotional problem:', error);
+    } finally {
+      setLoadingEmo(false);
+    }
+  };
+
+  const sendEmoProbSubmitToDiff = async () => {
     setLoadingEmo(true);
     setErrorEmo(null);
     try {
@@ -296,8 +321,13 @@ const Home: React.FC = () => {
               }}
             ></textarea>
             <br />
-            <button onClick={handleEmoProbSubmit} disabled={loadingEmo}>
-              {loadingEmo ? 'Submitting...' : 'Submit Emotional'}
+            <button onClick={sendEmoProbSubmitToSame} disabled={loadingEmo}>
+              {loadingEmo ? 'Submitting...' : '傳給同溫層'}
+            </button>
+
+            {' '}
+            <button onClick={sendEmoProbSubmitToDiff} disabled={loadingEmo}>
+              {loadingEmo ? 'Submitting...' : '傳給神秘人士'}
             </button>
             {errorEmo && <p style={{ color: 'red' }}>{errorEmo}</p>}
           </div>

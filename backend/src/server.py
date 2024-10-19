@@ -13,8 +13,8 @@ from pydantic import BaseModel
 from typing import List
 import uvicorn
 
-from dal_funcs import TechPostDAL, EmployeeDAL, TechCommentDAL, EmoMsgDAL, EmoReplyDAL, GPTDataDAL
-from dal_tables import TechPost, Employee, TechComment, EmoMsg, EmoReply, GPTData
+from dal_funcs import TechPostDAL, EmployeeDAL, TechCommentDAL, EmoMsgDAL, EmoReplyDAL, GPTDataDAL, GPTEmployeeDataDAL
+from dal_tables import TechPost, Employee, TechComment, EmoMsg, EmoReply, GPTData, GPTEmployeeData
 from authentication import authenticate_user, create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES, pwd_context
 from gpt import gpt_separate_paragraph, get_embedding, find_most_similar, gpt_pre_answer_tech_post
 
@@ -41,6 +41,7 @@ async def lifespan(app: FastAPI):
     emomsg_collection = db.get_collection("emomsg")
     emoreply_collection = db.get_collection("emoreply")
     gptdata_collection = db.get_collection("gptdata")
+    gptemployeedata_collection = db.get_collection("gptemployeedata")
 
     # Store in app.state:
     app.state.db_client = client
@@ -51,6 +52,7 @@ async def lifespan(app: FastAPI):
     app.state.emomsg_collection = emomsg_collection
     app.state.emoreply_collection = emoreply_collection
     app.state.gptdata_collection = gptdata_collection
+    app.state.gptemployeedata_collection = gptemployeedata_collection
     
     
     app.techpost_dal    = TechPostDAL(techpost_collection)
@@ -59,6 +61,7 @@ async def lifespan(app: FastAPI):
     app.emomsg_dal = EmoMsgDAL(emomsg_collection)
     app.emoreply_dal = EmoReplyDAL(emoreply_collection)
     app.gptdata_dal = GPTDataDAL(gptdata_collection)
+    app.gptemployeedata_dal = GPTEmployeeDataDAL(gptemployeedata_collection)
     
     # Yield back to FastAPI Application:
     yield
@@ -308,6 +311,8 @@ async def gpt_get_presearched_answer(
         msg=answer
     )
 
+# @app.post("/api/search/matchrcvr", status_code=status.HTTP_201_CREATED)
+# async def gpt_get_
     
 @app.post("/api/login")
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):

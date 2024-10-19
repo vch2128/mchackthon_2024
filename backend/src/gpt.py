@@ -3,7 +3,7 @@ import json
 # import asyncio
 from openai import OpenAI
 from typing import List
-from dal_tables import GPTData
+from dal_tables import GPTData, GPTEmployeeData
 import numpy as np
 
 OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
@@ -166,6 +166,27 @@ async def gpt_pre_answer_tech_post(problem, history_answer_list):
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
         return "failed"
+    
+async def gpt_get_rcvr_id_mostmatched(
+        gpt_employee_data_list: List[GPTEmployeeData],
+        new_embedding: List[float]
+    ) -> GPTData:
+    """Find the GPTData instance with the most similar embedding to the new_embedding."""
+    max_similarity = -1.0
+    most_similar_data = None
+
+    if not gpt_employee_data_list:
+        return "2f089e4813ad4d028bc543ff1de4e11e"
+
+    # Compute all similarity scores
+    async for data in gpt_employee_data_list:
+        similarity = cosine_similarity(data.tech_post_embedding, new_embedding)
+        if similarity > max_similarity:
+            max_similarity = similarity
+            most_similar_data = data
+    print(most_similar_data.tech_post_id)
+    return most_similar_data
+
 # async def main():
 #     result = await get_embedding("I am a bad guy")
 #     print(result)
