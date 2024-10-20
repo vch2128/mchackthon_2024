@@ -160,4 +160,14 @@
 #     "lasting_hours": 72,
 #     "attenders_id": ["1", "2", "3"]
 #   }'
-
+curl -X POST "http://localhost:8001/api/campaign" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Mountain Adventure Hike",
+    "description": "Take on an exhilarating hike through the scenic mountain trails, with breathtaking views at every turn. This guided trek will end with a picnic at the summit, complete with healthy snacks and refreshing drinks.",
+    "price": 0,
+    "image_path": "/images/campaign4.jpg",
+    "quantity": 12,
+    "lasting_hours": 6,
+    "attenders_id": []
+  }'
