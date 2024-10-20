@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Number of employees to generate
-NUM_EMPLOYEES=80
+NUM_EMPLOYEES=50
 
 # Predefined department and position lists relevant to TSMC
 DEPARTMENTS=("R&D" "Manufacturing" "Management" "Sales" "Finance" "Quality Assurance")
@@ -20,7 +20,7 @@ FIRST_NAMES=(
 )
 
 # Output JSON file
-OUTPUT_FILE="employee.json"
+OUTPUT_FILE="employee_1.json"
 
 # Description files
 DESCRIPTION_FILE="description.txt"

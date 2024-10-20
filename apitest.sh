@@ -120,14 +120,15 @@
 #          }'
 
 # create emo reply
-# curl -X POST "http://localhost:8001/api/emoreply" \
-#      -H "Content-Type: application/json" \
-#      -d '{
-#            "content": "haha",
-#            "emo_msg_id": "61ea989c65b849d88055992f7beaba3e",
-#            "sender_id": "066f32644fac497f9c72bf0e7d12a8c1"
-#          }'
-string="I struggle to maintain a healthy work-life balance. Long hours and the expectation to be always available make it difficult for me to spend quality time with family and pursue personal interests, leading to increased stress."
+curl -X POST "http://localhost:8001/api/emoreply" \
+     -H "Content-Type: application/json" \
+     -d '{
+           "content": "I am sorry you are facing this. Clear communication is so important for a smooth workflow. Maybe asking for more clarity or starting small check-ins could help. You are not alone in feeling this way, and things can improve with a little more openness. Stay positive!",
+           "emo_msg_id": "31c677711feb40788efee745660aa576",
+           "sender_id": "19aab065ed44438b8b48b19476c32012"
+         }'
+
+string="I work diligently on projects, but my efforts go unnoticed. Despite my hard work, I receive little recognition or praise from management. This lack of appreciation has started to diminish my motivation and job satisfaction."
 
 # curl -X POST "http://localhost:8001/api/emomsg"  \
 #      -H "Content-Type: application/json" \
@@ -136,13 +137,13 @@ string="I struggle to maintain a healthy work-life balance. Long hours and the e
 #            "content": "'"$string"'"
 #          }'
 
-curl -X POST "http://localhost:8001/api/emomsg_to"  \
-     -H "Content-Type: application/json" \
-     -d '{
-           "sender_id": "17c5771383a64adea83fd5d50311dd5e",
-           "content": "'"$string"'",
-           "rcvr_id": ["07cbf45c0101427d9f648944ff4a6081"]
-         }'
+# curl -X POST "http://localhost:8001/api/emomsg_to"  \
+#      -H "Content-Type: application/json" \
+#      -d '{
+#            "sender_id": "17c5771383a64adea83fd5d50311dd5e",
+#            "content": "'"$string"'",
+#            "rcvr_id": ["07cbf45c0101427d9f648944ff4a6081"]
+#          }'
 
 
 # curl -X GET http://localhost:8001/api/techposts/techcomments/708f24c378b64942b61edc3e15533045
@@ -151,7 +152,7 @@ curl -X POST "http://localhost:8001/api/emomsg_to"  \
 # curl -X GET http://localhost:8001/api/emomsg/rcvr/83fa6df15b784d60bc760e6413cd8269
 # curl -X GET http://localhost:8001/api/emoreply/emomsg/a9dafa3762d24284be76cd0ddff9c7d0
 # curl -X GET http://localhost:8001/api/emoreply/sender/2f089e4813ad4d028bc543ff1de4e11e
-# curl -X GET http://localhost:8001/api/employees/0445782eb4e4476aa1d3802a1df4f462
+# curl -X GET http://localhost:8001/api/employees/0874ae7d1cdd4867ae26334c86b0a4cb
 # a9dafa3762d24284be76cd0ddff9c7d0
 # 4214d9bfda9d4f9696d828aee6b5ba50
 
