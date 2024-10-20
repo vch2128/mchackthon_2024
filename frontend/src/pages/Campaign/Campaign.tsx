@@ -13,6 +13,9 @@ import axios from 'axios';
 import dining from '../../assets/dining.png';
 import hostevent from '../../assets/hostevent.png';
 import HostEventForm from './HostEventForm';
+import { Avatar, Popover } from 'antd';
+import { QuestionOutlined } from '@ant-design/icons';
+
 
 const { Content } = Layout;
 
@@ -324,32 +327,38 @@ const Campaign: React.FC = () => {
   );
   
   return (
-    <Layout >
-      {contextHolder} 
-      <Content
-        style={{
-          padding: '20px',
-          maxHeight: '100vh', // Ensure the content area fits within the viewport
-          overflowY: 'auto', // Enable vertical scrolling if content exceeds the viewport height
-          overflowX: 'hidden', // Prevent horizontal scrolling unless necessary
-          WebkitOverflowScrolling: 'touch', // Enable smooth scrolling on touch devices
-          scrollbarWidth: 'none', // Firefox
-          msOverflowStyle: 'none', // Internet Explorer and Edge
-        }}
-      >
-        
-        <br></br>
-        <br></br>
-        {renderProducts()}
-        <Modal
-          title={selectedCampaign?.name}
-          visible={isModalVisible}
-          onCancel={handleCloseModal}
-          footer={[
-            <Button key="back" onClick={handleCloseModal}>
-              Close
-            </Button>
-          ]}
+    <>
+      <div style={{ position: 'absolute', top: 70, right: 10 }}>
+        <Popover 
+          content={
+            <>
+              Before the timer ends. You can order the campaign you want.
+              <br />
+              Each employee can only order each event once.
+            </>}
+          title="Help" 
+          trigger="click"
+          placement="bottomRight"  // Ensure popover appears near the button (comment outside JSX)
+         >
+          <Avatar
+            style={{ cursor: 'pointer' }}
+            icon={<QuestionOutlined />}
+            size="large"
+          />
+        </Popover>
+      </div>
+      <Layout >
+        {contextHolder} 
+        <Content
+          style={{
+            padding: '20px',
+            maxHeight: '100vh', // Ensure the content area fits within the viewport
+            overflowY: 'auto', // Enable vertical scrolling if content exceeds the viewport height
+            overflowX: 'hidden', // Prevent horizontal scrolling unless necessary
+            WebkitOverflowScrolling: 'touch', // Enable smooth scrolling on touch devices
+            scrollbarWidth: 'none', // Firefox
+            msOverflowStyle: 'none', // Internet Explorer and Edge
+          }}
         >
           {selectedCampaign && (
             <div>
