@@ -1,0 +1,961 @@
+[
+{
+  "name": "Abigail Cai",
+  "account": "V2y9LeaR",
+  "password": "jmUwV6uK",
+  "department": "Manufacturing",
+  "age": 43,
+  "position": "Manager",
+  "region": "Tainan",
+  "seniority": 8,
+  "description": "Dedicated to maintaining high standards of quality assurance in manufacturing. In free time, Enjoys exploring new restaurants and food cuisines."
+}
+,
+{
+  "name": "Ella Peng",
+  "account": "fW04aWpr",
+  "password": "mg90fTJ5",
+  "department": "Management",
+  "age": 36,
+  "position": "Senior Engineer",
+  "region": "Taipei",
+  "seniority": 10,
+  "description": "Proficient in performance management and appraisal systems. In free time, Enjoys running and participating in marathons."
+}
+,
+{
+  "name": "Emma Xu",
+  "account": "jxxLt1jx",
+  "password": "tNJefqwT",
+  "department": "Management",
+  "age": 34,
+  "position": "Analyst",
+  "region": "Tainan",
+  "seniority": 4,
+  "description": "Proficient in human resource management, optimizing employee recruitment processes. In free time, Passionate about technology gadgets and innovations."
+}
+,
+{
+  "name": "Daniel Shi",
+  "account": "xw2QXxAB",
+  "password": "4NZLeYhZ",
+  "department": "Manufacturing",
+  "age": 38,
+  "position": "Analyst",
+  "region": "Hsinchu",
+  "seniority": 3,
+  "description": "Dedicated to maintaining high standards of quality assurance in manufacturing. In free time, Interested in astronomy and stargazing."
+}
+,
+{
+  "name": "John Wang",
+  "account": "gwbVu2kI",
+  "password": "R3lUWBVR",
+  "department": "Manufacturing",
+  "age": 29,
+  "position": "Engineer",
+  "region": "Tainan",
+  "seniority": 3,
+  "description": "Experienced in supply chain management, enhancing logistics efficiency. In free time, Loves swimming and water sports."
+}
+,
+{
+  "name": "Emma Fang",
+  "account": "vfqdUJDH",
+  "password": "gB5E3eCP",
+  "department": "R&D",
+  "age": 39,
+  "position": "Senior Engineer",
+  "region": "Taipei",
+  "seniority": 8,
+  "description": "Committed to sustainable and eco-friendly research practices. In free time, Loves knitting and crafting handmade items."
+}
+,
+{
+  "name": "Grace Du",
+  "account": "iuWTQaCs",
+  "password": "jtGGeyNP",
+  "department": "Management",
+  "age": 37,
+  "position": "Senior Engineer",
+  "region": "Hsinchu",
+  "seniority": 10,
+  "description": "Experienced in stakeholder management and corporate governance. In free time, Passionate about volunteering and community service."
+}
+,
+{
+  "name": "Amelia Xie",
+  "account": "ytM0ijBE",
+  "password": "T98M7kX5",
+  "department": "Sales",
+  "age": 41,
+  "position": "Senior Engineer",
+  "region": "Hsinchu",
+  "seniority": 14,
+  "description": "Strong customer relationship management skills, maintaining key client accounts. In free time, Passionate about technology gadgets and innovations."
+}
+,
+{
+  "name": "Dennis Yu",
+  "account": "YV3HGraD",
+  "password": "BhOyb0i9",
+  "department": "R&D",
+  "age": 44,
+  "position": "Senior Engineer",
+  "region": "Taipei",
+  "seniority": 14,
+  "description": "Possesses extensive experience in semiconductor process development, focusing on enhancing production efficiency. In free time, Loves cycling and participating in local races."
+}
+,
+{
+  "name": "Harper Wu",
+  "account": "JEaowdar",
+  "password": "y1Q4kcrM",
+  "department": "Management",
+  "age": 39,
+  "position": "Manager",
+  "region": "Taipei",
+  "seniority": 6,
+  "description": "Proficient in performance management and appraisal systems. In free time, Loves attending theater performances and plays."
+}
+,
+{
+  "name": "John Sun",
+  "account": "hcppr2oV",
+  "password": "cDxpBOpV",
+  "department": "Finance",
+  "age": 28,
+  "position": "Intern",
+  "region": "Taipei",
+  "seniority": 0,
+  "description": "Proficient in tax planning and regulatory compliance. In free time, Loves playing basketball and staying active."
+}
+,
+{
+  "name": "Bonnie He",
+  "account": "MLWhmLhM",
+  "password": "jHDRU73S",
+  "department": "R&D",
+  "age": 36,
+  "position": "Analyst",
+  "region": "Hsinchu",
+  "seniority": 3,
+  "description": "Proficient in simulation and modeling for process optimization. In free time, Loves playing basketball and staying active."
+}
+,
+{
+  "name": "William Gao",
+  "account": "xV8mEAEn",
+  "password": "CGv1EWW6",
+  "department": "Manufacturing",
+  "age": 41,
+  "position": "Manager",
+  "region": "Taipei",
+  "seniority": 7,
+  "description": "Skilled in equipment maintenance and optimization, ensuring smooth operations. In free time, Interested in astronomy and stargazing."
+}
+,
+{
+  "name": "Kevin Sun",
+  "account": "ZIpQaZjz",
+  "password": "Uk5rEdir",
+  "department": "Management",
+  "age": 35,
+  "position": "Analyst",
+  "region": "Taipei",
+  "seniority": 1,
+  "description": "Strong crisis management skills, effectively handling unexpected situations. In free time, Enjoys skiing and snowboarding during winter."
+}
+,
+{
+  "name": "Charlotte Lu",
+  "account": "zxb7dkza",
+  "password": "9PNMtZs3",
+  "department": "Management",
+  "age": 28,
+  "position": "Intern",
+  "region": "Hsinchu",
+  "seniority": 1,
+  "description": "Dedicated to fostering a culture of innovation and continuous improvement. In free time, Enjoys hiking and exploring nature trails."
+}
+,
+{
+  "name": "Ella Sun",
+  "account": "A5STMkGa",
+  "password": "EOgtze0N",
+  "department": "Finance",
+  "age": 42,
+  "position": "Senior Engineer",
+  "region": "Taipei",
+  "seniority": 8,
+  "description": "Proficient in financial modeling, aiding strategic decision-making. In free time, Enjoys playing the guitar and music composition."
+}
+,
+{
+  "name": "Chloe Liu",
+  "account": "CDT4Zmji",
+  "password": "yTYmLbaU",
+  "department": "Finance",
+  "age": 46,
+  "position": "Senior Engineer",
+  "region": "Hsinchu",
+  "seniority": 13,
+  "description": "Expertise in treasury management and cash flow optimization. In free time, Passionate about technology gadgets and innovations."
+}
+,
+{
+  "name": "Sophia Xu",
+  "account": "HooMET9n",
+  "password": "8XuUuNbB",
+  "department": "Manufacturing",
+  "age": 42,
+  "position": "Manager",
+  "region": "Tainan",
+  "seniority": 7,
+  "description": "Dedicated to workforce training and development in manufacturing settings. In free time, Loves fishing and outdoor adventures."
+}
+,
+{
+  "name": "Dennis Xu",
+  "account": "HpfMXcrZ",
+  "password": "UObvF7jL",
+  "department": "Quality Assurance",
+  "age": 27,
+  "position": "Analyst",
+  "region": "Hsinchu",
+  "seniority": 1,
+  "description": "Experienced in implementing quality control processes, maintaining product excellence. In free time, Passionate about traveling and experiencing new cultures."
+}
+,
+{
+  "name": "David Fang",
+  "account": "hbGlr6ZA",
+  "password": "HTf66Oq1",
+  "department": "Finance",
+  "age": 29,
+  "position": "Intern",
+  "region": "Tainan",
+  "seniority": 0,
+  "description": "Expertise in treasury management and cash flow optimization. In free time, Passionate about technology gadgets and innovations."
+}
+,
+{
+  "name": "Michael Gao",
+  "account": "5J6IZXTA",
+  "password": "QULTyVqC",
+  "department": "R&D",
+  "age": 25,
+  "position": "Intern",
+  "region": "Taipei",
+  "seniority": 0,
+  "description": "Strong background in materials science and engineering. In free time, Enjoys skiing and snowboarding during winter."
+}
+,
+{
+  "name": "Amelia Tang",
+  "account": "JhEQaNl7",
+  "password": "Ln6EiWo6",
+  "department": "R&D",
+  "age": 30,
+  "position": "Engineer",
+  "region": "Hsinchu",
+  "seniority": 4,
+  "description": "Passionate about new technologies, dedicated to researching innovative solutions. In free time, Passionate about traveling and experiencing new cultures."
+}
+,
+{
+  "name": "Robert Hu",
+  "account": "rEGDlXOm",
+  "password": "F6PfXKY7",
+  "department": "Sales",
+  "age": 34,
+  "position": "Manager",
+  "region": "Taipei",
+  "seniority": 5,
+  "description": "Strong customer relationship management skills, maintaining key client accounts. In free time, Passionate about learning new languages."
+}
+,
+{
+  "name": "Amelia Han",
+  "account": "Y0UQjKZI",
+  "password": "Cg0RpKJR",
+  "department": "Sales",
+  "age": 33,
+  "position": "Manager",
+  "region": "Tainan",
+  "seniority": 6,
+  "description": "Strong public relations skills, enhancing the company's market image. In free time, Loves attending live music concerts and events."
+}
+,
+{
+  "name": "Joseph Zheng",
+  "account": "KzYXbPJn",
+  "password": "VoKVVyXE",
+  "department": "Quality Assurance",
+  "age": 39,
+  "position": "Analyst",
+  "region": "Hsinchu",
+  "seniority": 4,
+  "description": "Skilled in defect analysis, driving continuous quality improvements. In free time, Loves knitting and crafting handmade items."
+}
+,
+{
+  "name": "Emma Yu",
+  "account": "O0quz4xG",
+  "password": "SzPi2kuK",
+  "department": "Quality Assurance",
+  "age": 35,
+  "position": "Engineer",
+  "region": "Tainan",
+  "seniority": 3,
+  "description": "Proficient in using quality management software, optimizing quality workflows. In free time, Passionate about traveling and experiencing new cultures."
+}
+,
+{
+  "name": "John Wu",
+  "account": "px0jE4Q0",
+  "password": "OcXJnkEb",
+  "department": "Quality Assurance",
+  "age": 31,
+  "position": "Analyst",
+  "region": "Tainan",
+  "seniority": 3,
+  "description": "Expertise in statistical quality control and process improvement. In free time, Enjoys bird watching and wildlife observation."
+}
+,
+{
+  "name": "Brian Xiao",
+  "account": "VWmQxART",
+  "password": "X7wiF23D",
+  "department": "Quality Assurance",
+  "age": 34,
+  "position": "Analyst",
+  "region": "Hsinchu",
+  "seniority": 3,
+  "description": "Proficient in using quality management software, optimizing quality workflows. In free time, Loves knitting and crafting handmade items."
+}
+,
+{
+  "name": "Anthony Pan",
+  "account": "tfObRsts",
+  "password": "w8Ag0jtD",
+  "department": "R&D",
+  "age": 41,
+  "position": "Senior Engineer",
+  "region": "Hsinchu",
+  "seniority": 12,
+  "description": "Skilled in machine learning, driving intelligent applications. In free time, Loves cycling and participating in local races."
+}
+,
+{
+  "name": "George Yu",
+  "account": "Cx91bmEj",
+  "password": "Q9qfBP27",
+  "department": "Management",
+  "age": 37,
+  "position": "Manager",
+  "region": "Tainan",
+  "seniority": 7,
+  "description": "Excellent leadership abilities, motivating teams to accomplish objectives. In free time, Enjoys running and participating in marathons."
+}
+,
+{
+  "name": "Emma Shi",
+  "account": "afPsN1pK",
+  "password": "tqiAc5wi",
+  "department": "Manufacturing",
+  "age": 34,
+  "position": "Engineer",
+  "region": "Taipei",
+  "seniority": 2,
+  "description": "Experienced in supply chain management, enhancing logistics efficiency. In free time, Loves swimming and water sports."
+}
+,
+{
+  "name": "Frank Fang",
+  "account": "DTRySFDl",
+  "password": "pF6uax24",
+  "department": "Management",
+  "age": 28,
+  "position": "Intern",
+  "region": "Tainan",
+  "seniority": 0,
+  "description": "Extensive experience in management, adept at leading teams to achieve goals. In free time, Passionate about martial arts and self-defense training."
+}
+,
+{
+  "name": "Frank Jin",
+  "account": "e7Zq3KCE",
+  "password": "n7PuOvFv",
+  "department": "Finance",
+  "age": 29,
+  "position": "Intern",
+  "region": "Hsinchu",
+  "seniority": 1,
+  "description": "Skilled in financial reporting, maintaining transparency in company finances. In free time, Passionate about writing and blogging."
+}
+,
+{
+  "name": "Joseph Cai",
+  "account": "9iBNbXRQ",
+  "password": "226Rfh8l",
+  "department": "Manufacturing",
+  "age": 30,
+  "position": "Analyst",
+  "region": "Hsinchu",
+  "seniority": 2,
+  "description": "Experienced in managing large-scale manufacturing projects, ensuring timely completion. In free time, Loves swimming and water sports."
+}
+,
+{
+  "name": "Brian Li",
+  "account": "08uuABz7",
+  "password": "bRRpFlBH",
+  "department": "R&D",
+  "age": 32,
+  "position": "Engineer",
+  "region": "Tainan",
+  "seniority": 5,
+  "description": "Rich experience in R&D team management, leading technological innovations. In free time, Interested in digital art and graphic design."
+}
+,
+{
+  "name": "Evelyn Wang",
+  "account": "suf8sGil",
+  "password": "fpJOnS4U",
+  "department": "R&D",
+  "age": 35,
+  "position": "Intern",
+  "region": "Hsinchu",
+  "seniority": 1,
+  "description": "Passionate about new technologies, dedicated to researching innovative solutions. In free time, Interested in digital art and graphic design."
+}
+,
+{
+  "name": "Linda Jiang",
+  "account": "h99Bkwii",
+  "password": "RJEfG1gf",
+  "department": "Manufacturing",
+  "age": 47,
+  "position": "Senior Engineer",
+  "region": "Tainan",
+  "seniority": 13,
+  "description": "Dedicated to maintaining high standards of quality assurance in manufacturing. In free time, Interested in reading science fiction novels."
+}
+,
+{
+  "name": "William Huang",
+  "account": "kXFv5zzK",
+  "password": "oSUnn0Gw",
+  "department": "Quality Assurance",
+  "age": 43,
+  "position": "Manager",
+  "region": "Hsinchu",
+  "seniority": 9,
+  "description": "Proficient in using quality management software, optimizing quality workflows. In free time, Passionate about photography and capturing moments."
+}
+,
+{
+  "name": "Dennis Yu",
+  "account": "vh2t3k1M",
+  "password": "cJ1CVKQ0",
+  "department": "Quality Assurance",
+  "age": 29,
+  "position": "Intern",
+  "region": "Tainan",
+  "seniority": 1,
+  "description": "Dedicated to training staff on quality standards and best practices. In free time, Passionate about technology gadgets and innovations."
+}
+,
+{
+  "name": "Bonnie Han",
+  "account": "pjBB2CS0",
+  "password": "Zg3Mr6Yq",
+  "department": "Sales",
+  "age": 30,
+  "position": "Intern",
+  "region": "Taipei",
+  "seniority": 1,
+  "description": "Strong public relations skills, enhancing the company's market image. In free time, Loves swimming and water sports."
+}
+,
+{
+  "name": "Isabella Ma",
+  "account": "JMkXTpzi",
+  "password": "tI91lHms",
+  "department": "Manufacturing",
+  "age": 29,
+  "position": "Engineer",
+  "region": "Hsinchu",
+  "seniority": 2,
+  "description": "Focused on automation technologies to increase production line effectiveness. In free time, Passionate about traveling and experiencing new cultures."
+}
+,
+{
+  "name": "Amelia Chen",
+  "account": "GPJlke0F",
+  "password": "kgfihfyQ",
+  "department": "Quality Assurance",
+  "age": 46,
+  "position": "Senior Engineer",
+  "region": "Hsinchu",
+  "seniority": 13,
+  "description": "Skilled in defect analysis, driving continuous quality improvements. In free time, Loves painting and creative arts."
+}
+,
+{
+  "name": "Mark Ma",
+  "account": "pw0T8Rwj",
+  "password": "0YQmYsvq",
+  "department": "R&D",
+  "age": 34,
+  "position": "Manager",
+  "region": "Taipei",
+  "seniority": 8,
+  "description": "Skilled in machine learning, driving intelligent applications. In free time, Passionate about learning new languages."
+}
+,
+{
+  "name": "Isabella Lu",
+  "account": "AgM4yAwU",
+  "password": "nTNsWXor",
+  "department": "Quality Assurance",
+  "age": 39,
+  "position": "Manager",
+  "region": "Hsinchu",
+  "seniority": 10,
+  "description": "Strong attention to detail, ensuring every product meets the highest quality standards. In free time, Enjoys yoga and mindfulness practices."
+}
+,
+{
+  "name": "Mia Wei",
+  "account": "wNnboABS",
+  "password": "n6QtmvL2",
+  "department": "Management",
+  "age": 36,
+  "position": "Manager",
+  "region": "Tainan",
+  "seniority": 10,
+  "description": "Experienced in stakeholder management and corporate governance. In free time, Enjoys playing the guitar and music composition."
+}
+,
+{
+  "name": "Richard Wei",
+  "account": "IR4aRWfW",
+  "password": "nNv92Gte",
+  "department": "Sales",
+  "age": 29,
+  "position": "Engineer",
+  "region": "Tainan",
+  "seniority": 4,
+  "description": "Strong customer relationship management skills, maintaining key client accounts. In free time, Interested in reading science fiction novels."
+}
+,
+{
+  "name": "Brian Hu",
+  "account": "p6HPunF3",
+  "password": "sn68nJMx",
+  "department": "Manufacturing",
+  "age": 31,
+  "position": "Engineer",
+  "region": "Hsinchu",
+  "seniority": 5,
+  "description": "Skilled in process re-engineering for enhanced operational efficiency. In free time, Passionate about martial arts and self-defense training."
+}
+,
+{
+  "name": "Grace Xu",
+  "account": "zlWUNgc0",
+  "password": "lt6N4nw5",
+  "department": "Manufacturing",
+  "age": 36,
+  "position": "Engineer",
+  "region": "Hsinchu",
+  "seniority": 3,
+  "description": "Committed to improving manufacturing efficiency through innovative techniques. In free time, Interested in gaming and eSports."
+}
+,
+{
+  "name": "Lily Fang",
+  "account": "JO330G8S",
+  "password": "4hMMZkR9",
+  "department": "Quality Assurance",
+  "age": 29,
+  "position": "Engineer",
+  "region": "Taipei",
+  "seniority": 4,
+  "description": "Dedicated to customer satisfaction through superior product quality. In free time, Loves painting and creative arts."
+}
+,
+{
+  "name": "Dennis Tang",
+  "account": "MtXxDwcG",
+  "password": "7TTi9v1o",
+  "department": "Finance",
+  "age": 39,
+  "position": "Analyst",
+  "region": "Taipei",
+  "seniority": 4,
+  "description": "Proficient in financial modeling, aiding strategic decision-making. In free time, Interested in astronomy and stargazing."
+}
+,
+{
+  "name": "Richard Deng",
+  "account": "HCT0rMpi",
+  "password": "d2wE59iE",
+  "department": "Manufacturing",
+  "age": 30,
+  "position": "Engineer",
+  "region": "Hsinchu",
+  "seniority": 4,
+  "description": "Committed to implementing green manufacturing practices, promoting sustainability. In free time, Loves attending live music concerts and events."
+}
+,
+{
+  "name": "Ella Sun",
+  "account": "sYimhn7s",
+  "password": "yClkFxFY",
+  "department": "Sales",
+  "age": 35,
+  "position": "Intern",
+  "region": "Hsinchu",
+  "seniority": 1,
+  "description": "Creative in sales approach, implementing innovative selling techniques. In free time, Enjoys yoga and mindfulness practices."
+}
+,
+{
+  "name": "Anthony Zhu",
+  "account": "RWzTAEEK",
+  "password": "Y6xUcWmD",
+  "department": "Sales",
+  "age": 36,
+  "position": "Engineer",
+  "region": "Hsinchu",
+  "seniority": 5,
+  "description": "Strong customer relationship management skills, maintaining key client accounts. In free time, Loves attending theater performances and plays."
+}
+,
+{
+  "name": "Harper Wei",
+  "account": "6SnwkUUO",
+  "password": "UQEk6tQd",
+  "department": "R&D",
+  "age": 29,
+  "position": "Analyst",
+  "region": "Hsinchu",
+  "seniority": 2,
+  "description": "Specializes in wafer fabrication processes, committed to quality control. In free time, Enjoys cooking and experimenting with new recipes."
+}
+,
+{
+  "name": "Grace Han",
+  "account": "mnv01iWG",
+  "password": "QtvcPOub",
+  "department": "Management",
+  "age": 35,
+  "position": "Intern",
+  "region": "Hsinchu",
+  "seniority": 0,
+  "description": "Dedicated to enhancing employee welfare, improving work environment and benefits. In free time, Loves attending live music concerts and events."
+}
+,
+{
+  "name": "Chloe Wang",
+  "account": "NfRyV0A8",
+  "password": "Ql4d400X",
+  "department": "Manufacturing",
+  "age": 34,
+  "position": "Analyst",
+  "region": "Hsinchu",
+  "seniority": 4,
+  "description": "Skilled in process re-engineering for enhanced operational efficiency. In free time, Loves playing basketball and staying active."
+}
+,
+{
+  "name": "Daniel Shi",
+  "account": "bJlNG2Jd",
+  "password": "L8Pu8IOf",
+  "department": "Management",
+  "age": 34,
+  "position": "Analyst",
+  "region": "Taipei",
+  "seniority": 3,
+  "description": "Proficient in human resource management, optimizing employee recruitment processes. In free time, Interested in woodworking and DIY projects."
+}
+,
+{
+  "name": "Lily Lin",
+  "account": "4CUzLHFc",
+  "password": "RWbZ8aaK",
+  "department": "R&D",
+  "age": 33,
+  "position": "Analyst",
+  "region": "Taipei",
+  "seniority": 2,
+  "description": "Passionate about new technologies, dedicated to researching innovative solutions. In free time, Enjoys cooking and experimenting with new recipes."
+}
+,
+{
+  "name": "Isabella Tang",
+  "account": "3idMPrwU",
+  "password": "7tSGc8Ja",
+  "department": "Management",
+  "age": 35,
+  "position": "Engineer",
+  "region": "Hsinchu",
+  "seniority": 2,
+  "description": "Strong background in risk assessment and mitigation strategies. In free time, Loves fishing and outdoor adventures."
+}
+,
+{
+  "name": "William Zhang",
+  "account": "mFWVd3jV",
+  "password": "DtM7hXgR",
+  "department": "Management",
+  "age": 35,
+  "position": "Manager",
+  "region": "Tainan",
+  "seniority": 9,
+  "description": "Excellent communication skills, facilitating internal team collaboration. In free time, Loves attending live music concerts and events."
+}
+,
+{
+  "name": "Charlotte Ye",
+  "account": "YGKPIcNK",
+  "password": "oZvKHjyo",
+  "department": "Management",
+  "age": 25,
+  "position": "Intern",
+  "region": "Hsinchu",
+  "seniority": 0,
+  "description": "Dedicated to fostering a culture of innovation and continuous improvement. In free time, Loves cycling and participating in local races."
+}
+,
+{
+  "name": "Hannah Guo",
+  "account": "LiJ6bYJ8",
+  "password": "nCRrjvGI",
+  "department": "Quality Assurance",
+  "age": 28,
+  "position": "Engineer",
+  "region": "Taipei",
+  "seniority": 3,
+  "description": "Experienced in supplier quality management, ensuring raw material standards. In free time, Loves swimming and water sports."
+}
+,
+{
+  "name": "Grace Deng",
+  "account": "feie5SoG",
+  "password": "OxZRL0U6",
+  "department": "Quality Assurance",
+  "age": 38,
+  "position": "Engineer",
+  "region": "Taipei",
+  "seniority": 3,
+  "description": "Experienced in root cause analysis and corrective action implementation. In free time, Loves playing basketball and staying active."
+}
+,
+{
+  "name": "Kevin Peng",
+  "account": "qeLJB4gx",
+  "password": "JLCJKUUi",
+  "department": "Management",
+  "age": 36,
+  "position": "Engineer",
+  "region": "Hsinchu",
+  "seniority": 4,
+  "description": "Expertise in organizational development and change management. In free time, Interested in gardening and growing organic vegetables."
+}
+,
+{
+  "name": "George Guo",
+  "account": "UMbiaOnN",
+  "password": "OURlnBtC",
+  "department": "Management",
+  "age": 44,
+  "position": "Senior Engineer",
+  "region": "Hsinchu",
+  "seniority": 11,
+  "description": "Strong background in risk assessment and mitigation strategies. In free time, Interested in collecting vintage items and antiques."
+}
+,
+{
+  "name": "Evelyn Ma",
+  "account": "IDl215pE",
+  "password": "wNa1UHmN",
+  "department": "Quality Assurance",
+  "age": 41,
+  "position": "Manager",
+  "region": "Hsinchu",
+  "seniority": 8,
+  "description": "Expertise in statistical quality control and process improvement. In free time, Loves painting and creative arts."
+}
+,
+{
+  "name": "William Lin",
+  "account": "VwsS6EVF",
+  "password": "TFalCz2g",
+  "department": "Sales",
+  "age": 38,
+  "position": "Senior Engineer",
+  "region": "Taipei",
+  "seniority": 11,
+  "description": "Excellent negotiation skills, securing favorable deals for the company. In free time, Passionate about volunteering and community service."
+}
+,
+{
+  "name": "Thomas Hu",
+  "account": "jFkzq2MB",
+  "password": "gzKI6DrY",
+  "department": "Quality Assurance",
+  "age": 38,
+  "position": "Engineer",
+  "region": "Tainan",
+  "seniority": 5,
+  "description": "Proficient in developing and maintaining quality documentation. In free time, Enjoys running and participating in marathons."
+}
+,
+{
+  "name": "Olivia Fang",
+  "account": "J44pbB8J",
+  "password": "kjn3KmY2",
+  "department": "Quality Assurance",
+  "age": 36,
+  "position": "Senior Engineer",
+  "region": "Taipei",
+  "seniority": 11,
+  "description": "Dedicated to developing quality assurance protocols, enhancing product reliability. In free time, Enjoys hiking and exploring nature trails."
+}
+,
+{
+  "name": "Ava Xiao",
+  "account": "XwReBvDE",
+  "password": "NOUF6ZhT",
+  "department": "R&D",
+  "age": 36,
+  "position": "Manager",
+  "region": "Hsinchu",
+  "seniority": 6,
+  "description": "Dedicated to AI research, pushing the boundaries of technological advancements. In free time, Loves attending live music concerts and events."
+}
+,
+{
+  "name": "Charlotte Zhou",
+  "account": "1uB54Z7Z",
+  "password": "L4C4E1R0",
+  "department": "Quality Assurance",
+  "age": 28,
+  "position": "Analyst",
+  "region": "Taipei",
+  "seniority": 1,
+  "description": "Expertise in statistical quality control and process improvement. In free time, Enjoys running and participating in marathons."
+}
+,
+{
+  "name": "Hannah Lin",
+  "account": "pp7Oie7d",
+  "password": "c23Ir7cy",
+  "department": "Sales",
+  "age": 39,
+  "position": "Senior Engineer",
+  "region": "Hsinchu",
+  "seniority": 8,
+  "description": "Proficient in CRM software and sales automation tools. In free time, Enjoys cooking and experimenting with new recipes."
+}
+,
+{
+  "name": "Mark Xu",
+  "account": "yOg5U5PX",
+  "password": "OudtGucB",
+  "department": "Sales",
+  "age": 35,
+  "position": "Intern",
+  "region": "Taipei",
+  "seniority": 1,
+  "description": "Skilled in sales forecasting and pipeline management. In free time, Interested in digital art and graphic design."
+}
+,
+{
+  "name": "Matthew Du",
+  "account": "udgSphCZ",
+  "password": "mtBxjJIQ",
+  "department": "Quality Assurance",
+  "age": 33,
+  "position": "Manager",
+  "region": "Taipei",
+  "seniority": 7,
+  "description": "Experienced in supplier quality management, ensuring raw material standards. In free time, Enjoys bird watching and wildlife observation."
+}
+,
+{
+  "name": "Dennis Wu",
+  "account": "gxCqs2vU",
+  "password": "56JdLtSi",
+  "department": "Finance",
+  "age": 38,
+  "position": "Manager",
+  "region": "Tainan",
+  "seniority": 9,
+  "description": "Proven ability in managing corporate finances, supporting sustainable growth. In free time, Passionate about writing and blogging."
+}
+,
+{
+  "name": "Ava Du",
+  "account": "fzib9RI1",
+  "password": "sF2jdubr",
+  "department": "Management",
+  "age": 37,
+  "position": "Manager",
+  "region": "Taipei",
+  "seniority": 8,
+  "description": "Proven ability in business strategy development, driving company growth. In free time, Loves fishing and outdoor adventures."
+}
+,
+{
+  "name": "Isabella Yu",
+  "account": "GNkio9Sm",
+  "password": "WAJo4Kxv",
+  "department": "Sales",
+  "age": 34,
+  "position": "Analyst",
+  "region": "Taipei",
+  "seniority": 1,
+  "description": "Skilled in sales forecasting and pipeline management. In free time, Passionate about traveling and experiencing new cultures."
+}
+,
+{
+  "name": "Robert Du",
+  "account": "YVYrYgwZ",
+  "password": "P1L3RI4E",
+  "department": "Sales",
+  "age": 32,
+  "position": "Engineer",
+  "region": "Hsinchu",
+  "seniority": 4,
+  "description": "Proficient in digital marketing tools, optimizing online sales channels. In free time, Enjoys hiking and exploring nature trails."
+}
+,
+{
+  "name": "Richard Xie",
+  "account": "xnQ6NeF7",
+  "password": "W9E9roAH",
+  "department": "Management",
+  "age": 35,
+  "position": "Senior Engineer",
+  "region": "Tainan",
+  "seniority": 9,
+  "description": "Proven ability in business strategy development, driving company growth. In free time, Passionate about dancing and performing arts."
+}
+,
+{
+  "name": "Kevin Sun",
+  "account": "kfXpGYxA",
+  "password": "uPWHvgzn",
+  "department": "R&D",
+  "age": 44,
+  "position": "Senior Engineer",
+  "region": "Hsinchu",
+  "seniority": 14,
+  "description": "Passionate about new technologies, dedicated to researching innovative solutions. In free time, Passionate about writing and blogging."
+}
+]
