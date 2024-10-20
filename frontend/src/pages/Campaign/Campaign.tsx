@@ -1,6 +1,5 @@
-import React, { useState, useContext, useEffect, useCallback} from 'react';
 import { UserContext } from '../../context/UserContext';
-import { useLocation } from 'react-router-dom';
+import React, { useState, useContext, useEffect } from 'react';
 import {
   Layout,
   List,
@@ -8,13 +7,17 @@ import {
   Button,
   Modal,
   message,
-  Popconfirm
+  Popconfirm,
 } from 'antd';
 import axios from 'axios';
 import dining from '../../assets/dining.png';
+import hostevent from '../../assets/hostevent.png';
+import HostEventForm from './HostEventForm';
 
 
 const { Content } = Layout;
+
+
 
 interface CampaignData {
   id: string;
@@ -88,7 +91,6 @@ const updateCampaign = async (campaignId: string, campaignUpdate: CampaignUpdate
   }
 };
 
-
 const getEmployeeWallet = async (employeeId: string): Promise<number> => {
   try {
     const response = await axios.get(`/api/employee/get_wallet/${employeeId}`);
@@ -98,6 +100,7 @@ const getEmployeeWallet = async (employeeId: string): Promise<number> => {
     throw error; // Re-throw the error to handle it elsewhere if needed
   }
 };
+
 interface UpdateWalletRequest {
   employee_id: string;
   value: number;
@@ -130,8 +133,11 @@ const Campaign: React.FC = () => {
   const { user } = useContext(UserContext);
   const [campaigns, setCampaigns] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedCampaign, setSelectedCampaign] = useState<CampaignData | null>(null);
+  const [isHostEventModalVisible, setIsHostEventModalVisible] = useState(false); // State for host event modal
+  const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [messageApi, contextHolder] = message.useMessage();
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [openPopconfirmId, setOpenPopconfirmId] = useState<string | null>(null);
 
   const success = () => {
     messageApi.open({
@@ -158,7 +164,7 @@ const Campaign: React.FC = () => {
       }
     };
     getCampaigns();
-  }, []);
+  }, [setIsHostEventModalVisible]);
   
 
   const isVerified = async (campaign: CampaignData) => {
@@ -228,8 +234,6 @@ const Campaign: React.FC = () => {
     setIsModalVisible(false);  // Hide the modal
   };
 
-  const [confirmLoading, setConfirmLoading] = useState(false);
-  const [openPopconfirmId, setOpenPopconfirmId] = useState<string | null>(null);
   const showPopconfirm = (campaignId: string) => {
     setOpenPopconfirmId(campaignId); // Set the campaign ID to open Popconfirm for
   };
@@ -238,56 +242,82 @@ const Campaign: React.FC = () => {
     setOpenPopconfirmId(null); // Close all Popconfirms by resetting the state
   };
 
+  const showHostEventForm = () => {
+    setIsHostEventModalVisible(true);  // Show the Host Event modal
+  };
+
+  const handleCloseHostEventModal = () => {
+    setIsHostEventModalVisible(false);  // Hide the Host Event modal
+  };
+
   const renderProducts = (): JSX.Element => (
-    <List
-      grid={{ gutter: [40, 20], column: 2 }} // Adjust rowGutter to increase vertical spacing
-      dataSource={campaigns.filter((campaign: CampaignData) => new Date(campaign.expire) > new Date())} // Filter out expired campaigns
-      renderItem={(campaign: CampaignData) => (
-        <List.Item key={campaign.id}>
-          <CountdownTimer expire={new Date(campaign.expire)} />
-          <Card
-            hoverable
-            style={{ width: '100%', height: 400 }}
-            cover={
-              <div 
-                style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 250, overflow: 'hidden' }}
-                onClick={() => showCampaignDetails(campaign)}>
-                <img
-                  alt={campaign.name}
-                  src={dining}
-                  style={{ height: '100%', width: '100%', objectFit: 'cover' }}
-                />
-              </div>
-            }
-            actions={[
-              <div key="input" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-                <span>Remains: {campaign.quantity}</span>
-              </div>, 
-              <Popconfirm
-                title="Confirmation"
-                description="Click OK to confirm the order! Wish you a good day."
-                open={openPopconfirmId === campaign.id} // Only open for the current campaign
-                onConfirm={() => handleOrder(campaign)} // Pass campaign to handleOrder
-                okButtonProps={{ loading: confirmLoading }}
-                onCancel={handleCancel}
-              >
-                <Button
-                  type="primary"
-                  onClick={() => showPopconfirm(campaign.id)} // Open Popconfirm for this campaign
-                >
-                  Order
-                </Button>
-              </Popconfirm>
-            ]}
-          >
-            <Card.Meta
-              title={campaign.name}
-              description={`$${campaign.price.toFixed(2)}`}
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', justifyContent: 'center'}}>
+      <Card
+        hoverable
+        style={{ width: '100%', height: 250 }}
+        cover={
+          <div 
+            style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 241, overflow: 'hidden' }}
+            onClick={() => showHostEventForm()}>
+            <img
+              src={hostevent}
+              style={{ height: '100%', width: '100%', objectFit: 'cover' }}
             />
-          </Card>
-        </List.Item>
-      )}
-    />
+          </div>
+        }
+      >
+      </Card>
+      
+      <List
+        grid={{ gutter: [40, 20], column: 2 }} // Adjust rowGutter to increase vertical spacing
+        dataSource={campaigns.filter((campaign: CampaignData) => new Date(campaign.expire) > new Date())} // Filter out expired campaigns
+        renderItem={(campaign: CampaignData) => (
+          <List.Item key={campaign.id}>
+            <CountdownTimer expire={new Date(campaign.expire)} />
+            <Card
+              hoverable
+              style={{ width: '100%', height: 400 }}
+              cover={
+                <div 
+                  style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 250, overflow: 'hidden' }}
+                  onClick={() => showCampaignDetails(campaign)}>
+                  <img
+                    alt={campaign.name}
+                    src={dining}
+                    style={{ height: '100%', width: '100%', objectFit: 'cover' }}
+                  />
+                </div>
+              }
+              actions={[
+                <div key="input" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                  <span>Remains: {campaign.quantity}</span>
+                </div>, 
+                <Popconfirm
+                  title="Confirmation"
+                  description="Click OK to confirm the order! Wish you a good day."
+                  open={openPopconfirmId === campaign.id} // Only open for the current campaign
+                  onConfirm={() => handleOrder(campaign)} // Pass campaign to handleOrder
+                  okButtonProps={{ loading: confirmLoading }}
+                  onCancel={handleCancel}
+                >
+                  <Button
+                    type="primary"
+                    onClick={() => showPopconfirm(campaign.id)} // Open Popconfirm for this campaign
+                  >
+                    Order
+                  </Button>
+                </Popconfirm>
+              ]}
+            >
+              <Card.Meta
+                title={campaign.name}
+                description={`$${campaign.price.toFixed(2)}`}
+              />
+            </Card>
+          </List.Item>
+        )}
+      />
+    </div>
   );
   
   return (
@@ -326,6 +356,15 @@ const Campaign: React.FC = () => {
               <p><strong>Expires At:</strong> {new Date(selectedCampaign.expire).toLocaleString()}</p>
             </div>
           )}
+        </Modal>
+
+        <Modal
+          title="Host an Event"
+          visible={isHostEventModalVisible}
+          onCancel={handleCloseHostEventModal}
+          footer={null}  // No footer since the form already has its submit button
+        >
+          <HostEventForm />
         </Modal>
       </Content>
     </Layout>
