@@ -6,12 +6,27 @@ import React, { useContext, useEffect } from 'react';
 import { UserContext } from './context/UserContext';
 import { Avatar, Popover} from 'antd';
 import { UserOutlined } from '@ant-design/icons'
+import axios from 'axios';
 
-function App() {
+interface Employee {
+  id: string;
+  name: string;
+  account: string;
+  password: string;
+  department: string;
+  age: number;
+  position: string;
+  seniority: number;
+  region: string;
+  wallet: number;
+  score: number;
+}
+
+const App: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user } = useContext(UserContext);
-
+  // const [techPost, setTechPost] = useState(null);
+  const { user, setUser } = useContext(UserContext);
 
   // Check if the user is authenticated by looking for a token in localStorage
   const isAuthenticated = !!localStorage.getItem('token');
