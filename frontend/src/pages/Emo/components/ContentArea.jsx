@@ -20,6 +20,7 @@ function ContentArea({ selectedParagraph, replies, formatDate }) {
             <List.Item.Meta
               avatar={<Avatar icon={<MailOutlined />} />}
               description={reply.content}
+              style={{ fontSize: '12px'}}
             />
             <div style={{ fontSize: '12px', color: '#999' }}>{formatDate(reply.createdAt)}</div>
           </List.Item>
