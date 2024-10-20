@@ -156,7 +156,7 @@ async def gpt_pre_answer_tech_post(problem, history_answer_list):
         completion = client.chat.completions.create(
             model="gpt-4",
             messages=messages,
-            max_token=5000,  # Increased tokens to accommodate longer responses
+            max_tokens=5000,  # Increased tokens to accommodate longer responses
         )
 
         assistant_reply = completion.choices[0].message.content
