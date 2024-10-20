@@ -14,10 +14,7 @@ import dining from '../../assets/dining.png';
 import hostevent from '../../assets/hostevent.png';
 import HostEventForm from './HostEventForm';
 
-
 const { Content } = Layout;
-
-
 
 interface CampaignData {
   id: string;
@@ -191,6 +188,11 @@ const Campaign: React.FC = () => {
     };
 
     const flag = await isVerified(campaign);
+    const isAttended = campaign.attenders_id.includes(user.id)
+    if (isAttended) {
+      error_("You have already applied the event.")
+      return 
+    }
     if (flag) {
       try {
         const updatedAttenders = [...campaign.attenders_id, String(user.id)];
@@ -364,7 +366,7 @@ const Campaign: React.FC = () => {
           onCancel={handleCloseHostEventModal}
           footer={null}  // No footer since the form already has its submit button
         >
-          <HostEventForm />
+          <HostEventForm closeModal={handleCloseHostEventModal}/>
         </Modal>
       </Content>
     </Layout>

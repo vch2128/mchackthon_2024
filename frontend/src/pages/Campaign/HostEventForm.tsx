@@ -6,7 +6,7 @@ import {
   Input,
   InputNumber,
   Select,
-  Segmented,
+  message,
 } from 'antd';
 import type { FormProps } from 'antd';
 import axios from 'axios';
@@ -34,12 +34,41 @@ const formItemLayout = {
   },
 };
 
-const HostEventForm: React.FC = () => {
+const tailFormItemLayout = {
+  wrapperCol: {
+    xs: {
+      span: 24,
+      offset: 0,
+    },
+    sm: {
+      span: 16,
+      offset: 8,
+    },
+  },
+};
+
+
+const HostEventForm: React.FC = ({ closeModal }) => {
 const { user } = useContext(UserContext);
   const [componentVariant, setComponentVariant] = useState<FormProps['variant']>('filled');
-
+  const [messageApi, contextHolder] = message.useMessage();
   const onFormVariantChange = ({ variant }: { variant: FormProps['variant'] }) => {
     setComponentVariant(variant);
+  };
+  const success = () => {
+    closeModal();
+    messageApi.open({
+      type: 'success',
+      content: 'Host the event successfully',
+    });
+  };
+
+  const error_ = (text: string) => {
+    closeModal();
+    messageApi.open({
+      type: 'error',
+      content: text,
+    });
   };
 
   const hostAnEvent = async (campaign: CampaignUpdate) => {
@@ -47,9 +76,11 @@ const { user } = useContext(UserContext);
       const response = await axios.post('/api/campaign', campaign, {
         headers: { 'Content-Type': 'application/json' },
       });
+      success()
       console.log('Campaign created successfully:', response.data);
       return response.data; // Return the created campaign data
     } catch (error) {
+      error_("Error creating campaign")
       console.error('Error creating campaign:', error);
       throw error; // Re-throw error to be caught by the caller
     }
@@ -71,24 +102,27 @@ const { user } = useContext(UserContext);
     try {
       await hostAnEvent(campaign);
     } catch (error) {
+      error_("Submission failed")
       console.error('Submission failed:', error);
     }
   };
-
+  
   return (
-    <Form
+    <>
+      {contextHolder} 
+      <Form
       {...formItemLayout}
       onValuesChange={onFormVariantChange}
-      onFinish={onFinish} 
+      onFinish={onFinish}
       variant={componentVariant}
-      style={{ maxWidth: 600 }}
+      style={{ maxWidth: 600, margin: 'auto' }} // Center form
       initialValues={{ variant: componentVariant }}
     >
-
-      <Form.Item 
-        label="Event Name" 
-        name="InputEventName" 
-        rules={[{ required: true, message: 'Please input the event name!' }]}>
+      <Form.Item
+        label="Event Name"
+        name="InputEventName"
+        rules={[{ required: true, message: 'Please input the event name!' }]}
+      >
         <Input />
       </Form.Item>
 
@@ -97,7 +131,7 @@ const { user } = useContext(UserContext);
         name="TextAreaDescription"
         rules={[{ required: true, message: 'Please input the description!' }]}
       >
-        <Input.TextArea />
+        <Input.TextArea rows={4} />
       </Form.Item>
 
       <Form.Item
@@ -114,26 +148,30 @@ const { user } = useContext(UserContext);
         rules={[{ required: true, message: 'Please select the quantity!' }]}
       >
         <Select>
-            <Select.Option value={3}>3</Select.Option>
-            <Select.Option value={4}>4</Select.Option>
-            <Select.Option value={5}>5</Select.Option>
-            <Select.Option value={6}>6</Select.Option>
-            <Select.Option value={7}>7</Select.Option>
-            <Select.Option value={8}>8</Select.Option>
-            <Select.Option value={9}>9</Select.Option>
-            <Select.Option value={10}>10</Select.Option>
-            <Select.Option value={15}>15</Select.Option>
-            <Select.Option value={20}>20</Select.Option>
-            <Select.Option value={30}>30</Select.Option>
+          <Select.Option value={3}>3</Select.Option>
+          <Select.Option value={4}>4</Select.Option>
+          <Select.Option value={5}>5</Select.Option>
+          <Select.Option value={6}>6</Select.Option>
+          <Select.Option value={7}>7</Select.Option>
+          <Select.Option value={8}>8</Select.Option>
+          <Select.Option value={9}>9</Select.Option>
+          <Select.Option value={10}>10</Select.Option>
+          <Select.Option value={15}>15</Select.Option>
+          <Select.Option value={20}>20</Select.Option>
+          <Select.Option value={30}>30</Select.Option>
         </Select>
       </Form.Item>
 
-      <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
+      <Form.Item wrapperCol={{
+        xs: { span: 24, offset: 0 },
+        sm: { span: 16, offset: 3 }, // Adjust offset to align button with form inputs
+      }}>
         <Button type="primary" htmlType="submit">
           Submit
         </Button>
       </Form.Item>
     </Form>
+    </>
   );
 };
 
