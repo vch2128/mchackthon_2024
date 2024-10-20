@@ -336,7 +336,7 @@ const Home: React.FC = () => {
   const renderNoResponseUI = () => (
     <div style={{ height: '100vh', overflowY: 'auto' ,scrollbarWidth: 'none', msOverflowStyle: 'none'}}>
       <div className="fixed-header2">
-        <h1>Home Page</h1>
+        <h1>TSMC Soul Helper</h1>
       </div>
 
       <div style={{ marginTop: '100px', marginBottom: '50px' }}>
