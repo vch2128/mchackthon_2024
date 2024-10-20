@@ -521,7 +521,7 @@ class CampaignDataDAL:
                 "price": price,
                 "image_path": image_path,
                 "quantity": quantity,
-                "expire": datetime.utcnow() + timedelta(hours=lasting_hours),
+                "expire": datetime.utcnow() + timedelta(hours=lasting_hours) +  timedelta(hours=8), # utc+8
                 "attenders_id": attenders_id if attenders_id else []
             },
             session=session,
@@ -566,7 +566,7 @@ class CampaignDataDAL:
             update_data["price"] = price
         if image_path:
             update_data["image_path"] = image_path
-        if quantity:
+        if quantity != None:
             update_data["quantity"] = quantity
         if lasting_hours:
             update_data["expire"] = datetime.utcnow() + timedelta(hours=lasting_hours)

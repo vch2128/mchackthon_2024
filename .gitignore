@@ -1,5 +1,6 @@
 node_modules
 apitest.sh
+.env
 description.txt
 hobby.txt
 create_employee.sh
