@@ -45,7 +45,7 @@ async def gpt_get_topic(paragraph):
 async def gpt_separate_paragraph(paragraph):
     if not OPENAI_API_KEY:
         return {"message": "API key not set"}
-
+    clean_paragraph = paragraph.replace('\\', ' ').replace('\n', ' ').replace('\t', ' ')
     prompt = f"""
         You will help me separate the paragraph into two parts.
         - The first part should include the mood and sentimental expression.
@@ -57,7 +57,7 @@ async def gpt_separate_paragraph(paragraph):
         ```
         
         Paragraph:
-        "{paragraph}"
+        "{clean_paragraph}"
     """
 
                      
@@ -71,7 +71,7 @@ async def gpt_separate_paragraph(paragraph):
         completion = client.chat.completions.create(
             model="gpt-4",
             messages=messages,
-            max_tokens=150,  # Increased tokens to accommodate longer responses
+            max_tokens=5000,  # Increased tokens to accommodate longer responses
         )
 
         assistant_reply = completion.choices[0].message.content
@@ -157,7 +157,7 @@ async def gpt_pre_answer_tech_post(problem, history_answer_list):
         completion = client.chat.completions.create(
             model="gpt-4",
             messages=messages,
-            max_tokens=150,  # Increased tokens to accommodate longer responses
+            max_token=5000,  # Increased tokens to accommodate longer responses
         )
 
         assistant_reply = completion.choices[0].message.content

@@ -22,7 +22,8 @@
 #             "age": 45,
 #             "position": "product manager",
 #             "seniority": 10,
-#             "region": "taipei"
+#             "region": "taipei",
+#             "description": "I am a bad guy"
 #          }'
 
 # id = 83fa6df15b784d60bc760e6413cd8269
@@ -46,7 +47,7 @@
 #             "region": "taipei"
 #          }'
 
-# id = 83fa6df15b784d60bc760e6413cd8269
+# id = 6eea426c67114dfc94a89d12749274cf
 # curl -X POST "http://localhost:8001/api/employee" \
 #      -H "Content-Type: application/json" \
 #      -d '{
@@ -59,7 +60,17 @@
 #             "seniority": 3,
 #             "region": "Kaoshiung",
 #             "description": "I am a intern in R&D department. In free time, I like to play basketball."
+#             "name": "ADMIN",
+#             "account": "ccccccc",
+#             "password": "0906",
+#             "department": "admin",
+#             "age": 30,
+#             "position": "CEO",
+#             "seniority": 10,
+#             "region": "Kaoshiung", 
+#             "description": "I know everything."
 #          }'
+
 
 # for test 
 # {"id":"07cbf45c0101427d9f648944ff4a6081","name":"Frank","account":"cccccc","password":"$2b$12$T3NvcR8aFlSAqDtE3VgpGOdE7qemtetNgdINNikMphOTLA09U0LJK","department":"R&D","age":25,"position":"intern","seniority":3,"region":"Kaoshiung"}
@@ -154,15 +165,15 @@ curl -X POST "http://localhost:8001/api/emomsg_to"  \
 # curl -X GET http://localhost:8001/api/campaigns
 
 
-curl -X POST "http://localhost:8001/api/campaign" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Dinner with dennis",
-    "description": "This is a test campaign",
-    "price": 2,
-    "image_path": "/images/campaign.jpg",
-    "quantity": 3,
-    "lasting_hours": 72,
-    "attenders_id": ["1", "2", "3"]
-  }'
+# curl -X POST "http://localhost:8001/api/campaign" \
+#   -H "Content-Type: application/json" \
+#   -d '{
+#     "name": "Dinner with dennis",
+#     "description": "This is a test campaign",
+#     "price": 2,
+#     "image_path": "/images/campaign.jpg",
+#     "quantity": 3,
+#     "lasting_hours": 72,
+#     "attenders_id": ["1", "2", "3"]
+#   }'
 
