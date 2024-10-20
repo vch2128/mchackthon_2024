@@ -360,6 +360,16 @@ const Campaign: React.FC = () => {
             msOverflowStyle: 'none', // Internet Explorer and Edge
           }}
         >
+        <Modal
+          title={selectedCampaign?.name}
+          visible={isModalVisible}
+          onCancel={handleCloseModal}
+          footer={[
+            <Button key="back" onClick={handleCloseModal}>
+              Close
+            </Button>
+          ]}
+        >
           {selectedCampaign && (
             <div>
               <p><strong>Description:</strong> {selectedCampaign.description}</p>
