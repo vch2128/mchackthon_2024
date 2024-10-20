@@ -13,7 +13,7 @@ client = OpenAI(api_key=OPENAI_API_KEY)
 async def gpt_get_topic(paragraph):
     if not OPENAI_API_KEY:
         return {"message": "API key not set"}
-
+    
     prompt = f"""
     Summarize the main topic of the following paragraph in 10 words or fewer:
 
@@ -44,7 +44,7 @@ async def gpt_get_topic(paragraph):
 async def gpt_separate_paragraph(paragraph):
     if not OPENAI_API_KEY:
         return {"message": "API key not set"}
-    clean_paragraph = paragraph.replace('\\', ' ').replace('\n', ' ').replace('\t', ' ')
+    # clean_paragraph = paragraph.replace('\\', ' ').replace('\n', ' ').replace('\t', ' ')
     prompt = f"""
         You will help me separate the paragraph into two parts.
         - The first part should include the mood and sentimental expression.
@@ -56,8 +56,9 @@ async def gpt_separate_paragraph(paragraph):
         ```
         
         Paragraph:
-        "{clean_paragraph}"
+        "{paragraph}"
     """
+
                      
     messages = [
         {"role": "system", "content": "You are a helpful assistant."},
@@ -73,7 +74,7 @@ async def gpt_separate_paragraph(paragraph):
         )
 
         assistant_reply = completion.choices[0].message.content
-        print(assistant_reply)
+    
         try:
             # Parse the JSON string into a dictionary
             print(assistant_reply)
