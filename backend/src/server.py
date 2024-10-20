@@ -174,6 +174,7 @@ class EmployeeCreate(BaseModel):
     position: str
     seniority: int
     region: str
+    description: str
     
 
 class NewEmployeeResponse(BaseModel):
@@ -186,6 +187,7 @@ class NewEmployeeResponse(BaseModel):
     position: str
     seniority: int
     region: str
+    description: str
 
     
 @app.post("/api/employee", status_code=status.HTTP_201_CREATED)
@@ -201,6 +203,7 @@ async def create_employee(employee: EmployeeCreate) -> NewEmployeeResponse:
         position=employee.position,
         seniority=employee.seniority,
         region=employee.region,
+        description=employee.description
     )
     info = "Employee info: department =" + str(employee.department) + "; age = " + str(employee.age) + "; company position = " + str(employee.position) + "; seniority = " + str(employee.seniority) + "years; workplace region = " + str(employee.region)
     new_embedding = await get_embedding(info)
@@ -214,7 +217,8 @@ async def create_employee(employee: EmployeeCreate) -> NewEmployeeResponse:
         age=employee.age,
         position=employee.position,
         seniority=employee.seniority,
-        region=employee.region
+        region=employee.region,
+        description=employee.description
     )
     
     
@@ -285,6 +289,11 @@ class NewEmoMsgResponse(BaseModel):
 class EmoMsgCreate(BaseModel):
     sender_id: str
     content: str
+    
+class EmoMsgCreate_to(BaseModel):
+    sender_id: str
+    content: str
+    rcvr_id: list[str]
 
 # create a emo msg
 @app.post("/api/emomsg", status_code=status.HTTP_201_CREATED)
@@ -304,7 +313,7 @@ async def create_emomsg(emomsg: EmoMsgCreate) -> NewEmoMsgResponse:
     )
     
 @app.post("/api/emomsg_to", status_code=status.HTTP_201_CREATED)
-async def create_emomsg(emomsg: EmoMsgCreate) -> NewEmoMsgResponse:
+async def create_emomsg(emomsg: EmoMsgCreate_to) -> NewEmoMsgResponse:
     new_id = await app.emomsg_dal.create_emo_msg(
         sender_id=emomsg.sender_id,
         content=emomsg.content,
