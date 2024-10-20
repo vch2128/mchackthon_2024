@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Number of employees to generate
-NUM_EMPLOYEES=2
+NUM_EMPLOYEES=80
 
 # Predefined department and position lists relevant to TSMC
 DEPARTMENTS=("R&D" "Manufacturing" "Management" "Sales" "Finance" "Quality Assurance")
