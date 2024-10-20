@@ -205,7 +205,7 @@ async def create_employee(employee: EmployeeCreate) -> NewEmployeeResponse:
         region=employee.region,
         description=employee.description
     )
-    info = "Employee info: department =" + str(employee.department) + "; age = " + str(employee.age) + "; company position = " + str(employee.position) + "; seniority = " + str(employee.seniority) + "years; workplace region = " + str(employee.region)
+    info = "Employee info: department =" + str(employee.department) + "; age = " + str(employee.age) + "; company position = " + str(employee.position) + "; seniority = " + str(employee.seniority) + "years; workplace region = " + str(employee.region) + "; personal depict: " + str(employee.description)
     new_embedding = await get_embedding(info)
     eid = await app.gptemployeedata_dal.create_gpt_employee_data(employee_id=new_id, employee_embedding=new_embedding)
     return NewEmployeeResponse(
