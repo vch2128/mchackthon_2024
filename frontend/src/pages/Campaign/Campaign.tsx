@@ -191,6 +191,7 @@ const Campaign: React.FC = () => {
     const isAttended = campaign.attenders_id.includes(user.id)
     if (isAttended) {
       error_("You have already applied the event.")
+      setConfirmLoading(false)
       return 
     }
     if (flag) {
