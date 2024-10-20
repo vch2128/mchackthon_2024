@@ -6,8 +6,7 @@ from typing import List
 from dal_tables import GPTData, GPTEmployeeData
 import numpy as np
 
-# OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
-OPENAI_API_KEY = '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'
+OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
 
 client = OpenAI(api_key=OPENAI_API_KEY)
 
@@ -59,7 +58,6 @@ async def gpt_separate_paragraph(paragraph):
         Paragraph:
         "{clean_paragraph}"
     """
-
                      
     messages = [
         {"role": "system", "content": "You are a helpful assistant."},
@@ -75,7 +73,7 @@ async def gpt_separate_paragraph(paragraph):
         )
 
         assistant_reply = completion.choices[0].message.content
-    
+        print(assistant_reply)
         try:
             # Parse the JSON string into a dictionary
             print(assistant_reply)
