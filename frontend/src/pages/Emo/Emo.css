@@ -38,7 +38,6 @@
   left: 23%;
   /* 確保內容區域從側邊欄後開始顯示 */
   padding: 24px;
-  background-color: #f0f2f5;
   overflow-y: auto;
   width: 70%;
   /* 使用百分比寬度讓內容區佔據 85% 的剩餘空間 */
