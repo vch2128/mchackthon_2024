@@ -3,9 +3,7 @@ import './App.css';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import PageRouter from './PageRouter';
 import React, { useContext, useEffect } from 'react';
-import React, { useContext, useEffect } from 'react';
 import { UserContext } from './context/UserContext';
-import { Avatar, Popover} from 'antd';
 import { Avatar, Popover} from 'antd';
 import { UserOutlined } from '@ant-design/icons'
 import axios from 'axios';
@@ -30,20 +28,6 @@ const App: React.FC = () => {
   // const [techPost, setTechPost] = useState(null);
   const { user, setUser } = useContext(UserContext);
 
-  useEffect(() => {
-    const fetchEmployee = async () => {
-      try {
-        if (user && user.id) {
-          const response = await axios.get<Employee>(`/api/employees/${user.id}`);
-          setUser(response.data);  // Update the user in UserContext
-        }
-      } catch (err) {
-        console.log(err)
-      }
-    }
-
-    fetchEmployee()
-  }, [])
   // Check if the user is authenticated by looking for a token in localStorage
   const isAuthenticated = !!localStorage.getItem('token');
   useEffect(() => {

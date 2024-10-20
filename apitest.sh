@@ -146,15 +146,15 @@
 # curl -X GET http://localhost:8001/api/campaigns
 
 
-# curl -X POST "http://localhost:8001/api/campaign" \
-#   -H "Content-Type: application/json" \
-#   -d '{
-#     "name": "Dinner with mentor",
-#     "description": "This is a test campaign",
-#     "price": 2,
-#     "image_path": "/images/campaign.jpg",
-#     "quantity": 3,
-#     "lasting_hours": 72,
-#     "attenders_id": ["1", "2", "3"]
-#   }'
+curl -X POST "http://localhost:8001/api/campaign" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Dinner with dennis",
+    "description": "This is a test campaign",
+    "price": 2,
+    "image_path": "/images/campaign.jpg",
+    "quantity": 3,
+    "lasting_hours": 72,
+    "attenders_id": ["1", "2", "3"]
+  }'
 
