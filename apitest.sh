@@ -50,19 +50,19 @@
 # curl -X POST "http://localhost:8001/api/employee" \
 #      -H "Content-Type: application/json" \
 #      -d '{
-#             "name": "DENNISSSS",
-#             "account": "ccccccccfff",
-#             "password": "66wefqwef",
-#             "department": "cs engineering",
-#             "age": 21,
+#             "name": "Frank",
+#             "account": "cccccc",
+#             "password": "Frank",
+#             "department": "R&D",
+#             "age": 25,
 #             "position": "intern",
-#             "seniority": 1,
-#             "region": "Kaoshiung"
+#             "seniority": 3,
+#             "region": "Kaoshiung",
+#             "description": "I am a intern in R&D department. In free time, I like to play basketball."
 #          }'
-# {"id":"7144dcaa96534cc6bf35b93efa8b7ee4","name":"Frank_testing","account":"cccccccc","password":"$2b$12$1YApLunGTKVA.7p/KFxlCO6cAmlLbb/GQ4unpGGrSQPeO6K42ZPre","department":"cs engineering","age":20,"position":"intern","seniority":1,"region":"Taipei"}
 
-# {"id":"78965c3c1dff4d8ba5a13e93fde07dd9","name":"dennis","account":"dennis0906","password":"0906"}
-# {"id":"af9fa3e96de14cdabc61130faae9dbcc","name":"frank","account":"frank6999","password":"2222"}
+# for test 
+# {"id":"07cbf45c0101427d9f648944ff4a6081","name":"Frank","account":"cccccc","password":"$2b$12$T3NvcR8aFlSAqDtE3VgpGOdE7qemtetNgdINNikMphOTLA09U0LJK","department":"R&D","age":25,"position":"intern","seniority":3,"region":"Kaoshiung"}
 
 
 # create techpost 
@@ -116,15 +116,23 @@
 #            "emo_msg_id": "61ea989c65b849d88055992f7beaba3e",
 #            "sender_id": "066f32644fac497f9c72bf0e7d12a8c1"
 #          }'
+string="I struggle to maintain a healthy work-life balance. Long hours and the expectation to be always available make it difficult for me to spend quality time with family and pursue personal interests, leading to increased stress."
 
-# create emo msg
 # curl -X POST "http://localhost:8001/api/emomsg"  \
-#        -H "Content-Type: application/json" \
-#        -d '{
-#              "sender_id": "7144dcaa96534cc6bf35b93efa8b7ee4",
-#              "content": "I am happy",
-#              "rcvr_id": "83fa6df15b784d60bc760e6413cd8269"
-#           }'
+#      -H "Content-Type: application/json" \
+#      -d '{
+#            "sender_id": "07cbf45c0101427d9f648944ff4a6081",
+#            "content": "'"$string"'"
+#          }'
+
+curl -X POST "http://localhost:8001/api/emomsg_to"  \
+     -H "Content-Type: application/json" \
+     -d '{
+           "sender_id": "17c5771383a64adea83fd5d50311dd5e",
+           "content": "'"$string"'",
+           "rcvr_id": ["07cbf45c0101427d9f648944ff4a6081"]
+         }'
+
 
 # curl -X GET http://localhost:8001/api/techposts/techcomments/708f24c378b64942b61edc3e15533045
 # curl -X GET http://localhost:8001/api/techposts/708f24c378b64942b61edc3e15533045
