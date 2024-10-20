@@ -12,19 +12,19 @@
 
 # create employee
 # id = 172d3ea5d9df41d5948bc12b52b7457c
-curl -X POST "http://localhost:8001/api/employee" \
-     -H "Content-Type: application/json" \
-     -d '{
-            "name": "bonnie",
-            "account": "bonniech",
-            "password": "bonnie",
-            "department": "cs engineering",
-            "age": 45,
-            "position": "product manager",
-            "seniority": 10,
-            "region": "taipei",
-            "description": "I am a bad guy"
-         }'
+# curl -X POST "http://localhost:8001/api/employee" \
+#      -H "Content-Type: application/json" \
+#      -d '{
+#             "name": "bonnie",
+#             "account": "bonniech",
+#             "password": "bonnie",
+#             "department": "cs engineering",
+#             "age": 45,
+#             "position": "product manager",
+#             "seniority": 10,
+#             "region": "taipei",
+#             "description": "I am a bad guy"
+#          }'
 
 # id = 83fa6df15b784d60bc760e6413cd8269
 # curl -X POST "http://localhost:8001/api/emomsg" \
@@ -47,19 +47,21 @@ curl -X POST "http://localhost:8001/api/employee" \
 #             "region": "taipei"
 #          }'
 
-# id = 83fa6df15b784d60bc760e6413cd8269
+# id = 6eea426c67114dfc94a89d12749274cf
 # curl -X POST "http://localhost:8001/api/employee" \
 #      -H "Content-Type: application/json" \
 #      -d '{
-#             "name": "DENNISSSS",
-#             "account": "ccccccccfff",
-#             "password": "66wefqwef",
-#             "department": "cs engineering",
-#             "age": 21,
-#             "position": "intern",
-#             "seniority": 1,
-#             "region": "Kaoshiung"
+#             "name": "ADMIN",
+#             "account": "ccccccc",
+#             "password": "0906",
+#             "department": "admin",
+#             "age": 30,
+#             "position": "CEO",
+#             "seniority": 10,
+#             "region": "Kaoshiung", 
+#             "description": "I know everything."
 #          }'
+
 # {"id":"7144dcaa96534cc6bf35b93efa8b7ee4","name":"Frank_testing","account":"cccccccc","password":"$2b$12$1YApLunGTKVA.7p/KFxlCO6cAmlLbb/GQ4unpGGrSQPeO6K42ZPre","department":"cs engineering","age":20,"position":"intern","seniority":1,"region":"Taipei"}
 
 # {"id":"78965c3c1dff4d8ba5a13e93fde07dd9","name":"dennis","account":"dennis0906","password":"0906"}

@@ -8,14 +8,14 @@ import {
   Modal,
   message,
   Popconfirm,
+  Popover,
+  Avatar
 } from 'antd';
 import axios from 'axios';
 import dining from '../../assets/dining.png';
 import hostevent from '../../assets/hostevent.png';
 import HostEventForm from './HostEventForm';
-import { Avatar, Popover } from 'antd';
 import { QuestionOutlined } from '@ant-design/icons';
-
 
 const { Content } = Layout;
 
@@ -360,36 +360,41 @@ const Campaign: React.FC = () => {
             msOverflowStyle: 'none', // Internet Explorer and Edge
           }}
         >
-        <Modal
-          title={selectedCampaign?.name}
-          visible={isModalVisible}
-          onCancel={handleCloseModal}
-          footer={[
-            <Button key="back" onClick={handleCloseModal}>
-              Close
-            </Button>
-          ]}
-        >
-          {selectedCampaign && (
-            <div>
-              <p><strong>Description:</strong> {selectedCampaign.description}</p>
-              <p><strong>Price:</strong> ${selectedCampaign.price.toFixed(2)}</p>
-              <p><strong>Quantity Left:</strong> {selectedCampaign.quantity}</p>
-              <p><strong>Expires At:</strong> {new Date(selectedCampaign.expire).toLocaleString()}</p>
-            </div>
-          )}
-        </Modal>
+          
+          <br></br>
+          <br></br>
+          {renderProducts()}
+          <Modal
+            title={selectedCampaign?.name}
+            visible={isModalVisible}
+            onCancel={handleCloseModal}
+            footer={[
+              <Button key="back" onClick={handleCloseModal}>
+                Close
+              </Button>
+            ]}
+          >
+            {selectedCampaign && (
+              <div>
+                <p><strong>Description:</strong> {selectedCampaign.description}</p>
+                <p><strong>Price:</strong> ${selectedCampaign.price.toFixed(2)}</p>
+                <p><strong>Quantity Left:</strong> {selectedCampaign.quantity}</p>
+                <p><strong>Expires At:</strong> {new Date(selectedCampaign.expire).toLocaleString()}</p>
+              </div>
+            )}
+          </Modal>
 
-        <Modal
-          title="Host an Event"
-          visible={isHostEventModalVisible}
-          onCancel={handleCloseHostEventModal}
-          footer={null}  // No footer since the form already has its submit button
-        >
-          <HostEventForm closeModal={handleCloseHostEventModal}/>
-        </Modal>
-      </Content>
-    </Layout>
+          <Modal
+            title="Host an Event"
+            visible={isHostEventModalVisible}
+            onCancel={handleCloseHostEventModal}
+            footer={null}  // No footer since the form already has its submit button
+          >
+            <HostEventForm closeModal={handleCloseHostEventModal}/>
+          </Modal>
+        </Content>
+      </Layout>
+    </>
   );
 };
 
