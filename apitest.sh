@@ -12,18 +12,19 @@
 
 # create employee
 # id = 172d3ea5d9df41d5948bc12b52b7457c
-# curl -X POST "http://localhost:8001/api/employee" \
-#      -H "Content-Type: application/json" \
-#      -d '{
-#             "name": "bonnie",
-#             "account": "bonniech",
-#             "password": "bonnie",
-#             "department": "cs engineering",
-#             "age": 45,
-#             "position": "product manager",
-#             "seniority": 10,
-#             "region": "taipei"
-#          }'
+curl -X POST "http://localhost:8001/api/employee" \
+     -H "Content-Type: application/json" \
+     -d '{
+            "name": "bonnie",
+            "account": "bonniech",
+            "password": "bonnie",
+            "department": "cs engineering",
+            "age": 45,
+            "position": "product manager",
+            "seniority": 10,
+            "region": "taipei",
+            "description": "I am a bad guy"
+         }'
 
 # id = 83fa6df15b784d60bc760e6413cd8269
 # curl -X POST "http://localhost:8001/api/emomsg" \
@@ -146,15 +147,15 @@
 # curl -X GET http://localhost:8001/api/campaigns
 
 
-curl -X POST "http://localhost:8001/api/campaign" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Dinner with dennis",
-    "description": "This is a test campaign",
-    "price": 2,
-    "image_path": "/images/campaign.jpg",
-    "quantity": 3,
-    "lasting_hours": 72,
-    "attenders_id": ["1", "2", "3"]
-  }'
+# curl -X POST "http://localhost:8001/api/campaign" \
+#   -H "Content-Type: application/json" \
+#   -d '{
+#     "name": "Dinner with dennis",
+#     "description": "This is a test campaign",
+#     "price": 2,
+#     "image_path": "/images/campaign.jpg",
+#     "quantity": 3,
+#     "lasting_hours": 72,
+#     "attenders_id": ["1", "2", "3"]
+#   }'
 
